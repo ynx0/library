@@ -19,7 +19,7 @@ while getopts "w" opt; do
 done
 
 if [ -z "$WATCH_MODE" ]; then
-    echo "Installed btc-agents"
+    echo "Installed pinboard"
     rsync -r --exclude-from=$EXCLUDE_FILE * $PIER/home/
 else
    echo "Watching for changes to copy to ${PIER}..."
