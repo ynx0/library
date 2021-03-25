@@ -1,17 +1,19 @@
 /-  *post
 =>
 |%
-::  first content is name/title
-::  second content is a %section reference
+::  first content is pin title
+::  second content is a 
 ::
-++  is-text-pointer
-  |=  [cs=(list content) num-elts=@ud]
+++  max-length-title  20
+++  max-length-body   250
+++  are-coordinates-valid
+  |=  [x=@ud y=@ud]
   ^-  ?
-  =/  our-lent=@ud  2
-  ?&  =((lent cs) (add num-elts our-lent))
-      ?=([* * *] cs)
-      ?=(%text -.i.cs)
-      ?=([%reference [* @ %sections @ud ~]] i.t.cs)
+  :: invariant: all x and y are gte 0 b/c @ud
+  =/  max-width=@ud  1.920
+  =/  max-height=@ud  1.080
+  ?&  (lte y max-height)
+      (lte x max-width)
   ==
 --
 |_  i=indexed-post
@@ -19,15 +21,22 @@
   |%
   ++  noun  i
   ::
-  ::  TODO enumerate all options below
   ++  graph-permissions-add
     ?+  index.p.i  !!
-      [@ ~]        [%yes %yes %no]
+      [@ ~]          [%yes %yes %no]
+      [@ %meta ~]    [%self %self %no]
+      [@ %meta @ ~]  [%yes %self %no]
+      [@ %pin ~]     [%self %self %no]
+      [@ %pin @ ~]   [%self %self %no]
     ==
   ::
   ++  graph-permissions-remove
     ?+  index.p.i  !!
-      [@ ~]        [%yes %self %self]
+      [@ ~]          [%yes %self %no]
+      [@ %meta ~]    [%no %no %no]
+      [@ %meta @ ~]  [%yes %self %no]
+      [@ %pin ~]     [%no %no %no]
+      [@ %pin @ ~]   [%yes %self %no]
     ==
   --
 ++  grab
@@ -36,54 +45,46 @@
     |=  p=*
     =/  ip  ;;(indexed-post p)
     ?+    index.p.ip  !!
-    ::  top level: book index
-    ::  only content is the book title
+    ::  top level node: pin
+    ::  structural node with no content
     ::
         [@ ~]
-      ?>  ?=([* ~] contents.p.ip)
-      ?>  ?=(%text -.i.contents.p.ip)
-      ip
-    ::
-    ::
-        [@ %sections ~]
       ?>  ?=(~ contents.p.ip)
       ip
+    ::  metadata revision container
+    ::  structural node with no content
     ::
-        [@ %sections @ud ~]
-      ?>  ?=([* ~] contents.p.ip)
-      ?>  ?=(%text -.i.contents.p.ip)
-      ip
-    ::  container for chapters
-    ::  null content
-        [@ %chapters ~]
+        [@ %meta ~]
       ?>  ?=(~ contents.p.ip)
       ip
-    ::  chapter
-    ::  index is a sequential id
+    ::  single metadata revision
+    ::  content node with data format [x y] specifying x and y coordinates of the pinboard
     ::
-        [@ %chapters @ud ~]
-      ?>  ?=(is-text-pointer 0)
+        [@ %meta @ ~]
+      ?>  ?=([[%text *] [%text *] ~] contents.p.ip)
+      =/  contents  contents.p.ip
+      =/  x  ;;(@ud -.i.contents)  :: TODO make this actually work
+      =/  y  ;;(@ud +.i.contents)
+      ?>  (are-coordinates-valid [x y])
       ip
-    ::  container for bookmarks
-    ::  bookmarks and chapters are the same structurally,
-    ::  but have different semantic purposii
-        [@ %bookmarks ~]
+    ::  container for pin content revisions
+    ::  structural node with no content
+    ::
+        [@ %pin ~]
       ?>  ?=(~ contents.p.ip)
       ip
-    ::  bookmark
-        [@ %bookmarks @ud ~]
-      ?>  (is-text-pointer contents.p.ip 0)
-      ip
-    ::  container for annotations
-        [@ %annotations ~]
-      ?>  ?=(~ contents.p.ip)
-      ip
-    ::  annotation
-    ::  last content is the annotation text
-        [@ %annotations @ud ~]
-      ?>  (is-text-pointer contents.p.ip 1)
-      ?>  ?=([* * * ~] contents.p.ip)
-      ?>  ?=(%text -.i.t.t.contents.p.ip)
+    ::  specific pin revision
+    ::  content node with data format [title body]
+    ::
+        [@ %pin @ ~]
+      ?>  ?=([[%text *] [%text *] ~] contents.p.ip)
+      =/  contents  contents.p.ip
+      =/  title  +.i.contents  :: TODO make this actually work
+      =/  body   +.t.contents  :: aa
+      ~&  title
+      ~&  body
+      ::  ?>  (lte (lent title) max-length-title)
+      ::  ?>  (lte (lent body) max-length-body)
       ip
     ==
   --
