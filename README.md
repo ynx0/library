@@ -21,6 +21,9 @@ add a sample pin to the graph. syntax: @ top level index, title of the pin
 :graph-store|sample-pin [our %some-date-time12] 1 'dumb pin'
 ```
 
+handy inspections
+- `:graph-store +dbug`
+- `:group-store +dbug`
 
 
 
