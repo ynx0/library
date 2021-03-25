@@ -28,4 +28,17 @@ handy inspections
 
 todo use this later:  ````@tas`(scot %date now)``` in place of some date time
 
+------------
+
+if you want a stack trace for your validator to see where it is failing,
+manually build the file instead, like so `=f -build-file %/mar/graph/validator/pinboard/hoon`
+
+then call `noun:grab:f` on an indexed-post that you want to use for a test case.
+
+ex: `(noun:grab:f [a=1 p=[author=our ~[1 %meta 1] now ~[[%text '-1'] [%text '1080']] [~ ~] ~]])`
+recall that an indexed-post is an `[a=atom p=post]`, and a post is a
+`[author=ship =index time-sent=time contents=(list content) hash=(unit hash) =signatures`
+
+in the above example, we simply omit the hash and signatures
+
 
