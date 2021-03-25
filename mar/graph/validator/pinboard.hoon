@@ -61,11 +61,12 @@
     ::  content node with data format [x y] specifying x and y coordinates of the pinboard
     ::
         [@ %meta @ ~]
-      ?>  ?=([[%text *] [%text *] ~] contents.p.ip)
+      :: ?>  ?=([[%text *] [%text *] ~] contents.p.ip)  :: todo figure this out
       =/  contents  contents.p.ip
-      =/  x  ;;(@ud -.i.contents)  :: TODO make this actually work
-      =/  y  ;;(@ud +.i.contents)
-      ?>  (are-coordinates-valid [x y])
+      ~&  contents
+      :: =/  x  ;;(@ud -.i.contents)  :: TODO make this actually work
+      :: =/  y  ;;(@ud +.i.contents)
+      :: ?>  (are-coordinates-valid [x y])
       ip
     ::  container for pin content revisions
     ::  structural node with no content
@@ -77,12 +78,12 @@
     ::  content node with data format [title body]
     ::
         [@ %pin @ ~]
-      ?>  ?=([[%text *] [%text *] ~] contents.p.ip)
+      :: ?>  ?=([[%text *] [%text *] ~] contents.p.ip)
       =/  contents  contents.p.ip
-      =/  title  +.i.contents  :: TODO make this actually work
-      =/  body   +.t.contents  :: aa
-      ~&  title
-      ~&  body
+      :: =/  title  +.i.contents  :: TODO make this actually work
+      :: =/  body   +.t.contents  :: aa
+      :: ~&  title
+      :: ~&  body
       ::  ?>  (lte (lent title) max-length-title)
       ::  ?>  (lte (lent body) max-length-body)
       ip
