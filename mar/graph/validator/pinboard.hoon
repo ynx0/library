@@ -38,6 +38,12 @@
       [@ %pin ~]     [%no %no %no]
       [@ %pin @ ~]   [%yes %self %no]
     ==
+  ++  transform-add-nodes
+    |=  [=index =post =atom was-parent-modified=?]
+    !!
+    :: ^-  [^index ^post]
+    :: =-  [- post(index -)]
+    :: [atom ~]
   --
 ++  grab
   |%
