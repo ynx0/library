@@ -26,6 +26,6 @@ handy inspections
 - `:group-store +dbug`
 
 
-
+todo use this later:  ````@tas`(scot %date now)``` in place of some date time
 
 
