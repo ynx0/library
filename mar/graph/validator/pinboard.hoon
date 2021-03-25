@@ -58,45 +58,54 @@
     ::  structural node with no content
     ::
         [@ ~]
+      ~|  "top level pin node should be empty!"
       ?>  ?=(~ contents.p.ip)
       ip
     ::  metadata revision container
     ::  structural node with no content
     ::
         [@ %meta ~]
+      ~|  "metadata revision container should be empty!"
       ?>  ?=(~ contents.p.ip)
       ip
     ::  single metadata revision
     ::  content node with data format [x y] specifying x and y coordinates of the pinboard
     ::
         [@ %meta @ ~]
-      :: ?>  ?=([[%text *] [%text *] ~] contents.p.ip)  :: todo figure this out
+      ?>  ?=([[%text *] [%text *] ~] contents.p.ip)
       =/  contents  contents.p.ip
       ~&  contents
-      :: =/  x  ;;(@ud -.i.contents)  :: TODO make this actually work
-      :: =/  y  ;;(@ud +.i.contents)
-      :: ?>  (are-coordinates-valid [x y])
+      ~|  "coordinates aren't valid numbers"
+      =/  x  (slav %ud +.i.contents)
+      =/  y  (slav %ud +.i.t.contents)
+      ~|  "invalid coordinates {<x>} {<y>}"
+      ?>  (are-coordinates-valid [x y])
       ip
     ::  container for pin content revisions
     ::  structural node with no content
     ::
         [@ %pin ~]
+      ~|  "pin revision container should be empty!"
       ?>  ?=(~ contents.p.ip)
       ip
     ::  specific pin revision
     ::  content node with data format [title body]
     ::
         [@ %pin @ ~]
-      :: ?>  ?=([[%text *] [%text *] ~] contents.p.ip)
+      ?>  ?=([[%text *] [%text *] ~] contents.p.ip)
       =/  contents  contents.p.ip
-      :: =/  title  +.i.contents  :: TODO make this actually work
-      :: =/  body   +.t.contents  :: aa
+      :: ~&  contents
+      =/  title=tape  (trip +.i.contents)  :: this part works now
+      =/  body=tape   (trip +.i.t.contents)  ::
       :: ~&  title
       :: ~&  body
-      ::  ?>  (lte (lent title) max-length-title)
-      ::  ?>  (lte (lent body) max-length-body)
+      ~|  "title too long"
+      ?>  (lte (lent (tuba title)) max-length-title)  :: tuba normalizes things like emojis to count as one character
+      ~|  "body too long"
+      ?>  (lte (lent (tuba body)) max-length-body)    ::
       ip
     ==
   --
 ++  grad  %noun
 --
+
