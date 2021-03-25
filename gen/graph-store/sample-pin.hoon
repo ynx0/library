@@ -1,13 +1,11 @@
 /-  *graph-store
 =>
 |%
-++  pin-text
-  'This is some sample pin text.'
-++  coordinates  [x='0' y='0']
+:: ++  coordinates  [x='0' y='0']
 --
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
-        [[[our=ship name=term] top=@ title=cord ~] ~]
+        [[[our=ship name=term] top=@ title=cord text=cord coords=[x=cord y=cord] ~] ~]
     ==
 =|  blank=post
 =:  author.blank     our
@@ -15,11 +13,12 @@
     contents.blank   ~
 ==
 =/  pin-contents
-  ~[[%text title] [%text pin-text]]
-~&  pin-text
-~&  x:coordinates
+  ~[[%text title] [%text text]]
+:: ~&  pin-text
+:: ~&  x:coordinates
 =/  meta-contents
-  ~[[%text x:coordinates] [%text y:coordinates]]  :: why doesn't x.coordinates work?
+::  ~[[%text x:coordinates] [%text y:coordinates]]  :: why doesn't x.coordinates work?
+  ~[[%text x:coords] [%text y:coords]]
 :-  %graph-update
 ^-  update
 :+  %0  now
