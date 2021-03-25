@@ -44,6 +44,9 @@
     :: ^-  [^index ^post]
     :: =-  [- post(index -)]
     :: [atom ~]
+  ::
+    ++  notification-kind  `[%message [0 1] %count %none]
+  ::
   --
 ++  grab
   |%
