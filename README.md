@@ -18,7 +18,7 @@ create the graph. (note the rid (here, [our %some-date-time12]) must be unique t
 
 add a sample pin to the graph. syntax: @ top level index, title of the pin
 ```
-:graph-store|sample-pin [our %some-date-time12] 1 'dumb pin'
+:graph-store|create-pin [our %some-date-time12] 1 'dumb pin'
 ```
 
 handy inspections
@@ -40,5 +40,14 @@ recall that an indexed-post is an `[a=atom p=post]`, and a post is a
 `[author=ship =index time-sent=time contents=(list content) hash=(unit hash) =signatures`
 
 in the above example, we simply omit the hash and signatures
+
+---------------------
+
+
+```
+:graph-store|remove-nodes [our %some-date-time1] (sy ~[~[4 %meta]])  :: not so fun: deletes a structural node
+:graph-store|remove-nodes [our %some-date-time1] (sy ~[~[1] ~[2]])   :: deletes certain pins
+:graph-store|remove-graph [our %some-date-time1]                     :: deletes the whole graph
+```
 
 
