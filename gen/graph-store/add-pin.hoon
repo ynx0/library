@@ -1,33 +1,33 @@
 /-  *graph-store
+=>
+|%
+:: ++  coordinates  [x='0' y='0']
+--
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
-        [[[our=ship name=term] ~] ~]
+        [[[our=ship name=term] top=@ title=cord text=cord coords=[x=cord y=cord] ~] ~]
     ==
-=|  book1=post
-=:  author.book1     our
-    index.book1    [3]~
-    time-sent.book1  now
-    contents.book1  ~[[%text 'Great Expectations']]
+=|  blank=post
+=:  author.blank     our
+    time-sent.blank  now
+    contents.blank   ~
 ==
-=|  book2=post
-=:  author.book2     our
-    index.book2    [4]~
-    time-sent.book2  now
-    contents.book2  ~[[%text 'The Triumph of Timtime']]
-==
-=|  chapters=post
-=:  author.chapters  our
-    index.chapters  ~[3 %chapters]
-    time-sent.chapters  now
-    contents.chapters  ~
-==
+=/  pin-contents
+  ~[[%text title] [%text text]]
+:: ~&  pin-text
+:: ~&  x:coordinates
+=/  meta-contents
+::  ~[[%text x:coordinates] [%text y:coordinates]]  :: why doesn't x.coordinates work?
+  ~[[%text x:coords] [%text y:coords]]
 :-  %graph-update
 ^-  update
 :+  %0  now
 :+  %add-nodes  [our name]
 %-  ~(gas by *(map index node))
 :~
-    [index.book1 [book1 [%empty ~]]]
-    [index.book2 [book2 [%empty ~]]]
-    [index.chapters [chapters [%empty ~]]]
+    [~[top] [blank(index ~[top]) [%empty ~]]]
+    [~[top %meta] [blank(index ~[top %meta]) [%empty ~]]]
+    [~[top %meta 1] [blank(index ~[top %meta 1], contents meta-contents) [%empty ~]]]
+    [~[top %pin] [blank(index ~[top %pin]) [%empty ~]]]
+    [~[top %pin 1] [blank(index ~[top %pin 1], contents pin-contents) [%empty ~]]]
 ==
