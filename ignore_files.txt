@@ -4,3 +4,4 @@
 *.txt
 *.js
 *.swp
+*.save
