@@ -1,13 +1,27 @@
 /-  spider
 /+  strandio, store=graph-store, gra=graph, graph-view, sig=signatures
-=,  strand=strand:spider 
+=,  strand=strand:spider
+:: =>  :: do i need this? spider guide 
+|%
+++  get-last-revision-node
+:: |=  [uid, index=atom]??
+++  incr-index  !!
+--
 ^-  thread:spider 
 |=  arg=vase 
 =/  m  (strand ,vase) 
 ^-  form:m
 =+  !<([=uid [x=@ud y=@ud] ~] arg)
-:: =/  latest-meta=node (get-latest-revision-node)
-:: =|  
+=/  last-meta=node (get-last-revision-node)
+=|  new-meta=post
+=:  author.new-meta    our
+    index.new-meta     (incr-index index.p.last-meta)
+    time-sent          now
+    contents.new-meta  (make-contents [x y])
+:: (add-nodes [index.post [post]])
+:: replace contents with new [x and y]
+:: replace index with +(index.latest-meta)
+:: call add-nodes thread with new node
 ::
 ::               LOGIC
 :: Given a uid to a specific pin on a specific graph
