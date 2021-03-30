@@ -5,7 +5,7 @@
 --
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
-        [[[our=ship name=term] top=@ title=cord text=cord coords=[x=cord y=cord] ~] ~]
+        [[[our=ship name=term] top=@ title=cord text=cord coords=[x=@ud y=@ud] ~] ~]
     ==
 =|  blank=post
 =:  author.blank     our
@@ -17,8 +17,7 @@
 :: ~&  pin-text
 :: ~&  x:coordinates
 =/  meta-contents
-::  ~[[%text x:coordinates] [%text y:coordinates]]  :: why doesn't x.coordinates work?
-  ~[[%text x:coords] [%text y:coords]]
+  ~[[%text `@t`(scot %ud x:coords)] [%text `@t`(scot %ud y:coords)]]
 :-  %graph-update
 ^-  update
 :+  %0  now
