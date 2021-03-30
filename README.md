@@ -18,7 +18,7 @@ create the graph. (note the rid (here, [our %some-date-time1]) must be unique to
 
 add a sample pin to the graph. syntax: @ top level index, title of the pin
 ```
-:graph-store|create-pin [our %some-date-time1] 1 'dumb pin'
+:graph-store|add-pin [our %some-date-time1] 1 'dumb pin'
 ```
 
 handy inspections
