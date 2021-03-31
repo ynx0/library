@@ -1,10 +1,8 @@
 /-  *graph-store
+/+  *pinboard
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
-        [[[our=ship name=term] top=@ ~] ~]
+        [[[=ship name=term] top=@ ~] ~]
     ==
 :-  %graph-update
-^-  update
-:+  %0  now
-:+  %remove-nodes  [our name]
-(sy ~[[top ~]])
+(remove-pin-update [[ship name] top now])
