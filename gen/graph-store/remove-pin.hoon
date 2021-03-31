@@ -7,4 +7,4 @@
 ^-  update
 :+  %0  now
 :+  %remove-nodes  [our name]
-(sy ~[[top ~]]) 
+(sy ~[[top ~]])
