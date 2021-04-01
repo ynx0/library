@@ -16,6 +16,7 @@
   ~&  path
   ;<  =bowl:spider  bind:m  get-bowl:strandio  :: doing (get-bowl:strandio) causes a (gigantic) crash :(
   ~&  bowl
+  ~&  "test2"
   ::;<  result=mold   bind:m
   ::  %+  scry:strandio  mold
   ::  :: /gx/(scot %p our.bowl)/graph-store/(scot %da now.bowl)/(snoc `^path`path %noun)
@@ -76,6 +77,7 @@
 =/  m  (strand ,vase)
 ^-  form:m
 =+  !<([~ [=ship name=term] top=@ [x=@ud y=@ud]] arg)
+~&  "test1"
 =/  aa  (scry-for update:store (weld /node/(scot %p ship)/name (turn ~[top %meta] (cury scot %ud))))
 ::=/  meta-container=node  (got-node:gra [ship name] ~[top %meta])
 ::~&  children.meta-container
