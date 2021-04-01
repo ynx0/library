@@ -30,8 +30,9 @@
   :: similarly unholy hybrid threadified got-node from lib/graph.hoon
   |=  [res=resource =index:store]
   =/  m  (strand ,node:store)
-  ^-  form:m  
-  ;<  =update:store  bind:m  (scry-for update:store /node/(scot %p entity.res)/[name.res]/(turn index (cury scot %ud)))
+  ^-  form:m
+  ::  based off of https://github.com/urbit/urbit/blob/master/pkg/arvo/lib/graph.hoon#L65-L67
+  ;<  =update:store  bind:m  (scry-for update:store (weld /node/(scot %p entity.res)/[name.res] (turn index (cury scot %ud))))
   ?>  ?=(%0 -.update)
   ?>  ?=(%add-nodes -.q.update)
   ?>  ?=(^ nodes.q.update)
