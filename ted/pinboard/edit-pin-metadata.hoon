@@ -13,7 +13,8 @@
   =/  m  (strand ,mold)  :: this already looks scary. wet gate, strand defined by a parametric type?? oh my
   ^-  form:m
   ~&  path
-  ;<  =bowl:spider  bind:m  get-bowl:strandio
+  ;<  =bowl:spider  bind:m  get-bowl:strandio  :: doing (get-bowl:strandio) causes a (gigantic) crash :(
+  ~&  bowl
   ;<  result=mold   bind:m
     %+  scry:strandio  mold
     :: /gx/(scot %p our.bowl)/graph-store/(scot %da now.bowl)/(snoc `^path`path %noun)
