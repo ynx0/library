@@ -16,8 +16,15 @@
   ;<  =bowl:spider  bind:m  get-bowl:strandio
   ;<  result=mold   bind:m
     %+  scry:strandio  mold
-    /gx/(scot %p our.bowl)/graph-store/(scot %da now.bowl)/(snoc `^path`path %noun)
-    ::/gx/(scot %p our.bowl)/graph-store/(scot %da now.bowl)/(snoc path %noun)
+    :: /gx/(scot %p our.bowl)/graph-store/(scot %da now.bowl)/(snoc `^path`path %noun)
+    ;:  weld
+      /gx
+      /(scot %p our.bowl)
+      /graph-store
+      /(scot %da now.bowl)
+      `^path`path
+      /noun
+    ==
   (pure:m result)
 ++  got-node
   :: similarly unholy hybrid threadified got-node from lib/graph.hoon
