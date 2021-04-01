@@ -10,34 +10,38 @@
   :: https://github.com/urbit/urbit/blob/9c9446d77f0969846b1cebd12f6290d513375ad4/pkg/arvo/lib/graph.hoon#L4
   :: and https://github.com/urbit/urbit/blob/ab4356ea88f531788845dd47efe0b571dd1ae446/pkg/arvo/ted/graph/add-nodes.hoon#L6
   |*  [=mold =path]
-  =/  m  (strand ,mold)  :: this already looks scary. wet gate, strand defined by a parametric type?? oh my
+  ::=/  m  (strand ,mold)  :: this already looks scary. wet gate, strand defined by a parametric type?? oh my
+  =/  m  (strand ,*)  :: this already looks scary. wet gate, strand defined by a parametric type?? oh my
   ^-  form:m
   ~&  path
   ;<  =bowl:spider  bind:m  get-bowl:strandio  :: doing (get-bowl:strandio) causes a (gigantic) crash :(
   ~&  bowl
-  ;<  result=mold   bind:m
-    %+  scry:strandio  mold
-    :: /gx/(scot %p our.bowl)/graph-store/(scot %da now.bowl)/(snoc `^path`path %noun)
-    ;:  weld
-      /gx
-      /(scot %p our.bowl)
-      /graph-store
-      /(scot %da now.bowl)
-      `^path`path
-      /noun
-    ==
-  (pure:m result)
+  ::;<  result=mold   bind:m
+  ::  %+  scry:strandio  mold
+  ::  :: /gx/(scot %p our.bowl)/graph-store/(scot %da now.bowl)/(snoc `^path`path %noun)
+  ::  ;:  weld
+  ::    /gx
+  ::    /(scot %p our.bowl)
+  ::    /graph-store
+  ::    /(scot %da now.bowl)
+  ::    `^path`path
+  ::    /noun
+  ::  ==
+  ::(pure:m result)
+  (pure:m ~)
 ++  got-node
   :: similarly unholy hybrid threadified got-node from lib/graph.hoon
   |=  [res=resource =index:store]
   =/  m  (strand ,node:store)
   ^-  form:m
   ::  based off of https://github.com/urbit/urbit/blob/master/pkg/arvo/lib/graph.hoon#L65-L67
-  ;<  =update:store  bind:m  (scry-for update:store (weld /node/(scot %p entity.res)/[name.res] (turn index (cury scot %ud))))
-  ?>  ?=(%0 -.update)
-  ?>  ?=(%add-nodes -.q.update)
-  ?>  ?=(^ nodes.q.update)
-  (pure:m q.n.nodes.q.update)
+  ::;<  =update:store  bind:m  (scry-for update:store (weld /node/(scot %p entity.res)/[name.res] (turn index (cury scot %ud))))
+  ::;<  update  bind:m  (scry-for update:store (weld /node/(scot %p entity.res)/[name.res] (turn index (cury scot %ud))))  
+  ::?>  ?=(%0 -.update)
+  ::?>  ?=(%add-nodes -.q.update)
+  ::?>  ?=(^ nodes.q.update)
+  ::(pure:m q.n.nodes.q.update)
+  (pure:m *node:store)
 :: ++  get-last-revision-node
   :: |=  [=node node-type=?(%pin %meta)]
   :: head of bap:ordered-map of all nodes under [top node-type]
@@ -72,10 +76,11 @@
 =/  m  (strand ,vase)
 ^-  form:m
 =+  !<([~ [=ship name=term] top=@ [x=@ud y=@ud]] arg)
-=/  meta-container=node  (got-node:gra [ship name] ~[top %meta])
-~&  children.meta-container
+=/  aa  (scry-for update:store (weld /node/(scot %p ship)/name (turn ~[top %meta] (cury scot %ud))))
+::=/  meta-container=node  (got-node:gra [ship name] ~[top %meta])
+::~&  children.meta-container
 :: =/  last-meta=node     -:(bap:orm:store children.meta-container)  :: get the latest metadata revision.
-~&  meta-container
+::~&  meta-container
 :: ~&  last-meta
 ::=/  add-meta-rev-update=update:store
   ::(meta-rev-update:pinboard [[ship name] top now [x y] index.last-meta])
