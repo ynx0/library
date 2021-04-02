@@ -67,15 +67,17 @@
 =+  !<([~ [=ship name=term] top=@ [x=@ud y=@ud]] arg)
 ;<  meta-container=node  bind:m  (got-node [ship name] ~[top %meta])
 ::~&  meta-container
- =/  last-meta=node     val:(snag 0 (tap:orm:store +.children.meta-container)) :: get the latest metadata revision
- ::~&  last-meta
- ::~&  key.last-meta
- ::~&  index.post.val.last-meta
- ::~&  (snag 2 index.post.val.last-meta)
- ::~&  `node:store`val.last-meta
- ;<  =bowl:spider  bind:m  get-bowl:strandio  :: doing (get-bowl:strandio) causes a (gigantic) crash :(
- =/  add-meta-rev-update=update:store
+=/  last-meta=node     val:(snag 0 (tap:orm:store +.children.meta-container)) :: get the latest metadata revision
+::~&  last-meta
+::~&  key.last-meta
+::~&  index.post.val.last-meta
+::~&  (snag 2 index.post.val.last-meta)
+::~&  `node:store`val.last-meta
+;<  =bowl:spider  bind:m  get-bowl:strandio  :: doing (get-bowl:strandio) causes a (gigantic) crash :(
+=/  add-meta-rev-update=update:store
   (meta-rev-update:pinboard [ship name] top our.bowl now.bowl [x y] last-meta)
- ~&  add-meta-rev-update
- ;<  tid=tid:spider   bind:m  (start-thread-with-args:strandio %graph-add-nodes !>(add-meta-rev-update))
+~&  add-meta-rev-update
+;<  tid=tid:spider  bind:m  (start-thread-with-args:strandio %graph-add-nodes !>(add-meta-rev-update))
+::;<  tid=tid:spider  bind:m  (await-thread:strandio %graph-add-nodes !>(add-meta-rev-update))  :: bad, doesn't work unless i re-ota my fakezod, which i don wanna do b/c graph-store has breaking changes that i don't wanna deal with
+~&  tid
 (pure:m !>(~))
