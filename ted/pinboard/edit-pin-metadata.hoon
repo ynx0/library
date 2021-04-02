@@ -13,10 +13,9 @@
   =/  m  (strand ,mold)  :: this already looks scary. wet gate, strand defined by a parametric type?? oh my
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl:strandio  :: doing (get-bowl:strandio) causes a (gigantic) crash :(
-  ~&  bowl
   =/  fullpath=^path  (weld /gx/graph-store (snoc `^path`path %noun))
-  ~&  path
-  ~&  fullpath
+  ::~&  path
+  ::~&  fullpath
   ;<  result=mold   bind:m
     %+  scry:strandio  mold  fullpath
   (pure:m result)
@@ -30,9 +29,8 @@
   ?>  ?=(%0 -.update)
   ?>  ?=(%add-nodes -.q.update)
   ?>  ?=(^ nodes.q.update)
-  ~&  nodes.q.update
+  ::~&  nodes.q.update
   (pure:m q.n.nodes.q.update)
-  ::(pure:m *node:store)
 :: ++  get-last-revision-node
   :: |=  [=node node-type=?(%pin %meta)]
   :: head of bap:ordered-map of all nodes under [top node-type]
@@ -67,15 +65,17 @@
 =/  m  (strand ,vase)
 ^-  form:m
 =+  !<([~ [=ship name=term] top=@ [x=@ud y=@ud]] arg)
-~&  "test1"
-::;<  aa=*  bind:m  (scry-for update:store (weld /node/(scot %p ship)/[name] (turn ~[top %meta] (cury scot %ud))))
 ;<  meta-container=node  bind:m  (got-node [ship name] ~[top %meta])
-~&  meta-container
-:: =/  last-meta=node     -:(bap:orm:store children.meta-container)  :: get the latest metadata revision.
 ::~&  meta-container
-:: ~&  last-meta
-::=/  add-meta-rev-update=update:store
-  ::(meta-rev-update:pinboard [[ship name] top now [x y] index.last-meta])
-:: ;<  tid=tid:spider   bind:m  (start-thread-with-args %graph-add-nodes !>(add-meta-rev-update))
-:: ;<  =graph:store  bind:m  (get-specific-pin-by-top-index [ship name] top)
+ =/  last-meta=node     val:(snag 0 (tap:orm:store +.children.meta-container)) :: get the latest metadata revision
+ ::~&  last-meta
+ ::~&  key.last-meta
+ ::~&  index.post.val.last-meta
+ ::~&  (snag 2 index.post.val.last-meta)
+ ::~&  `node:store`val.last-meta
+ ;<  =bowl:spider  bind:m  get-bowl:strandio  :: doing (get-bowl:strandio) causes a (gigantic) crash :(
+ =/  add-meta-rev-update=update:store
+  (meta-rev-update:pinboard [ship name] top our.bowl now.bowl [x y] last-meta)
+ ~&  add-meta-rev-update
+ ;<  tid=tid:spider   bind:m  (start-thread-with-args:strandio %graph-add-nodes !>(add-meta-rev-update))
 (pure:m !>(~))
