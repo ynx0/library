@@ -59,7 +59,7 @@
       contents.meta-post   meta-contents
   ==
   :+  %0  time-sent
-  :+  %add-nodes  [entity.rid name.rid]
+  :+  %add-nodes  rid
   %-  ~(gas by *(map index node))
   ~[[meta-index [meta-post [%empty ~]]]]
 :: creating a new pin content revision
