@@ -45,10 +45,11 @@
 ::
 :: creating a new metadata revision
 ++  meta-rev-update
-  |=  [rid=resource top=@ author=ship time-sent=time new-coords=[x=@ud y=@ud] last-revision-index=index]
+  |=  [rid=resource top=@ author=ship time-sent=time new-coords=[x=@ud y=@ud] last-revision-node=node]
   :: todo use uid and assert that index is len 1 representing ref to a pin
   :: todo rename ship to author
   ^-  update
+  =/  last-revision-index=index:post  index.post.last-revision-node
   =/  meta-index=index:post              (incr-index last-revision-index)
   =/  meta-contents=(list content)  (make-meta-contents new-coords)
   =|  meta-post=post
