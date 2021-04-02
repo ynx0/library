@@ -77,7 +77,7 @@
 =/  add-meta-rev-update=update:store
   (meta-rev-update:pinboard [ship name] top our.bowl now.bowl [x y] last-meta)
 ~&  add-meta-rev-update
-;<  tid=tid:spider  bind:m  (start-thread-with-args:strandio %graph-add-nodes !>(add-meta-rev-update))
+;<  tid=tid:spider  bind:m  (start-thread-with-args:strandio %graph-add-nodes !>([~ add-meta-rev-update]))
 ::;<  tid=tid:spider  bind:m  (await-thread:strandio %graph-add-nodes !>(add-meta-rev-update))  :: bad, doesn't work unless i re-ota my fakezod, which i don wanna do b/c graph-store has breaking changes that i don't wanna deal with
 ~&  tid
 (pure:m !>(~))
