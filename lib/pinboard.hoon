@@ -92,10 +92,11 @@
   ~[[meta-index [meta-post [%empty ~]]]]
 :: creating a new pin content revision
 ++  pin-rev-update
-  |=  [rid=resource top=@ author=ship time-sent=time new-title=cord new-body=cord last-revision-index=index]
+  |=  [rid=resource top=@ author=ship time-sent=time new-title=cord new-body=cord last-revision-node=node]
   :: todo use uid and assert that index is len 1 representing ref to a pin
   :: todo rename ship to author
   ^-  update
+  =/  last-revision-index=index:post  index.post.last-revision-node
   =/  pin-index=index    (incr-index last-revision-index)
   =/  pin-contents       (make-pin-contents [new-title new-body])
   =|  pin-post=post:post
