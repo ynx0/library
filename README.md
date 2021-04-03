@@ -4,58 +4,79 @@ Dead simple pinboard app
 
 ---
 
-create a group
-```
--group-create [%create %my-pins [%open *(set rank:title) *(set ship)] 'pin group' 'group desc']
-```
+Using this application, you will be able to:
 
-create the graph. (note the rid (here, [our %some-date-time1]) must be unique to all of graph stored, not just unique within the group. this is why they tend to be datetimes. (if two people create a graph at the exact same time with this then one's will prob fail lmao))
-
-```
--graph-create [%create [our %some-date-time1] 'pinboard with fake chat module' 'desc' `%graph-validator-pinboard [%group [our %my-pins2]] 'chat']
-```
+1. Create a pinboard
+2. Create a pin
+3. Delete a pin
+4. Modify a pin's content
+5. Modify a pin's position
 
 
-add a sample pin to the graph. syntax: @ top level index, title of the pin
-```
-:graph-store|add-pin [our %some-date-time1] 1 'dumb pin'
-```
-
-handy inspections
-- `:graph-store +dbug`
-- `:group-store +dbug`
-
-
-todo use this later:  ````@tas`(scot %date now)``` in place of some date time
-
-------------
-
-if you want a stack trace for your validator to see where it is failing,
-manually build the file instead, like so `=f -build-file %/mar/graph/validator/pinboard/hoon`
-
-then call `noun:grab:f` on an indexed-post that you want to use for a test case.
-
-ex: `(noun:grab:f [a=1 p=[author=our ~[1 %meta 1] now ~[[%text '-1'] [%text '1080']] [~ ~] ~]])`
-recall that an indexed-post is an `[a=atom p=post]`, and a post is a
-`[author=ship =index time-sent=time contents=(list content) hash=(unit hash) =signatures`
-
-in the above example, we simply omit the hash and signatures
-
----------------------
-
+First, create a group.
 
 ```
-:graph-store|remove-nodes [our %some-date-time1] (sy ~[~[4 %meta]])  :: not so fun: deletes a structural node
-:graph-store|remove-nodes [our %some-date-time1] (sy ~[~[1] ~[2]])   :: deletes certain pins
-:graph-store|remove-graph [our %some-date-time1]                     :: deletes the whole graph
+-group-create [%create %my-group [%open *(set rank:title) *(set ship)] 'pin group' 'a group mainly about pins']
+```
+
+You can look at the current state of a given agent using the syntax `:<the-agent> +dbug`
+
+Visually verify that the group was created.
+
+```
+:group-store +dbug [%state 'groups']
 ```
 
 
------------------
+Then, create a new graph using the pinboard validator.
 
--pinboard-edit-pin-metadata [[our %some-date-time1] 1 [222 222]]
+```
+-graph-create [%create [our %pinboard-1] 'The First Pinboard' 'the first pinboard to exist' `%graph-validator-pinboard [%group [our %my-group]] '']
+```
 
-=store -build-file %/sur/graph-store/hoon
-=pinboard -build-file %/lib/pinboard/hoon
+Verify that the graph was properly created.
+```
+:graph-store +dbug [%state 'graphs']
+```
 
-=a ;;(update:store .^(noun %gx /=graph-store=/node/~zod/some-date-time1/1/noun))
+Create and add a new pin to the pinboard, specifying its title text, body text, and coordinates
+```
+-pinboard-create-pin [our %pinboard-1] 'Chores' 'Buy groceries' [x=5 y=10]
+```
+
+Verify that the pin was created successfully.
+```
+:graph-store +dbug [%state 'graphs']
+```
+
+
+Edit the contents by adding a new revision.
+```
+-pinboard-edit-contents [our %pinboard-1] 'Chores' 'Buy groceries. Eat lunch.'
+```
+
+Verify that a revision node was created successfully.
+```
+:graph-store +dbug [%state 'graphs']
+```
+
+Edit the metadata by adding a new revision, specifying the index of the pin.
+```
+-pinboard-edit-metadata [our %pinboard-1] 1 [x=15 y=20]
+```
+
+Verify that a revision node was created successfully.
+```
+:graph-store +dbug [%state 'graphs']
+```
+
+Delete the pin, specifying it's index.
+```
+-pinboard-delete-pin [our %pinboard-1] 1
+```
+
+Verify that a revision node was created successfully.
+```
+:graph-store +dbug [%state 'graphs']
+```
+
