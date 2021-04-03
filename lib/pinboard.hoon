@@ -10,11 +10,12 @@
   :: https://github.com/urbit/urbit/blob/9c9446d77f0969846b1cebd12f6290d513375ad4/pkg/arvo/lib/graph.hoon#L4
   :: and https://github.com/urbit/urbit/blob/ab4356ea88f531788845dd47efe0b571dd1ae446/pkg/arvo/ted/graph/add-nodes.hoon#L6
   |*  [=mold =path]
-  =/  m  (strand:spider ,mold)  :: this already looks scary. wet gate, strand defined by a parametric type?? oh my
+  =/  m  (strand:spider ,mold)
   ^-  form:m
   ;<  result=mold   bind:m
     %+  scry:strandio  mold  (weld /gx/graph-store (snoc `^path`path %noun))
   (pure:m result)
+::
 ++  got-node
   ::  based off of https://github.com/urbit/urbit/blob/master/pkg/arvo/lib/graph.hoon#L65-L67
   |=  [res=resource =index:store]
@@ -25,6 +26,7 @@
   ?>  ?=(%add-nodes -.q.update)
   ?>  ?=(^ nodes.q.update)
   (pure:m q.n.nodes.q.update)
+::
 ++  get-latest-revision-node
   |=  [rev-container-node=node:store]
   ^-  node:store
@@ -37,16 +39,15 @@
   =/  old-index-frag=atom  (snag 2 index)  :: get the 3rd value from the index
   (snap index 2 (add 1 old-index-frag))    :: replace the 3rd value of index with incremented index
 ::
-++  make-meta-contents  :: todo rename to something clearer
+++  make-meta-contents
   |=  [x=@ud y=@ud]
   ^-  (list content)
   ~[[%text `@t`(scot %ud x)] [%text `@t`(scot %ud y)]]
 ::
-++  make-pin-contents  :: todo rename to something clearer
+++  make-pin-contents
   |=  [title=cord body=cord]
   ^-  (list content)
   ~[[%text title] [%text body]]
-::
 ::
 ::
 :: creating a new pin
@@ -90,11 +91,10 @@
   :+  %add-nodes  rid
   %-  ~(gas by *(map index node))
   ~[[meta-index [meta-post [%empty ~]]]]
+::
 :: creating a new pin content revision
 ++  pin-rev-update
   |=  [rid=resource top=@ author=ship time-sent=time new-title=cord new-body=cord last-revision-node=node]
-  :: todo use uid and assert that index is len 1 representing ref to a pin
-  :: todo rename ship to author
   ^-  update
   =/  last-revision-index=index:post  index.post.last-revision-node
   =/  pin-index=index    (incr-index last-revision-index)
@@ -109,9 +109,10 @@
   :+  %add-nodes  rid
   %-  ~(gas by *(map index node))
   ~[[pin-index [pin-post [%empty ~]]]]
+::
 :: deleting a pin from a graph
 ++  remove-pin-update
-  |=  [rid=resource top=@ time-sent=time]  :: todo take in a resource
+  |=  [rid=resource top=@ time-sent=time]
   ^-  update
   :+  %0  time-sent
   :+  %remove-nodes  rid

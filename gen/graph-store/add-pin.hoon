@@ -1,4 +1,3 @@
-/-  *graph-store
 /+  *pinboard
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]

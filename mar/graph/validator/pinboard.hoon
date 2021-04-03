@@ -1,9 +1,6 @@
 /-  *post
 =>
 |%
-::  first content is pin title
-::  second content is a 
-::
 ++  max-length-title  20
 ++  max-length-body   250
 ++  are-coordinates-valid
@@ -41,9 +38,6 @@
   ++  transform-add-nodes
     |=  [=index =post =atom was-parent-modified=?]
     !!
-    :: ^-  [^index ^post]
-    :: =-  [- post(index -)]
-    :: [atom ~]
   ::
     ++  notification-kind  `[%message [0 1] %count %none]
   ::
@@ -93,12 +87,12 @@
         [@ %pin @ ~]
       ?>  ?=([[%text *] [%text *] ~] contents.p.ip)
       =/  contents  contents.p.ip
-      =/  title=tape  (trip +.i.contents)  :: this part works now
-      =/  body=tape   (trip +.i.t.contents)  ::
+      =/  title=tape  (trip +.i.contents)
+      =/  body=tape   (trip +.i.t.contents)
       ~|  "title too long"
       ?>  (lte (lent (tuba title)) max-length-title)  :: tuba normalizes things like emojis to count as one character
       ~|  "body too long"
-      ?>  (lte (lent (tuba body)) max-length-body)    ::
+      ?>  (lte (lent (tuba body)) max-length-body)
       ip
     ==
   --
