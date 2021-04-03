@@ -27,7 +27,7 @@
   ?>  ?=(^ nodes.q.update)
   (pure:m q.n.nodes.q.update)
 ::
-++  get-latest-revision-node
+++  get-latest-node
   |=  [rev-container-node=node:store]
   ^-  node:store
   :: unwrapped: given a revision container node:
