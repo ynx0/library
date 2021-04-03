@@ -1,7 +1,36 @@
-/-  *graph-store, *post, *resource
+/-  *graph-store, *post, *resource, spider
+/+  store=graph-store, strandio
 :: TODO extract shared logic into a core with inferior/nested arms?
 :: TODO these arms are wrong, they need to take in both a resource and a face representing our
 |%
+::  Thread Stuff
+::  TODO should this even go here? ask ~mip
+++  scry-for
+  :: unholy child of
+  :: https://github.com/urbit/urbit/blob/9c9446d77f0969846b1cebd12f6290d513375ad4/pkg/arvo/lib/graph.hoon#L4
+  :: and https://github.com/urbit/urbit/blob/ab4356ea88f531788845dd47efe0b571dd1ae446/pkg/arvo/ted/graph/add-nodes.hoon#L6
+  |*  [=mold =path]
+  =/  m  (strand:spider ,mold)  :: this already looks scary. wet gate, strand defined by a parametric type?? oh my
+  ^-  form:m
+  =/  fullpath=^path  (weld /gx/graph-store (snoc `^path`path %noun))
+  ;<  result=mold   bind:m
+    %+  scry:strandio  mold  fullpath
+  (pure:m result)
+++  got-node
+  ::  based off of https://github.com/urbit/urbit/blob/master/pkg/arvo/lib/graph.hoon#L65-L67
+  |=  [res=resource =index:store]
+  =/  m  (strand:spider ,node:store)
+  ^-  form:m
+  ;<  =update:store  bind:m  (scry-for update:store (weld /node/(scot %p entity.res)/[name.res] (turn index (cury scot %ud))))
+  ?>  ?=(%0 -.update)
+  ?>  ?=(%add-nodes -.q.update)
+  ?>  ?=(^ nodes.q.update)
+  (pure:m q.n.nodes.q.update)
+++  get-latest-revision-node
+  |=  [rev-container-node=node:store]
+  ^-  node:store
+  val:(snag 0 (tap:orm:store +.children.rev-container-node))
+::
 ++  incr-index  :: rename to something clearer
   |=  [=index:post]
   ^-  index:post
