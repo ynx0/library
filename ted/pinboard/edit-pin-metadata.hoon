@@ -1,8 +1,7 @@
 /-  spider, post, *graph-store
 /+  strandio, store=graph-store, gra=graph, graph-view, sig=signatures, pinboard
 =,  strand=strand:spider
-:: TODO get bowl for our and now
-:: TODO use uid instead of resource + top index
+:: TODO use uid instead of resource + top index. but does this really make sense?
 =>
 |%
 ++  scry-for
@@ -14,49 +13,28 @@
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl:strandio  :: doing (get-bowl:strandio) causes a (gigantic) crash :(
   =/  fullpath=^path  (weld /gx/graph-store (snoc `^path`path %noun))
-  ::~&  path
-  ::~&  fullpath
   ;<  result=mold   bind:m
     %+  scry:strandio  mold  fullpath
   (pure:m result)
 ++  got-node
-  :: similarly unholy hybrid threadified got-node from lib/graph.hoon
+  ::  based off of https://github.com/urbit/urbit/blob/master/pkg/arvo/lib/graph.hoon#L65-L67
   |=  [res=resource =index:store]
   =/  m  (strand ,node:store)
   ^-  form:m
-  ::  based off of https://github.com/urbit/urbit/blob/master/pkg/arvo/lib/graph.hoon#L65-L67
   ;<  =update:store  bind:m  (scry-for update:store (weld /node/(scot %p entity.res)/[name.res] (turn index (cury scot %ud))))
   ?>  ?=(%0 -.update)
   ?>  ?=(%add-nodes -.q.update)
   ?>  ?=(^ nodes.q.update)
-  ::~&  nodes.q.update
   (pure:m q.n.nodes.q.update)
 :: ++  get-last-revision-node
   :: |=  [=node node-type=?(%pin %meta)]
   :: head of bap:ordered-map of all nodes under [top node-type]
   :: !!
-:: ++  get-specific-pin-by-top-index  :: todo rename to something better
-  :: |=  [rid=resource:store top=@]
-  ::=/  m  (strand ,node)
-  :: =/  m  (strand ,~)
-  :: ^-  form:m
-  ::;<  =update:store  bind:m
-  ::  %+  scry:strandio  update:store
-  ::  /gx/graph-store/node/(scot %p entity.rid)/[name.rid]/(scot %ud top)/noun
-  ::?>  ?=(%0 -.update)
-  ::?>  ?=(%add-nodes -.q.update)
-  ::=/  nodes  nodes.q.update
-  ::~&  nodes
-  :: (got-nodes:store rid ~[top])
-  ::(pure:m (got-node:gra nodes))
-  :: (pure:m ~)
 --
 ::                     LOGIC
 :: Given a resource and top level index fragment to a specific pin on a specific graph
 :: Given the new x=@ud and y=@ud
 :: Get the latest revision node that exists
-  ::  pin-node=the pin in question
-  ::  latest-metadata revision = head of bap:ordered-map of all nodes in children of pin-node-meeta
 :: Make a new revision node with [%text (convert x into cord)] [%text (convert y into cord)] as contents
 :: increment the number from the index of the latest revision node
 :: start an add-nodes thread with the newly created node 
@@ -68,9 +46,6 @@
 ;<  meta-container=node  bind:m  (got-node [ship name] ~[top %meta])
 ::~&  meta-container
 =/  last-meta=node     val:(snag 0 (tap:orm:store +.children.meta-container)) :: get the latest metadata revision
-::~&  last-meta
-::~&  key.last-meta
-::~&  index.post.val.last-meta
 ::~&  (snag 2 index.post.val.last-meta)
 ::~&  `node:store`val.last-meta
 ;<  =bowl:spider  bind:m  get-bowl:strandio  :: doing (get-bowl:strandio) causes a (gigantic) crash :(
