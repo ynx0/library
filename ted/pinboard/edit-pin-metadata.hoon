@@ -1,5 +1,5 @@
-/-  spider, post, *graph-store
-/+  strandio, store=graph-store, gra=graph, graph-view, sig=signatures, pinboard
+/-  spider, *graph-store
+/+  strandio, store=graph-store, pinboard
 =,  strand=strand:spider
 :: TODO use uid instead of resource + top index. but does this really make sense?
 ::                     LOGIC

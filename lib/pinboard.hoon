@@ -12,9 +12,8 @@
   |*  [=mold =path]
   =/  m  (strand:spider ,mold)  :: this already looks scary. wet gate, strand defined by a parametric type?? oh my
   ^-  form:m
-  =/  fullpath=^path  (weld /gx/graph-store (snoc `^path`path %noun))
   ;<  result=mold   bind:m
-    %+  scry:strandio  mold  fullpath
+    %+  scry:strandio  mold  (weld /gx/graph-store (snoc `^path`path %noun))
   (pure:m result)
 ++  got-node
   ::  based off of https://github.com/urbit/urbit/blob/master/pkg/arvo/lib/graph.hoon#L65-L67
