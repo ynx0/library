@@ -74,7 +74,6 @@
         [@ %meta @ ~]
       ?>  ?=([[%text *] [%text *] ~] contents.p.ip)
       =/  contents  contents.p.ip
-      ~&  contents
       ~|  "coordinates aren't valid numbers"
       =/  x  (slav %ud +.i.contents)
       =/  y  (slav %ud +.i.t.contents)
@@ -94,11 +93,8 @@
         [@ %pin @ ~]
       ?>  ?=([[%text *] [%text *] ~] contents.p.ip)
       =/  contents  contents.p.ip
-      :: ~&  contents
       =/  title=tape  (trip +.i.contents)  :: this part works now
       =/  body=tape   (trip +.i.t.contents)  ::
-      :: ~&  title
-      :: ~&  body
       ~|  "title too long"
       ?>  (lte (lent (tuba title)) max-length-title)  :: tuba normalizes things like emojis to count as one character
       ~|  "body too long"
