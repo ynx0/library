@@ -26,10 +26,10 @@
   ?>  ?=(%add-nodes -.q.update)
   ?>  ?=(^ nodes.q.update)
   (pure:m q.n.nodes.q.update)
-:: ++  get-last-revision-node
-  :: |=  [=node node-type=?(%pin %meta)]
-  :: head of bap:ordered-map of all nodes under [top node-type]
-  :: !!
+++  get-latest-revision-node
+  |=  [rev-container-node=node:store]
+  ^-  node:store
+  val:(snag 0 (tap:orm:store +.children.rev-container-node))
 --
 ::                     LOGIC
 :: Given a resource and top level index fragment to a specific pin on a specific graph
@@ -44,8 +44,7 @@
 ^-  form:m
 =+  !<([~ [=ship name=term] top=@ [x=@ud y=@ud]] arg)
 ;<  meta-container=node  bind:m  (got-node [ship name] ~[top %meta])
-::~&  meta-container
-=/  last-meta=node     val:(snag 0 (tap:orm:store +.children.meta-container)) :: get the latest metadata revision
+=/  last-meta=node     (get-latest-revision-node meta-container) :: get the latest metadata revision
 ::~&  (snag 2 index.post.val.last-meta)
 ::~&  `node:store`val.last-meta
 ;<  =bowl:spider  bind:m  get-bowl:strandio  :: doing (get-bowl:strandio) causes a (gigantic) crash :(
