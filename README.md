@@ -51,3 +51,11 @@ in the above example, we simply omit the hash and signatures
 ```
 
 
+-----------------
+
+-pinboard-edit-pin-metadata [[our %some-date-time1] 1 [222 222]]
+
+=store -build-file %/sur/graph-store/hoon
+=pinboard -build-file %/lib/pinboard/hoon
+
+=a ;;(update:store .^(noun %gx /=graph-store=/node/~zod/some-date-time1/1/noun))
