@@ -10,11 +10,11 @@
 :: start an add-nodes thread with the newly created node
 ^-  thread:spider 
 |=  arg=vase
-=/  m  (strand ,vase)
+=/  m  (strand ,~)
 ^-  form:m
 =+  !<([~ [=ship name=term] top=@ new-title=cord new-body=cord] arg)
 ;<  =bowl:spider         bind:m   get-bowl:strandio
-;<  pin-container=node  bind:m  (got-node:pinboard [ship name] ~[top %pin])
+;<  pin-container=node   bind:m  (got-node:pinboard [ship name] ~[top %pin])
 =/  last-pin=node  (get-latest-revision-node:pinboard pin-container)
 =/  add-pin-rev-update=update:store
   (pin-rev-update:pinboard [ship name] top our.bowl now.bowl new-title new-body last-pin)
