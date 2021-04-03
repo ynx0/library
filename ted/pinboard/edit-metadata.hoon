@@ -16,7 +16,7 @@
 =+  !<([~ [=ship name=term] top=@ [x=@ud y=@ud]] arg)
 ;<  =bowl:spider         bind:m   get-bowl:strandio
 ;<  meta-container=node  bind:m  (got-node:pinboard [ship name] ~[top %meta])
-=/  last-meta=node  (get-latest-revision-node:pinboard meta-container)
+=/  last-meta=node  (get-latest-node:pinboard meta-container)
 =/  add-meta-rev-update=update:store
   (meta-rev-update:pinboard [ship name] top our.bowl now.bowl [x y] last-meta)
 ;<  tid=tid:spider  bind:m

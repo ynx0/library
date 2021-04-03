@@ -14,10 +14,10 @@
 ^-  form:m
 =+  !<([~ [=ship name=term] top=@ new-title=cord new-body=cord] arg)
 ;<  =bowl:spider         bind:m   get-bowl:strandio
-;<  pin-container=node   bind:m  (got-node:pinboard [ship name] ~[top %pin])
-=/  last-pin=node  (get-latest-revision-node:pinboard pin-container)
+;<  pin-rev-container=node   bind:m  (got-node:pinboard [ship name] ~[top %pin])
+=/  last-pin-rev=node  (get-latest-node:pinboard pin-rev-container)
 =/  add-pin-rev-update=update:store
-  (pin-rev-update:pinboard [ship name] top our.bowl now.bowl new-title new-body last-pin)
+  (pin-rev-update:pinboard [ship name] top our.bowl now.bowl new-title new-body last-pin-rev)
 ;<  tid=tid:spider  bind:m
   (start-thread-with-args:strandio %graph-add-nodes !>([~ add-pin-rev-update]))
 (pure:m !>(~))
