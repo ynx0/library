@@ -30,7 +30,14 @@
 ++  get-latest-revision-node
   |=  [rev-container-node=node:store]
   ^-  node:store
-  val:(snag 0 (tap:orm:store +.children.rev-container-node))
+  :: unwrapped: given a revision container node:
+  :: 1. get its children, which nets a graph of all revisions
+  :: 2. discard the leading %graph term
+  :: 3. listify the children, with greatest key first
+  :: 4. get the first element of the list
+  :: 5. get the value from key/value pair of key = index fragment, val = node
+  =/  revisions  +.children.rev-container-node
+  val:(snag 0 (tap:orm:store revisions))
 ::
 ++  incr-index  :: rename to something clearer
   |=  [=index:post]
