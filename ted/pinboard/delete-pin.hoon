@@ -10,7 +10,7 @@
 :: start an add-nodes thread with the newly created pin
 ^-  thread:spider 
 |=  arg=vase
-=/  m  (strand ,~)
+=/  m  (strand ,vase)
 ^-  form:m
 =+  !<([~ [=ship name=term] top=@] arg)
 ;<  =bowl:spider    bind:m  get-bowl:strandio

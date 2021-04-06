@@ -11,7 +11,7 @@
 :: start an add-nodes thread with the newly created node 
 ^-  thread:spider 
 |=  arg=vase
-=/  m  (strand ,~)
+=/  m  (strand ,vase)
 ^-  form:m
 =+  !<([~ [=ship name=term] top=@ [x=@ud y=@ud]] arg)
 ;<  =bowl:spider         bind:m   get-bowl:strandio
