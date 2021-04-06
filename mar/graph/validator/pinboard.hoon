@@ -1,4 +1,5 @@
 /-  *post
+=,  post-zero:post
 =>
 |%
 ++  max-length-title  20

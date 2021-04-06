@@ -1,10 +1,12 @@
-/-  *graph-store, *post, *resource, spider
-/+  store=graph-store, strandio
+/-  *post, *resource, spider
+/+  graph-store, strandio
 :: TODO extract shared logic into a core with inferior/nested arms?
 :: TODO these arms are wrong, they need to take in both a resource and a face representing our
+~&  *resource
+=,  zero:graph-store
 |%
-::  Thread Stuff
-::  TODO should this even go here? ask ~mip
+  ::Thread Stuff
+  ::TODO should this even go here? ask ~mip
 ++  scry-for
   :: unholy child of
   :: https://github.com/urbit/urbit/blob/9c9446d77f0969846b1cebd12f6290d513375ad4/pkg/arvo/lib/graph.hoon#L4
@@ -18,18 +20,18 @@
 ::
 ++  got-node
   ::  based off of https://github.com/urbit/urbit/blob/master/pkg/arvo/lib/graph.hoon#L65-L67
-  |=  [res=resource =index:store]
-  =/  m  (strand:spider ,node:store)
+  |=  [res=resource =index]
+  =/  m  (strand:spider ,node)
   ^-  form:m
-  ;<  =update:store  bind:m  (scry-for update:store (weld /node/(scot %p entity.res)/[name.res] (turn index (cury scot %ud))))
+  ;<  =update  bind:m  (scry-for update (weld /node/(scot %p entity.res)/[name.res] (turn index (cury scot %ud))))
   ?>  ?=(%0 -.update)
   ?>  ?=(%add-nodes -.q.update)
   ?>  ?=(^ nodes.q.update)
   (pure:m q.n.nodes.q.update)
 ::
 ++  get-latest-node
-  |=  [rev-container-node=node:store]
-  ^-  node:store
+  |=  [rev-container-node=node]
+  ^-  node
   :: unwrapped: given a revision container node:
   :: 1. get its children, which nets a graph of all revisions
   :: 2. discard the leading %graph term
@@ -37,7 +39,7 @@
   :: 4. get the first element of the list
   :: 5. get the value from key/value pair of key = index fragment, val = node
   =/  revisions  +.children.rev-container-node
-  val:(snag 0 (tap:orm:store revisions))
+  val:(snag 0 (tap:orm revisions))
 ::
 ++  incr-index  :: rename to something clearer
   |=  [=index:post]
