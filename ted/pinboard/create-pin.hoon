@@ -13,11 +13,12 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([~ [=ship name=term] top=@ title=cord body=cord coords=[x=@ud y=@ud]] arg)
+=+  !<([~ [=ship name=term] title=cord body=cord coords=[x=@ud y=@ud]] arg)
 ;<  =bowl:spider         bind:m   get-bowl:strandio
-;<  pin=node             bind:m  (got-node:pinboard [ship name] ~[top])
-=/  last-pin=node  (get-latest-node:pinboard pin-container)
-=/  add-pin-update=update:store  (add-pin-update:pinboard [[ship name] top our.bowl now.bowl title text coords])
-;<  tid=tid:spider  bind:m
-  (start-thread-with-args:strandio %graph-add-nodes !>([~ add-pin-update]))
+;<  pinboard=graph:store  bind:m
+    %+  scry:strandio  graph:store /gx/graph-store/graph/[ship]/[name]/noun
+=/  top=@  (add 1 (snag 0 index.post.last-pin))
+=/  pin-update=update:store  (add-pin-update:pinboard [[ship name] top our.bowl now.bowl title text coords])
+;<  tid=tid:spider       bind:m
+  (start-thread-with-args:strandio %graph-add-nodes !>([~ pin-update]))
 (pure:m !>(~))
