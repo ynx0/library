@@ -21,10 +21,11 @@
   =/  m  (strand:spider ,node)
   ^-  form:m
   ;<  =update  bind:m  (scry-for update (weld /node/(scot %p entity.res)/[name.res] (turn index (cury scot %ud))))
-  ?>  ?=(%0 -.update)
-  ?>  ?=(%add-nodes -.q.update)
-  ?>  ?=(^ nodes.q.update)
-  (pure:m q.n.nodes.q.update)
+  ?>  ?=(%add-nodes -.update)
+  ::?>  ?=(^ nodes.q.update)  :: might not work
+  =/  out-node  ;;(node +>->.q.update)  :: this is really ugly code. gotta figure out how not to use +>->
+  (pure:m out-node)
+  ::(pure:m *node)
 ::
 ++  get-latest-node
   ::|=  [rev-container-node=node]
