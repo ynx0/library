@@ -21,7 +21,7 @@
 :: also design thought: landscape uses `@da`now  rather than sequetial indexing. should i use this instead?
 =/  top=@  (add 1 (snag 0 index.post.last-pin))
 =/  pin-update=update:store  (add-pin-update:pinboard [[ship name] top our.bowl now.bowl title body coords])
-~&  pin-update
+~&  pin-update  :: generates valid update
 ;<  tid=tid:spider       bind:m
-  (start-thread-with-args:strandio %graph-add-nodes !>([~ pin-update]))
-(pure:m !>(~))
+  (start-thread-with-args:strandio %graph-add-nodes !>([~ pin-update]))  :: appears to be that this doesn't get properly called. yeah it is erroring out silently
+(pure:m !>(~))  
