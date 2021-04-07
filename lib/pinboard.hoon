@@ -27,16 +27,22 @@
   (pure:m q.n.nodes.q.update)
 ::
 ++  get-latest-node
-  |=  [rev-container-node=node]
-  ^-  node
+  ::|=  [rev-container-node=node]
+  |=  [=graph]
+  ^-  (unit node)
+  :: todo proper unit code
   :: unwrapped: given a revision container node:
   :: 1. get its children, which nets a graph of all revisions
   :: 2. discard the leading %graph term
   :: 3. listify the children, with greatest key first
   :: 4. get the first element of the list
   :: 5. get the value from key/value pair of key = index fragment, val = node
-  =/  revisions  +.children.rev-container-node
-  val:(snag 0 (tap:orm revisions))
+  ::=/  revisions  +.children.rev-container-node
+  =/  node-list=(list (pair atom node))  (tap:orm graph)
+  ::?~  node-list  ~  :: why doesn't this line work????? i literally had it working like 2 seconds ago AHhhh
+  =/  latest-node  (snag 0 node-list)
+  [~ +:latest-node]
+  
 ::
 ++  incr-index  :: rename to something clearer
   |=  [=index:post]
