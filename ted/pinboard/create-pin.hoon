@@ -13,11 +13,15 @@
 =/  m  (strand ,vase)
 ^-  form:m
 =+  !<([~ [=ship name=term] title=cord body=cord coords=[x=@ud y=@ud]] arg)
-;<  =bowl:spider         bind:m   get-bowl:strandio
-;<  pinboard=graph:store  bind:m
-    %+  scry:strandio  graph:store /gx/graph-store/graph/[ship]/[name]/noun
+;<  =bowl:spider           bind:m   get-bowl:strandio
+;<  =update:store  bind:m
+    %+  scry:strandio  update:store  /gx/graph-store/graph/(scot %p ship)/[name]/graph-update-1
+=/  board  ;;(graph:store +>-.q.update)
+=/  last-pin=node:store  (need (get-latest-node:pinboard board))  :: this needs to later become an if statement that if null, then top is 1
+:: also design thought: landscape uses `@da`now  rather than sequetial indexing. should i use this instead?
 =/  top=@  (add 1 (snag 0 index.post.last-pin))
-=/  pin-update=update:store  (add-pin-update:pinboard [[ship name] top our.bowl now.bowl title text coords])
+=/  pin-update=update:store  (add-pin-update:pinboard [[ship name] top our.bowl now.bowl title body coords])
+~&  pin-update
 ;<  tid=tid:spider       bind:m
   (start-thread-with-args:strandio %graph-add-nodes !>([~ pin-update]))
 (pure:m !>(~))
