@@ -19,6 +19,8 @@
   ++  noun  i
   ::
   ++  graph-permissions-add
+    |=  vip=vip-metadata:met
+    ^-  permissions:graph
     ?+  index.p.i  !!
       [@ ~]          [%yes %yes %no]
       [@ %meta ~]    [%self %self %no]
@@ -28,6 +30,8 @@
     ==
   ::
   ++  graph-permissions-remove
+    |=  vip=vip-metadata:met
+    ^-  permissions:graph
     ?+  index.p.i  !!
       [@ ~]          [%yes %self %no]
       [@ %meta ~]    [%no %no %no]
