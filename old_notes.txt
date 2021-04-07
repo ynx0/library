@@ -1,3 +1,23 @@
+# dump apr 6
+
+working scries
+
+.^(noun %gx /=graph-store=/node-exists/~zod/pinboard-1/1/noun)
+
+:: todo why tf do i have to resort to limb/wing/lark syntax? i.e. why cant i do p.q.r.s type stuff?
+=xa ;;(update:store .^(noun %gx /=graph-store=/node/~zod/pinboard-1/1/noun))
+=xb ;;((map index:store node:store) +>.q.xa)
+=xc `node:store`->.xb
+
+
+=a .^(noun %gx /=graph-store=/graph/~zod/pinboard-1/noun)
+=a ;;(update:store a)
+=b q.a
+=c +>-.b
+=d ;;(graph:store c)
+`(list (pair atom node:store))`(tap:orm:gra d)
+(add-pin-update:pinboard [[our %pinboard-1] 1 our now 'title' 'text' [x=0 y=0]])
+
 
 # Old Text Dump
 
