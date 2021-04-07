@@ -9,7 +9,7 @@
 :: Make a new revision node with [%text (convert x into cord)] [%text (convert y into cord)] as contents
 :: increment the number from the index of the latest revision node
 :: start an add-nodes thread with the newly created node 
-^-  thread:spider 
+^-  thread:spider
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m

@@ -3,8 +3,7 @@
 :: TODO extract shared logic into a core with inferior/nested arms?
 :: TODO these arms are wrong, they need to take in both a resource and a face representing our
 |%
-  ::Thread Stuff
-  ::TODO should this even go here? ask ~mip
+:: Thread Only Functions: Can only be called as a strand/ in a spider context
 ++  scry-for
   :: unholy child of
   :: https://github.com/urbit/urbit/blob/9c9446d77f0969846b1cebd12f6290d513375ad4/pkg/arvo/lib/graph.hoon#L4
@@ -42,7 +41,7 @@
 ++  incr-index  :: rename to something clearer
   |=  [=index:post]
   ^-  index:post
-  ?>  =(3 (lent index))  :: must be of form like [1 %meta 1]
+  ?>  =(3 (lent index))                    :: index must be of form like [1 %meta 1] or [1 %pin 1]
   =/  old-index-frag=atom  (snag 2 index)  :: get the 3rd value from the index
   (snap index 2 (add 1 old-index-frag))    :: replace the 3rd value of index with incremented index
 ::
