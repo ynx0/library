@@ -1,5 +1,4 @@
-/-  *post
-=,  post-zero:post
+/-  *post, met=metadata-store, graph=graph-store
 =>
 |%
 ++  max-length-title  20
