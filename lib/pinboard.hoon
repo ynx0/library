@@ -1,9 +1,7 @@
 /-  *post, *resource, spider
-/+  graph-store, strandio
+/+  *graph-store, strandio
 :: TODO extract shared logic into a core with inferior/nested arms?
 :: TODO these arms are wrong, they need to take in both a resource and a face representing our
-~&  *resource
-=,  zero:graph-store
 |%
   ::Thread Stuff
   ::TODO should this even go here? ask ~mip
