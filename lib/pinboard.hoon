@@ -68,7 +68,7 @@
   ==
   =/  pin-contents   (make-pin-contents title body)
   =/  meta-contents  (make-meta-contents coords)
-  :+  %0  time-sent
+  :-  time-sent
   :+  %add-nodes  rid
   %-  ~(gas by *(map index node))
   :~
@@ -94,7 +94,7 @@
       time-sent.meta-post  time-sent
       contents.meta-post   meta-contents
   ==
-  :+  %0  time-sent
+  :-  time-sent
   :+  %add-nodes  rid
   %-  ~(gas by *(map index node))
   ~[[meta-index [meta-post [%empty ~]]]]
@@ -112,7 +112,7 @@
       time-sent.pin-post  time-sent
       contents.pin-post   pin-contents
   ==
-  :+  %0  time-sent
+  :-  time-sent
   :+  %add-nodes  rid
   %-  ~(gas by *(map index node))
   ~[[pin-index [pin-post [%empty ~]]]]
@@ -121,7 +121,7 @@
 ++  remove-pin-update
   |=  [rid=resource top=@ time-sent=time]
   ^-  update
-  :+  %0  time-sent
+  :-  time-sent
   :+  %remove-nodes  rid
   (sy ~[[top ~]])
 --
