@@ -41,7 +41,17 @@
     ==
   ++  transform-add-nodes
     |=  [=index =post =atom was-parent-modified=?]
-    !!
+    :: todo this needs to be implemented properly
+    :: based off of publish, doesn't take parent-modified into account
+    ^-  [^index ^post]
+    =-  [- post(index -)]
+    ?+    index  ~|(transform+[index post] !!)
+        [@ ~]          [atom ~]
+        [@ %meta ~]    [atom %meta ~]
+        [@ %pin ~]     [atom %pin ~]
+        [@ %meta @ ~]  [i.index %meta atom ~]
+        [@ %pin @ ~]   [i.index %meta atom ~]
+    ==
   ::
     ++  notification-kind  `[%message [0 1] %count %none]
   ::
