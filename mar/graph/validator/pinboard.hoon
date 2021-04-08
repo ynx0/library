@@ -44,14 +44,18 @@
     :: todo this needs to be implemented properly
     :: based off of publish, doesn't take parent-modified into account
     ^-  [^index ^post]
-    =-  [- post(index -)]
-    ?+    index  ~|(transform+[index post] !!)
-        [@ ~]          [atom ~]
-        [@ %meta ~]    [atom %meta ~]
-        [@ %pin ~]     [atom %pin ~]
-        [@ %meta @ ~]  [i.index %meta atom ~]
-        [@ %pin @ ~]   [i.index %meta atom ~]
-    ==
+    :: trust all incoming indexes by default, don't modify them
+    :: we could also do something with the post if we wanted, like forcing all coords to be valid
+    ::=/  transformed-index
+    ::  ?+    index  ~|(transform+[index post] !!)
+    ::      [@ ~]          index
+    ::      [@ %meta ~]    index
+    ::      [@ %pin ~]     index
+    ::      [@ %meta @ ~]  index
+    ::      [@ %pin @ ~]   index
+    ::  ==
+    ::[transformed-index post(index transformed-index)]
+    [index post]
   ::
     ++  notification-kind  `[%message [0 1] %count %none]
   ::
