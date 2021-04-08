@@ -3,5 +3,5 @@
 |=  $:  [now=@da eny=@uvJ =beak]
         [[[=ship name=term] top=@ ~] ~]
     ==
-:-  %graph-update
+:-  %graph-update-1
 (remove-pin-update [[ship name] top now])
