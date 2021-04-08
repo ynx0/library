@@ -21,7 +21,7 @@
 =/  last-pin=node:store  (need (get-latest-node:pinboard board))  :: this needs to later become an if statement that if null, then top is 1
 =/  top=@  (add 1 (snag 0 index.post.last-pin))
 =/  pin-update=update:store  (add-pin-update:pinboard [[ship name] top our.bowl now.bowl title body coords])
-;<  ~  bind:m   (poke-our:strandio %graph-store %graph-update-1 !>(update))  :: bypass %graph-push-hook, which fails during transform
+;<  ~  bind:m   (poke-our:strandio %graph-store %graph-update-1 !>(pin-update))  :: bypass %graph-push-hook, which fails during transform
 ::;<  tid=tid:spider       bind:m
   ::(start-thread-with-args:strandio %graph-add-nodes !>([~ pin-update]))  :: appears to be that this doesn't get properly called. yeah it is erroring out silently
 (pure:m !>(~))  
