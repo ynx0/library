@@ -15,6 +15,5 @@
 =+  !<([~ [=ship name=term] top=@] arg)
 ;<  =bowl:spider    bind:m  get-bowl:strandio
 =/  remove-pin-update=update:store  (remove-pin-update:pinboard [[ship name] top now.bowl])
-;<  tid=tid:spider  bind:m
-  (start-thread-with-args:strandio %graph-add-nodes !>([~ remove-pin-update]))
+;<  ~  bind:m   (poke-our:strandio %graph-push-hook %graph-update-1 !>(remove-pin-update))  :: bypass %graph-push-hook, which fails during transform
 (pure:m !>(~))
