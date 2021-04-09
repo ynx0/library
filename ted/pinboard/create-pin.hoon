@@ -23,8 +23,8 @@
   ?:  ?=(~ last-pin)  1
 (add 1 (snag 0 index.post:(need last-pin)))
 =/  pin-update=update:store  (add-pin-update:pinboard [[ship name] top our.bowl now.bowl title body coords])
-;<  ~  bind:m   (poke-our:strandio %graph-store %graph-update-1 !>(pin-update))  :: bypass %graph-push-hook, which fails during transform
-::;<  tid=tid:spider       bind:m
-  ::(start-thread-with-args:strandio %graph-add-nodes !>([~ pin-update]))  :: appears to be that this doesn't get properly called. yeah it is erroring out silently
+::;<  ~  bind:m   (poke-our:strandio %graph-store %graph-update-1 !>(pin-update))  :: bypass %graph-push-hook, which fails during transform
+;<  tid=tid:spider       bind:m
+  (start-thread-with-args:strandio %graph-add-nodes !>([~ pin-update]))  :: appears to be that this doesn't get properly called. yeah it is erroring out silently
 (pure:m !>(~))
 
