@@ -18,8 +18,10 @@
 ;<  =update:store  bind:m
     %+  scry:strandio  update:store  /gx/graph-store/graph/(scot %p ship)/[name]/graph-update-1
 =/  board  ;;(graph:store +>-.q.update)
-=/  last-pin=node:store  (need (get-latest-node:pinboard board))  :: this needs to later become an if statement that if null, then top is 1
-=/  top=@  (add 1 (snag 0 index.post.last-pin))
+=/  last-pin=(unit node:store)  (get-latest-node:pinboard board)  :: this needs to later become an if statement that if null, then top is 1
+=/  top=@
+  ?:  ?=(~ last-pin)  1
+(add 1 (snag 0 index.post:(need last-pin)))
 =/  pin-update=update:store  (add-pin-update:pinboard [[ship name] top our.bowl now.bowl title body coords])
 ;<  ~  bind:m   (poke-our:strandio %graph-store %graph-update-1 !>(pin-update))  :: bypass %graph-push-hook, which fails during transform
 ::;<  tid=tid:spider       bind:m
