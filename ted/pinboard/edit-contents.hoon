@@ -13,9 +13,9 @@
 =/  m  (strand ,vase)
 ^-  form:m
 =+  !<([~ [=ship name=term] top=@ new-title=cord new-body=cord] arg)
-;<  =bowl:spider         bind:m   get-bowl:strandio
-;<  pin-rev-container=node   bind:m  (got-node:pinboard [ship name] ~[top %pin])
-=/  last-pin-rev=node  (get-latest-node:pinboard +.children.pin-rev-container)
+;<  =bowl:spider                   bind:m   get-bowl:strandio
+;<  pin-rev-container=node:store   bind:m  (got-node:pinboard [ship name] ~[top %pin])
+=/  last-pin-rev=node:store  (need (get-latest-node:pinboard +.children.pin-rev-container))  :: todo handle missing last-pin-rev more gracefully
 =/  add-pin-rev-update=update:store
   (pin-rev-update:pinboard [ship name] top our.bowl now.bowl new-title new-body last-pin-rev)
 ;<  tid=tid:spider  bind:m
