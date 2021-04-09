@@ -15,8 +15,8 @@
 ^-  form:m
 =+  !<([~ [=ship name=term] top=@ [x=@ud y=@ud]] arg)
 ;<  =bowl:spider         bind:m   get-bowl:strandio
-;<  meta-container=node  bind:m  (got-node:pinboard [ship name] ~[top %meta])
-=/  last-meta=node  (get-latest-node:pinboard +.children.meta-container)
+;<  meta-container=node:store  bind:m  (got-node:pinboard [ship name] ~[top %meta])
+=/  last-meta=node:store  (need (get-latest-node:pinboard +.children.meta-container))  :: todo handle missing last-pin-rev more gracefully
 =/  add-meta-rev-update=update:store
   (meta-rev-update:pinboard [ship name] top our.bowl now.bowl [x y] last-meta)
 ;<  tid=tid:spider  bind:m
