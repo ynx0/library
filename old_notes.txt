@@ -1,7 +1,20 @@
 # dump apr 6
 
-working scries
+=store -build-file %/sur/graph-store/hoon
+=gra -build-file %/lib/graph-store/hoon
+=pinboard -build-file %/lib/pinboard/hoon
 
+:graph-store|add-pin [our %pinboard-1] 2 our 'eta' 'bta' [12 24]
+
+=upd (add-pin-update:pinboard [[our %pinboard-1] 2 our now 'eta' 'bta' [12 24]])
+;;  (map index:store node:store)  +>.q.upd
+
+*item:orm:gra
+(gas:orm:gra *graph:store ~[[0 *node:store] [1 *node:store]])
+=.  fakegraph  (gas:orm:gra *graph:store [(item:orm:gra) ~])  fakegraph
+
+----------------------------------------------
+working scries
 .^(noun %gx /=graph-store=/node-exists/~zod/pinboard-1/1/noun)
 
 :: todo why tf do i have to resort to limb/wing/lark syntax? i.e. why cant i do p.q.r.s type stuff?
