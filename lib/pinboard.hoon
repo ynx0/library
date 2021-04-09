@@ -21,8 +21,8 @@
   =/  m  (strand:spider ,node)
   ^-  form:m
   ;<  =update  bind:m  (scry-for update (weld /node/(scot %p entity.res)/[name.res] (turn index (cury scot %ud))))
-  ?>  ?=(%add-nodes -.update)
-  ::?>  ?=(^ nodes.q.update)  :: might not work
+  ?>  ?=(%add-nodes -.q.update)
+  ?>  ?=(^ nodes.q.update)  :: might not work
   =/  out-node  ;;(node +>->.q.update)  :: this is really ugly code. gotta figure out how not to use +>->
   (pure:m out-node)
   ::(pure:m *node)
