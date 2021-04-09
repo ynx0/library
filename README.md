@@ -57,7 +57,7 @@ Verify that the pin was created successfully.
 
 Edit the contents by adding a new revision.
 ```
--pinboard-edit-contents [our %pinboard-1] 'Chores' 'Buy groceries. Eat lunch.'
+-pinboard-edit-contents [our %pinboard-1] 1 'Chores' 'Buy groceries. Eat lunch.'
 ```
 
 Verify that a revision node was created successfully.
