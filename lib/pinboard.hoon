@@ -1,10 +1,9 @@
-/-  *graph-store, *post, *resource, spider
-/+  store=graph-store, strandio
+/-  *post, *resource, spider
+/+  *graph-store, strandio
 :: TODO extract shared logic into a core with inferior/nested arms?
 :: TODO these arms are wrong, they need to take in both a resource and a face representing our
 |%
-::  Thread Stuff
-::  TODO should this even go here? ask ~mip
+:: Thread Only Functions: Can only be called as a strand/ in a spider context
 ++  scry-for
   :: unholy child of
   :: https://github.com/urbit/urbit/blob/9c9446d77f0969846b1cebd12f6290d513375ad4/pkg/arvo/lib/graph.hoon#L4
@@ -18,31 +17,38 @@
 ::
 ++  got-node
   ::  based off of https://github.com/urbit/urbit/blob/master/pkg/arvo/lib/graph.hoon#L65-L67
-  |=  [res=resource =index:store]
-  =/  m  (strand:spider ,node:store)
+  |=  [res=resource =index]
+  =/  m  (strand:spider ,node)
   ^-  form:m
-  ;<  =update:store  bind:m  (scry-for update:store (weld /node/(scot %p entity.res)/[name.res] (turn index (cury scot %ud))))
-  ?>  ?=(%0 -.update)
+  ;<  =update  bind:m  (scry-for update (weld /node/(scot %p entity.res)/[name.res] (turn index (cury scot %ud))))
   ?>  ?=(%add-nodes -.q.update)
-  ?>  ?=(^ nodes.q.update)
-  (pure:m q.n.nodes.q.update)
+  ?>  ?=(^ nodes.q.update)  :: might not work
+  =/  out-node  ;;(node +>->.q.update)  :: this is really ugly code. gotta figure out how not to use +>->
+  (pure:m out-node)
+  ::(pure:m *node)
 ::
 ++  get-latest-node
-  |=  [rev-container-node=node:store]
-  ^-  node:store
+  ::|=  [rev-container-node=node]
+  |=  [=graph]
+  ^-  (unit node)
+  :: todo proper unit code
   :: unwrapped: given a revision container node:
   :: 1. get its children, which nets a graph of all revisions
   :: 2. discard the leading %graph term
   :: 3. listify the children, with greatest key first
   :: 4. get the first element of the list
   :: 5. get the value from key/value pair of key = index fragment, val = node
-  =/  revisions  +.children.rev-container-node
-  val:(snag 0 (tap:orm:store revisions))
+  ::=/  revisions  +.children.rev-container-node
+  =/  node-list=(list (pair atom node))  (tap:orm graph)
+  ::?~  node-list  ~  :: why doesn't this line work????? i literally had it working like 2 seconds ago AHhhh
+  =/  latest-node  (snag 0 node-list)
+  [~ +:latest-node]
+  
 ::
 ++  incr-index  :: rename to something clearer
   |=  [=index:post]
   ^-  index:post
-  ?>  =(3 (lent index))  :: must be of form like [1 %meta 1]
+  ?>  =(3 (lent index))                    :: index must be of form like [1 %meta 1] or [1 %pin 1]
   =/  old-index-frag=atom  (snag 2 index)  :: get the 3rd value from the index
   (snap index 2 (add 1 old-index-frag))    :: replace the 3rd value of index with incremented index
 ::
@@ -68,7 +74,7 @@
   ==
   =/  pin-contents   (make-pin-contents title body)
   =/  meta-contents  (make-meta-contents coords)
-  :+  %0  time-sent
+  :-  time-sent
   :+  %add-nodes  rid
   %-  ~(gas by *(map index node))
   :~
@@ -94,7 +100,7 @@
       time-sent.meta-post  time-sent
       contents.meta-post   meta-contents
   ==
-  :+  %0  time-sent
+  :-  time-sent
   :+  %add-nodes  rid
   %-  ~(gas by *(map index node))
   ~[[meta-index [meta-post [%empty ~]]]]
@@ -112,7 +118,7 @@
       time-sent.pin-post  time-sent
       contents.pin-post   pin-contents
   ==
-  :+  %0  time-sent
+  :-  time-sent
   :+  %add-nodes  rid
   %-  ~(gas by *(map index node))
   ~[[pin-index [pin-post [%empty ~]]]]
@@ -121,7 +127,7 @@
 ++  remove-pin-update
   |=  [rid=resource top=@ time-sent=time]
   ^-  update
-  :+  %0  time-sent
+  :-  time-sent
   :+  %remove-nodes  rid
   (sy ~[[top ~]])
 --

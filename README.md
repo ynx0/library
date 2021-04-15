@@ -21,10 +21,14 @@ First, create a group.
 
 You can look at the current state of a given agent using the syntax `:<the-agent> +dbug`
 
-Visually verify that the group was created.
+Verify that the group was created.
 
 ```
 :group-store +dbug [%state 'groups']
+>   { [ p=[entity=~zod name=%my-group]
+    q=[members={~zod} tags={[p=%admin q={~zod}]} policy=[%open ban-ranks={} banned={}] hidden=%.n]
+  ]
+}
 ```
 
 
@@ -37,6 +41,7 @@ Then, create a new graph using the pinboard validator.
 Verify that the graph was properly created.
 ```
 :graph-store +dbug [%state 'graphs']
+>   {[p=[entity=~zod name=%pinboard-1] q=[p={} q=[~ %graph-validator-pinboard]]]}
 ```
 
 Create and add a new pin to the pinboard, specifying its title text, body text, and coordinates
@@ -52,7 +57,7 @@ Verify that the pin was created successfully.
 
 Edit the contents by adding a new revision.
 ```
--pinboard-edit-contents [our %pinboard-1] 'Chores' 'Buy groceries. Eat lunch.'
+-pinboard-edit-contents [our %pinboard-1] 1 'Chores' 'Buy groceries. Eat lunch.'
 ```
 
 Verify that a revision node was created successfully.
