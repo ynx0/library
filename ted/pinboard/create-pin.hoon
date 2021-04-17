@@ -21,7 +21,7 @@
 =/  last-pin=(unit node:store)  (get-latest-node:pinboard board)  :: this needs to later become an if statement that if null, then top is 1
 =/  top=@
   ?:  ?=(~ last-pin)  1
-(add 1 (snag 0 index.post:(need last-pin)))
+(add 1 (snag 0 index.post.u.last-pin)))
 =/  pin-update=update:store  (add-pin-update:pinboard [[ship name] top our.bowl now.bowl title body coords])
 ::;<  ~  bind:m   (poke-our:strandio %graph-store %graph-update-1 !>(pin-update))  :: bypass %graph-push-hook, which fails during transform
 ;<  tid=tid:spider       bind:m
