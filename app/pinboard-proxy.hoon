@@ -21,7 +21,7 @@
 =*  state  -
 ^-  agent:gall
 |_  =bowl:gall
-+*  this      .
++*  this    .
     def   ~(. (default-agent this %|) bowl)
 ::
 ++  on-init
@@ -40,9 +40,11 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   :: someone is trying to update my local graph store, specifically a pinboard
-  :: 1. do some permissions logic,
-  :: 2. then if allowed, poke the local graph store with the supplied update
-  :: 3. otherwise ?? dunno the std poke nack behaviour
+  :: 1. permissions:
+  ::   a. get allowed resources of src.bowl
+  ::   b. check if the target resource in allowed resources
+  ::   c. reject poke if not
+  :: 2. assuming allowed, poke the local graph store with the supplied update, defering to helper arm
   `this
 ::
 ++  on-watch  on-watch:def
