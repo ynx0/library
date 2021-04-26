@@ -102,16 +102,10 @@
       ~|  "comments section container should be empty!"
       ?>  ?=(~ contents.p.ip)
       ip
-    ::  comment revision container
-    ::  structural node with no content
-        [@ %comments @ ~]
-      ~|  "comment revision container should be empty!"
-      ?>  ?=(~ contents.p.ip)
-      ip
-    ::  specific comment revision
+    ::  comment
     ::
-        [@ %comments @ @ ~]
-      :: todo we could do this eventually
+        [@ %comments @ ~]
+      :: we could allow any content eventually
       ::?>  ?=(* contents.p.ip)  :: any content is allowed.
       ?>  ?=([[%text *] ~] contents.p.ip)  :: only a single %text content is allowed
       =/  contents  contents.p.ip
