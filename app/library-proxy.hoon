@@ -23,10 +23,11 @@
 +*  this    .
     def   ~(. (default-agent this %|) bowl)
     hc    ~(. +> bowl)
+    io    ~(. agentio bowl)
 ::
 ++  on-init
   ^-  (quip card _this)
-  ~&  >  '%skeleton initialized successfully'
+  ~&  >  '%library-proxy initialized successfully'
   :: subscribe to graph store updates here
   `this
 ++  on-save
@@ -35,7 +36,7 @@
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
-  ~&  >  '%skeleton recompiled successfully'
+  ~&  >  '%library-proxy recompiled successfully'
   `this(state !<(versioned-state old-state))
 ++  on-poke
   |=  [=mark =vase]
