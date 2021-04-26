@@ -1,17 +1,16 @@
 /-  *post, met=metadata-store, graph=graph-store
 =>
 |%
-++  max-length-title  20
-++  max-length-body   250
-++  are-coordinates-valid
-  |=  [x=@ud y=@ud]
+++  is-title-valid
+  |=  [title=cord]
   ^-  ?
-  :: invariant: all x and y are gte 0 b/c @ud
-  =/  max-width=@ud  1.920
-  =/  max-height=@ud  1.080
-  ?&  (lte y max-height)
-      (lte x max-width)
-  ==
+  %.y
+++  is-isbn-valid  :: we could do https://github.com/xlcnd/isbnlib/blob/41f59c74a69a2675c3f135431e9785f9ae502a7e/isbnlib/_core.py#L52
+  |=  [isbn=cord]
+  ^-  ?
+  =/  len=(lent isbn)
+  ?>  ?|  =(len 10)  =(len 13)
+  %.y
 --
 |_  i=indexed-post
 ++  grow
@@ -21,24 +20,26 @@
   ++  graph-permissions-add
     |=  vip=vip-metadata:met
     ^-  permissions:graph
-    ?+  index.p.i  !!
-      [@ ~]          [%yes %yes %no]
-      [@ %meta ~]    [%self %self %no]
-      [@ %meta @ ~]  [%yes %self %no]
-      [@ %pin ~]     [%self %self %no]
-      [@ %pin @ ~]   [%self %self %no]
-    ==
+    !!
+    ::?+  index.p.i  !!
+    ::  [@ ~]          [%yes %yes %no]
+    ::  [@ %meta ~]    [%self %self %no]
+    ::  [@ %meta @ ~]  [%yes %self %no]
+    ::  [@ %pin ~]     [%self %self %no]
+    ::  [@ %pin @ ~]   [%self %self %no]
+    ::==
   ::
   ++  graph-permissions-remove
     |=  vip=vip-metadata:met
     ^-  permissions:graph
-    ?+  index.p.i  !!
-      [@ ~]          [%yes %self %no]
-      [@ %meta ~]    [%no %no %no]
-      [@ %meta @ ~]  [%yes %self %no]
-      [@ %pin ~]     [%no %no %no]
-      [@ %pin @ ~]   [%yes %self %no]
-    ==
+    !!
+    ::?+  index.p.i  !!
+    ::  [@ ~]          [%yes %self %no]
+    ::  [@ %meta ~]    [%no %no %no]
+    ::  [@ %meta @ ~]  [%yes %self %no]
+    ::  [@ %pin ~]     [%no %no %no]
+    ::  [@ %pin @ ~]   [%yes %self %no]
+    ::==
   ++  transform-add-nodes
     |=  [=index =post =atom was-parent-modified=?]
     :: todo this needs to be implemented properly
@@ -66,11 +67,11 @@
     |=  p=*
     =/  ip  ;;(indexed-post p)
     ?+    index.p.ip  !!
-    ::  top level node: pin
+    ::  top level node: book
     ::  structural node with no content
     ::
         [@ ~]
-      ~|  "top level pin node should be empty!"
+      ~|  "top level book node should be empty!"
       ?>  ?=(~ contents.p.ip)
       ip
     ::  metadata revision container
@@ -81,36 +82,39 @@
       ?>  ?=(~ contents.p.ip)
       ip
     ::  single metadata revision
-    ::  content node with data format [x y] specifying x and y coordinates of the pinboard
+    ::  content node. first %text element is treated as title,
+    ::  second is treated as isbn
     ::
         [@ %meta @ ~]
-      ?>  ?=([[%text *] [%text *] ~] contents.p.ip)
       =/  contents  contents.p.ip
-      ~|  "coordinates aren't valid numbers"
-      =/  x  (slav %ud +.i.contents)
-      =/  y  (slav %ud +.i.t.contents)
-      ~|  "invalid coordinates {<x>} {<y>}"
-      ?>  (are-coordinates-valid [x y])
+      ?>  ?=([[%text *] [%text *] ~] contents.p.ip)
+      =/  title  (scot %p +.i.contents)
+      ~|  "library: invalid title!"
+      ?>  (is-title-valid title)
+      =/  isbn  (scot %p +.i.t.contents)
+      ~|  "library: invalid isbn!"
+      ?>  (is-isbn-valid isbn)
       ip
-    ::  container for pin content revisions
+    ::  comments section container
     ::  structural node with no content
     ::
-        [@ %pin ~]
-      ~|  "pin revision container should be empty!"
+        [@ %comments ~]
+      ~|  "comments section container should be empty!"
       ?>  ?=(~ contents.p.ip)
       ip
-    ::  specific pin revision
-    ::  content node with data format [title body]
+    ::  comment revision container
+    ::  structural node with no content
+        [@ %comments @ ~]
+      ~|  "comment revision container should be empty!"
+      ?>  ?=(~ contents.p.ip)
+      ip
+    ::  specific comment revision
     ::
-        [@ %pin @ ~]
-      ?>  ?=([[%text *] [%text *] ~] contents.p.ip)
+        [@ %comments @ @ ~]
+      :: todo we could do this eventually
+      ::?>  ?=(* contents.p.ip)  :: any content is allowed.
+      ?>  ?=([[%text *] ~] contents.p.ip)  :: only a single %text content is allowed
       =/  contents  contents.p.ip
-      =/  title=tape  (trip +.i.contents)
-      =/  body=tape   (trip +.i.t.contents)
-      ~|  "title too long"
-      ?>  (lte (lent (tuba title)) max-length-title)  :: tuba normalizes things like emojis to count as one character
-      ~|  "body too long"
-      ?>  (lte (lent (tuba body)) max-length-body)
       ip
     ==
   --
