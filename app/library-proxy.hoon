@@ -18,24 +18,6 @@
   $%  [%add-annotation =annotation]                :: anyone (based on permissions)
       [%remove-annotation =index]                :: anyone (based on permissions)
   ==
-::
-::  Use case:
-::  Every ship can have multiple pinboards stored in their graph store
-::  Every ship can want to expose the different pinboards based on some basic permissioning scheme
-::  Every ship can want to subscribe to other's pinboards
-::  Every ship can want to update to other's pinboards (and their own)
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::    WATCHES/SUBSCRIBES
-::  ~~/board/(board-name) - subscribers get updates to all updates that happen to the board (i.e. updates to the graph)~~
-:: `path` to graph resource, custom permissioning based on the subscribee.
-::    ON-AGENT
-::  subscribe to and handle updates from subscriptions to other's pinboard-proxys
-::     SCRYs
-::  /all
-::  /keys
-::  /pinboards
-::  not really a foremost concern rn.
-::  mainly just stuff on the local state
 |%
 +$  versioned-state
     $%  state-0
