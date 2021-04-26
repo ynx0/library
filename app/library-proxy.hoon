@@ -1,35 +1,16 @@
+/-  *resource, *library
 /+  store=graph-store, graph, default-agent,
-    dbug, verb
-:: todo extract out following to sur/library.hoon
-=>
-|%
-+$  book
-  $:
-    !!
-  ==
-::
-+$  command
-  $%  [%update-permissions top=@ ships=(set ship)] ::  only our can poke
-      [%add-book =book]                            :: only our can poke
-      [%remove-book top=@]                         :: only our can poke
-  ==
-::
-+$  action
-  $%  [%add-annotation =annotation]                :: anyone (based on permissions)
-      [%remove-annotation =index]                :: anyone (based on permissions)
-  ==
+    dbug, verb, agentio
 |%
 +$  versioned-state
     $%  state-0
     ==
 ::
-+$  state-null  ~
++$  state-0  [%0 base-state-0]
 +$  base-state-0
   $:
-    allowed-users=(map ship (set resource))
+    =permissions
   ==
-::
-+$  state-0  [%0 base-state-0]
 ::
 +$  card  card:agent:gall
 ::
