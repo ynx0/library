@@ -1,51 +1,24 @@
 /+  store=graph-store, graph, default-agent,
     dbug, verb
-:: todo extract out following to sur/pinboard.hoon
+:: todo extract out following to sur/library.hoon
 =>
 |%
-+$  pin-contents
++$  book
   $:
-    title=cord
-    body=cord
+    !!
   ==
 ::
-+$  pin-meta
-  $:
-    coords=[x=@ud y=@ud]
-  ==
-::
-+$  pin
-  $:
-    author=ship
-    pin-contents
-    pin-meta
-  ==
-::
-+$  diff
-  $%  [%create-pinboard =path]                        ::  %create: create a pinboard at path
-      [%delete-pinboard =path]                        ::  %delete: delete a pinboard at path
-      [%add-pin =path =pin]                           ::  %message: add a pin to the pinboard at path
-      :: TODO use =reference?
-      [%edit-pin-meta =path top=@ =pin-meta]          ::  %edit-pin-meta: edit the metadata of a specific pin
-      [%edit-pin-contents =path top=@ =pin-contents]  ::  %edit-pin-contents: edit the contents of a specific pin
++$  command
+  $%  [%update-permissions top=@ ships=(set ship)] ::  only our can poke
+      [%add-book =book]                            :: only our can poke
+      [%remove-book top=@]                         :: only our can poke
   ==
 ::
 +$  action
-  $%  ::  %messages: append a list of messages to mailbox
-      ::
-      ::[%messages =path envelopes=(list envelope)]
-      ::[%add-pins =path pins=(list pin)]  :: do we need this?
-      diff
+  $%  [%add-annotation =annotation]                :: anyone (based on permissions)
+      [%remove-annotation =index]                :: anyone (based on permissions)
   ==
 ::
-+$  update
-  $%  [%initial =graphs:store]
-      [%keys keys=(set path)]
-      ::[%messages =path envelopes=(list envelope)]
-      ::[%add-pins =path pins=(list pin)]  :: do we need this?
-      diff
-  ==
---
 ::  Use case:
 ::  Every ship can have multiple pinboards stored in their graph store
 ::  Every ship can want to expose the different pinboards based on some basic permissioning scheme
