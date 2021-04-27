@@ -44,11 +44,57 @@
   =^  cards  state
   ?+  mark  (on-poke:def mark vase)
       %library-proxy-command
-    ?>  =(our.bowl src.bowl)
-    (handle-command:hc !<(command vase))
+    ?>  =(our.bowl src.bowl)  :: only we can poke with a `command`
+    =+  !<(command vase)
+    ?-  -.command
+      %update-permissions
+    =/  rid    rid.command
+    =/  top    top.command
+    =/  ships  ships.command
+    =/  prm=prim  (~(gas by *prim) (my top ships))
+    =/  new-state
+      ?-  operation.command
+        %add
+      (~(put by permissions.state) prm)
+        %remove
+      (~(del by permissions.state) prm)
+    `this(state new-state)
+    ::
+      %add-book
+    :: create a graph update and send it to local graph store using the book
+    =/  rid   rid.command
+    =/  book  book.command
+    =/  update  (add-book-update rid src.bowl now.bowl book)
+    [(poke-our %graph-store update) this]
+    ::
+      %remove-book
+    :: create a graph update to remove the book based on the index and send it to local graph store 
+    =/  update  (remove-book-update rid.command top.command now.bowl)
+    [(poke-our %graph-store update) this]
+    ::
     ::
       %library-proxy-action
-    (handle-action:hc !<(action vase))
+    
+    =/  src  src.bowl
+    =+  !<(action vase)
+    ?-  -.action
+      %add-comment
+    :: TODO assert that the person has permissions to the book.
+    ?>  %.y
+    =/  rid  rid.action
+    =/  top  top.action
+    =/  =comment:library  comment.action
+    =/  update  (add-comment-update rid top src.bowl now.bowl comment)
+    [(poke-our %graph-store update) this]
+    ::
+      %remove-comment
+    ::  TODO how do we only allow author of comment to remove their own comment
+    ::  get old node, see if it the same author as src.bowl, only then allow removal
+    ?>  %.y
+    =/  rid            rid.action
+    =/  comment-index  index.action
+    =/  update  (remove-comment-update rid comment-index now.bowl)
+    [(poke-our %graph-store update) this]
     ::
   ==
   [cards this]
