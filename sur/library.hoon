@@ -14,7 +14,7 @@
   ==
 ::
 +$  action
-  $%  [%add-comment comment=@ta]  :: anyone (based on permissions)
+  $%  [%add-comment comment=cord]  :: anyone (based on permissions)
       [%remove-comment rid=resource =index]    :: anyone (based on permissions)
   ==
 --
