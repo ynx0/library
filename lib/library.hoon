@@ -1,4 +1,4 @@
-/-  *post, *resource, spider
+/-  *post, *resource, library, spider
 /+  *graph-store, strandio
 |%
 :: Thread Only Functions: Can only be called as a strand/ in a spider context
@@ -42,21 +42,23 @@
   [~ +:latest-node]
 ::
 ::
+++  incr-index
+  :: increments the last value in the index by 1
   |=  [=index:post]
   ^-  index:post
-  ?>  =(3 (lent index))                    :: index must be of form like [1 %meta 1] or [1 %pin 1]
-  =/  old-index-frag=atom  (snag 2 index)  :: get the 3rd value from the index
-  (snap index 2 (add 1 old-index-frag))    :: replace the 3rd value of index with incremented index
+  =/  last=@  (sub (lent index) 1)  :: calculate the array index of the last item
+  =/  old-revision-count=atom  (snag last index)  :: get the last item
+  (snap index last (add 1 old-revision-count))    :: replace the value of last item with 1 added to it
 ::
 ++  make-meta-contents
-  |=  [x=@ud y=@ud]
+  |=  [=book:library]
   ^-  (list content)
-  ~[[%text `@t`(scot %ud x)] [%text `@t`(scot %ud y)]]
+  ~[[%text title.book] [%text isbn.book]]
 ::
-++  make-pin-contents
-  |=  [title=cord body=cord]
+++  make-comment-contents
+  |=  [comment-text=comment:library]
   ^-  (list content)
-  ~[[%text title] [%text body]]
+  ~[[%text `@t`comment-text]]
 ::
 ::
 :: creating a new pin
