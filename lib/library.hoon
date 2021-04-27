@@ -61,17 +61,17 @@
   ~[[%text `@t`comment-text]]
 ::
 ::
-:: creating a new pin
-++  add-pin-update
-  |=  [rid=resource top=@ author=ship time-sent=time title=cord body=cord coords=[x=@ud y=@ud]]
+++  add-book-update
+  :: creating a new book under a library
+  |=  [rid=resource author=ship time-sent=time =book:library]
   ^-  update
   =|  blank=post
   =:  author.blank     author
       time-sent.blank  time-sent
       contents.blank   ~
   ==
-  =/  pin-contents   (make-pin-contents title body)
-  =/  meta-contents  (make-meta-contents coords)
+  =/  meta-contents  (make-meta-contents book)
+  =/  top  time-sent
   :-  time-sent
   :+  %add-nodes  rid
   %-  ~(gas by *(map index node))
@@ -79,19 +79,21 @@
       [~[top] [blank(index ~[top]) [%empty ~]]]
       [~[top %meta] [blank(index ~[top %meta]) [%empty ~]]]
       [~[top %meta 1] [blank(index ~[top %meta 1], contents meta-contents) [%empty ~]]]
-      [~[top %pin] [blank(index ~[top %pin]) [%empty ~]]]
-      [~[top %pin 1] [blank(index ~[top %pin 1], contents pin-contents) [%empty ~]]]
+      [~[top %comments] [blank(index ~[top %comments]) [%empty ~]]]
   ==
 ::
-:: creating a new metadata revision
-++  meta-rev-update
-  |=  [rid=resource top=@ author=ship time-sent=time new-coords=[x=@ud y=@ud] last-revision-node=node]
-  :: todo use uid and assert that index is len 1 representing ref to a pin
-  :: todo rename ship to author
+++  remove-book-update
+  |=  [rid=resource top=@ time-sent=time]
   ^-  update
-  =/  last-revision-index=index:post  index.post.last-revision-node
-  =/  meta-index=index:post              (incr-index last-revision-index)
-  =/  meta-contents=(list content)  (make-meta-contents new-coords)
+  :-  time-sent
+  :+  %remove-nodes  rid
+  (sy ~[[top ~]])
+::
+++  revise-meta-update
+  |=  [rid=resource last-revision-index=index author=ship time-sent=time =book:library]
+  ^-  update
+  =/  meta-index=index:post           (incr-index last-revision-index)
+  =/  meta-contents=(list content)    (make-meta-contents new-coords)
   =|  meta-post=post
   =:  author.meta-post     author
       index.meta-post      meta-index
@@ -103,29 +105,29 @@
   %-  ~(gas by *(map index node))
   ~[[meta-index [meta-post [%empty ~]]]]
 ::
-:: creating a new pin content revision
-++  pin-rev-update
-  |=  [rid=resource top=@ author=ship time-sent=time new-title=cord new-body=cord last-revision-node=node]
+++  add-comment-update
+  :: creating a new comment
+  |=  [rid=resource top=@ author=ship time-sent=time =comment:library]
   ^-  update
-  =/  last-revision-index=index:post  index.post.last-revision-node
-  =/  pin-index=index    (incr-index last-revision-index)
-  =/  pin-contents       (make-pin-contents [new-title new-body])
-  =|  pin-post=post:post
-  =:  author.pin-post     author
-      index.pin-post      pin-index
-      time-sent.pin-post  time-sent
-      contents.pin-post   pin-contents
+  =/  comment-index=index:post  [top %comments time-sent]
+  =/  comment-contents     (make-comment-contents comment)
+  =|  comment-post=post:post
+  =:  author.comment-post     author
+      index.comment-post      comment-index
+      time-sent.comment-post  time-sent
+      contents.comment-post   comment-contents
   ==
   :-  time-sent
   :+  %add-nodes  rid
   %-  ~(gas by *(map index node))
-  ~[[pin-index [pin-post [%empty ~]]]]
+  ~[[comment-index [comment-post [%empty ~]]]]
 ::
-:: deleting a pin from a graph
-++  remove-pin-update
-  |=  [rid=resource top=@ time-sent=time]
+++  remove-comment-update
+  |=  [rid=resource comment-index=index time-sent=time]
   ^-  update
+  ~|  "invalid index {<comment-index>} provided"
+  ?>  (lent comment-index 3)
   :-  time-sent
   :+  %remove-nodes  rid
-  (sy ~[[top ~]])
+  (sy index)
 --
