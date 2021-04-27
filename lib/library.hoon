@@ -1,7 +1,5 @@
 /-  *post, *resource, spider
 /+  *graph-store, strandio
-:: TODO extract shared logic into a core with inferior/nested arms?
-:: TODO these arms are wrong, they need to take in both a resource and a face representing our
 |%
 :: Thread Only Functions: Can only be called as a strand/ in a spider context
 ++  scry-for
@@ -25,13 +23,12 @@
   ?>  ?=(^ nodes.q.update)  :: might not work
   =/  out-node  ;;(node +>->.q.update)  :: this is really ugly code. gotta figure out how not to use +>->
   (pure:m out-node)
-  ::(pure:m *node)
 ::
 ++  get-latest-node
-  ::|=  [rev-container-node=node]
   |=  [=graph]
   ^-  (unit node)
   :: todo proper unit code
+  :: todo, make ?> assertions so that you don't have to use lark syntax
   :: unwrapped: given a revision container node:
   :: 1. get its children, which nets a graph of all revisions
   :: 2. discard the leading %graph term
@@ -43,9 +40,8 @@
   ::?~  node-list  ~  :: why doesn't this line work????? i literally had it working like 2 seconds ago AHhhh
   =/  latest-node  (snag 0 node-list)
   [~ +:latest-node]
-  
 ::
-++  incr-index  :: rename to something clearer
+::
   |=  [=index:post]
   ^-  index:post
   ?>  =(3 (lent index))                    :: index must be of form like [1 %meta 1] or [1 %pin 1]
