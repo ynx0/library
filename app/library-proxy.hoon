@@ -115,7 +115,8 @@
       ?+  p.cage.sign  `state
           %graph-update-1
         :: todo
-        (handle-graph-update:hc !<(update:graph q.cage.sign))
+        ::=+  !<(update:graph q.cage.sign)
+        ::(handle-graph-update:hc !<(update:graph q.cage.sign))
         ::
       ==
   [cards this]
