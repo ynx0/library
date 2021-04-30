@@ -55,10 +55,10 @@
     =/  new-state
       ?-  operation.command
         %add
-      (~(put by permissions.state) prm)
-        %remove
-      (~(del by permissions.state) prm)
-    `this(state new-state)
+        (~(put ju permissions.state) prm)
+          %remove
+        (~(del ju permissions.state) prm)
+      `this(state new-state)
     ::
       %add-book
     :: create a graph update and send it to local graph store using the book
