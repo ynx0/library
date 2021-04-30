@@ -74,7 +74,6 @@
     ::
     ::
       %library-proxy-action
-    
     =/  src  src.bowl
     =+  !<(action vase)
     ?-  -.action
@@ -109,8 +108,8 @@
       %fact
     =^  cards  state
       ?+  p.cage.sign  `state
-      :: todo
           %graph-update-1
+        :: todo
         (handle-graph-update:hc !<(update:graph q.cage.sign))
         ::
       ==
@@ -124,7 +123,9 @@
   =^  cards  state
   ?+  path  (on-watch:def path)
     [%updates ship ~]
-    ?>  =(src.bowl +<.path)  :: check for imposter
+    :: check for imposter
+    :: only allow ship ~zod to subscribe on /updates/~zod , no one else
+    ?>  =(src.bowl +<.path)
     `this
   ==
   [cards this]
@@ -142,15 +143,8 @@
 ++  handle-command
   |=  [=command]
   ^-  (quip card _state)
-  ?-  -.command
-    %update-permissions
-  :: add the ship to the jug by key of top
-    %add-book
-  :: create a graph update and send it to local graph store using the book
-    %remove-book
-  :: create a graph update to remove the book based on the index and send it to local graph store 
-  --
-
+  =^  cards  state  ~
+  !!
 ++  handle-action
   |=  [*]
   !!
