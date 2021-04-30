@@ -42,25 +42,25 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   =^  cards  state
-  ?+  mark  (on-poke:def mark vase)
+  ?+    mark  (on-poke:def mark vase)
       %library-proxy-command
     ?>  =(our.bowl src.bowl)  :: only we can poke with a `command`
     =+  !<(command vase)
-    ?-  -.command
-      %update-permissions
-    =/  rid    rid.command
-    =/  top    top.command
-    =/  ships  ships.command
-    =/  prm=prim  (~(gas by *prim) (my top ships))
-    =/  new-state
-      ?-  operation.command
-        %add
+    ?-    -.command
+        %update-permissions
+      =/  rid    rid.command
+      =/  top    top.command
+      =/  ships  ships.command
+      =/  prm=prim  (~(gas by *prim) (my top ships))
+      =/  new-state
+      ?-    operation.command
+          %add
         (~(put ju permissions.state) prm)
           %remove
         (~(del ju permissions.state) prm)
       `this(state new-state)
     ::
-      %add-book
+        %add-book
     :: create a graph update and send it to local graph store using the book
     =/  rid   rid.command
     =/  book  book.command
