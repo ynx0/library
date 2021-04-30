@@ -1,0 +1,30 @@
+user flows.
+
+
+base:
+ship ~zod exists 
+ship ~nus exists
+
+1. ship ~zod creates library X in its local graph store
+
+x. ~zod wishes to add a book to his own library
+	a. zod sends a poke to his own proxy to add the book
+	   the proxy handles it, poking the local graph store.
+
+
+y. ~nus wishes to subscribe to all books that it is allowed to see from ~zod's library X
+	a. ~nus sends a well formed subscription request (watch) from his proxy to ~zod's proxy on path /updates/~nus
+	b. now, any and all graph updates that ~nus should hear about will flow into it's +on-agent arm, with the path /updates/~nus
+	c. ~zod must send any and all updates that ~nus must see from his proxy to ~nus's proxy
+		- to do this, ~zod's proxy subscribes to it's own graph store for all updates. when it receives a graph-update from graph store,
+		  it must send all ships that need to know about it the update by generating cards.
+		  to construct a list of all ships that should know (and thus all paths to send the update cards on),
+		  first get the prim associated with the resource of the update.
+		  then, get the 0th index fragment of the update, i.e. what root node, or book, is being modified.
+		  using his index fragment, key into the prim to access the list of ships that deserve to know about the update.
+		  now, construct list of cards necessary to update all subscribers with the given update and deserving ships
+
+z. ~nus wishes to comment on a book in library X on ~zod's ship.
+	a. ~nus pokes ~zod's library proxy with an [%add-comment =comment] poke 
+
+
