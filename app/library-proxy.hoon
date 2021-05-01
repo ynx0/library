@@ -105,6 +105,20 @@
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
+  :::: (in this model. each ship is responsible soley for sending out updates of resources it owns, and no one else.
+  :::: as a result, we simply trust updates (after imposter check) from a given ship; that is, it is the sole source of truth).
+  ::  CHECK dap.bowl , if graph store then we know its local, if proxy then we know someone else is
+  ::  also check src.bowl
+
+  :: if it is graph store update from local graph-store
+  :: check if it is a resource we own. if it is not, do not send out any updates for it
+  :: if it is, build a list of ships that deserve to get the update (potentially taking into account its type and stuff)
+  :: then send the updates out.
+
+  :: if it is graph store update from foreign proxy
+  :: assert that the resource of the update matches the src.bowl (i.e. disallow updates from imposter)
+  :: ingest the update by poking the local graph store with it.
+
   ?+  -.sign  (on-agent:def wire sign)
       %kick
     ~&  >>>  "kicked from graph store subscription"

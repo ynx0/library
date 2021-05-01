@@ -13,15 +13,10 @@
   $%  [%update-permissions rid=resource top=@ =ship operation=?(%add %remove)] ::  only our can poke
       [%add-book rid=resource =book]                                           ::  only our can poke
       [%remove-book rid=resource top=@]                                        ::  only our can poke
-      :: [%add-book =update:store]                                           ::  only our can poke
-      :: [%remove-book =update:store]                                        ::  only our can poke
   ==
 ::
 +$  action
   $%  [%add-comment rid=resource top=@ =comment]  :: anyone can add if they have permissions to view
       [%remove-comment rid=resource =index]       :: anyone can remove own
   ==
-  ::$%  [%add-comment =update:store]  :: anyone can add if they have permissions to view
-  ::    [%remove-comment =update:store]       :: anyone can remove own
-  ::==
 --
