@@ -62,10 +62,9 @@
     ::
         %add-book
     :: create a graph update and send it to local graph store using the book
-    =/  rid   rid.command
-    =/  book  book.command
+    =/  rid     rid.command
+    =/  book    book.command
     =/  update  (add-book-update rid src.bowl now.bowl book)
-    ::=/  update  update.command  :: if we're just purely forwarding graph updates
     ::  [delete later] the second item in cell is ~ which is actually the return path we want the poke-ack to 
     ::  be sent on, but, we don't really care about it i don't think so we'll leave it null for now
     [[%pass ~ %agent [our %graph-store] %poke %graph-update-1+!>(update)] this]
@@ -73,8 +72,6 @@
       %remove-book
     :: create a graph update to remove the book based on the index and send it to local graph store 
     =/  update  (remove-book-update rid.command top.command now.bowl)
-    ::=/  update  update.command
-    ::?>  =(%remove-nodes -.q.update)
     [[%pass ~ %agent [our %graph-store] %poke %graph-update-1+!>(update)] this]
     ::
     ::
