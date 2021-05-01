@@ -6,30 +6,18 @@ Dead simple pinboard app
 
 Using this application, you will be able to:
 
-1. Create a pinboard
-2. Create a pin
-3. Delete a pin
-4. Modify a pin's content
-5. Modify a pin's position
+1. Create a library
+1.5 have anothe ship subscribe
+2. Add a book
+	a. see the book in the other ship 
+3. Add a comment to a book (from the other ship)
+4. Revise the contents of a book
+	a. see this in the other ship
+5. Remove a comment (from the other ship)
+6. Remove the book
+7. Remove the library
 
 
-First, create a group.
-
-```
--group-create [%create %my-group [%open *(set rank:title) *(set ship)] 'pin group' 'a group mainly about pins']
-```
-
-You can look at the current state of a given agent using the syntax `:<the-agent> +dbug`
-
-Verify that the group was created.
-
-```
-:group-store +dbug [%state 'groups']
->   { [ p=[entity=~zod name=%my-group]
-    q=[members={~zod} tags={[p=%admin q={~zod}]} policy=[%open ban-ranks={} banned={}] hidden=%.n]
-  ]
-}
-```
 
 
 Then, create a new graph using the pinboard validator.
