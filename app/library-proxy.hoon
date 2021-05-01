@@ -45,20 +45,22 @@
   ?+    mark  (on-poke:def mark vase)
       %library-proxy-command
     ?>  =(our.bowl src.bowl)  :: only we can poke with a `command`
+    ::?>  =((team:title our.bowl src.bowl) )  :: todo allow moons to act as ourselfs
     =+  !<(command vase)
     ?-    -.command
         %update-permissions
       =/  rid    rid.command
       =/  top    top.command
-      =/  ships  ships.command
-      =/  prm=prim  (~(gas by *prim) (my top ships))
-      =/  new-state
-      ?-    operation.command
-          %add
-        (~(put ju permissions.state) prm)
-          %remove
-        (~(del ju permissions.state) prm)
-      `this(state new-state)
+      =/  ship   ship.command
+      =/  prm=prim  (~(gut by permissions) rid *prim)  ::  get the prim associated with the given resource
+      =.  prm  :: perform the modification then rebind the product to prm
+      ?-  operation.command
+        %add     (~(put ju prm) top ship)  :: add the ship to the set associated with top
+        %remove  (~(del ju prm) top ship)  :: remove the ship to the set associated with top
+      ::
+      :: todo whats the best way to phrase the following operation?
+      =.  permissions  (~(put by permissions) rid prm)      :: replace the old prm with the new one
+      [~ this]
     ::
         %add-book
     :: create a graph update and send it to local graph store using the book
