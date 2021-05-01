@@ -78,27 +78,35 @@
     ::
     ::
       %library-proxy-action
-    =/  src  src.bowl
     =+  !<(action vase)
-    ?-  -.action
-      %add-comment
-    :: TODO assert that the person has permissions to the book.
-    ?>  %.y
-    =/  rid  rid.action
-    =/  top  top.action
-    =/  =comment:library  comment.action
-    =/  update  (add-comment-update rid top src.bowl now.bowl comment)
-    [[%pass ~ %agent [our %graph-store] %poke %graph-update-1+!>(update)] this]
-    ::
-      %remove-comment
-    ::  TODO how do we only allow author of comment to remove their own comment
-    ::  get old node, see if it the same author as src.bowl, only then allow removal
-    ?>  %.y
-    =/  rid            rid.action
-    =/  comment-index  index.action
-    =/  update  (remove-comment-update rid comment-index now.bowl)
-    [[%pass ~ %agent [our %graph-store] %poke %graph-update-1+!>(update)] this]
-    ::
+    ?-    -.action
+        %add-comment
+      =/  rid  rid.action
+      =/  top  top.action
+      =/  prm=prim  (~(got by permissions) rid)  ::  get the prim associated with the given resource
+      ?>  (~(has ju prm) top author)             ::  assert that the ship created the comment
+      :: extract out above to core
+      =/  =comment:library  comment.action
+      =/  update  (add-comment-update rid top src.bowl now.bowl comment)
+      [[%pass ~ %agent [our %graph-store] %poke %graph-update-1+!>(update)] this]
+      ::
+        %remove-comment
+      ::  TODO how do we only allow author of comment to remove their own comment
+      ::  get old node, see if it the same author as src.bowl, only then allow removal
+      ::  only allow deletion of own comment
+      =/  rid            rid.action
+      =/  comment-index  index.action
+      =/  prim  (~(got by permissions) rid)
+      =/  update  .^(update:store %gx /graph-store/node/[rid]/[comment-index]/something)  ::  scry graph store for the index
+      ?>(%| -.mp.update)
+      =/  post ...
+      =/  comment-author  ~
+      ?>  =(comment-author src.bowl)
+      ::  assert the author of comment to match src.bowl
+      ::  extract above to permissions core
+      =/  update  (remove-comment-update rid comment-index now.bowl)
+      [[%pass ~ %agent [our %graph-store] %poke %graph-update-1+!>(update)] this]
+      ::
   ==
   [cards this]
 ++  on-agent
