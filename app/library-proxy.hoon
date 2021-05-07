@@ -1,6 +1,6 @@
 /-  *resource, *library
 /+  store=graph-store, graph, default-agent,
-    dbug, verb, agentio, *library
+    dbug, verb, agentio  ::, *library
 |%
 +$  versioned-state
     $%  state-0
@@ -47,10 +47,10 @@
   =^  cards  state
   ?+    mark  (on-poke:def mark vase)
       %library-proxy-command
-    ?>  =(our.bowl src.bowl)  :: only we can poke with a `command`
-    ::?>  =((team:title our.bowl src.bowl) )  :: todo allow moons to act as ourselfs
+    ::?>  =(our.bowl src.bowl)  :: only we can poke with a `command`
+    ?>  (team:title our.bowl src.bowl)  :: allow moons to act as ourselfs
     =+  !<(=command vase)
-    ?+    -.command  ~|("unhandled command {<-.command>}" !!)
+    ?-    -.command
         %update-permissions
       =/  rid    rid.command
       =/  top    top.command
@@ -62,53 +62,50 @@
         %remove  (~(del ju prm) top ship)  :: remove the ship to the set associated with top
       ==
       [~ state(permissions (~(put by permissions) rid prm))]  :: replace the old prm with the new one
-    
+    ::
         %add-book
     :: create a graph update and send it to local graph store using the book
     =/  rid     rid.command
     =/  book    book.command
-    =/  update  (add-book-update rid src.bowl now.bowl book)
+    =/  update  *update:store :: (add-book-update rid src.bowl now.bowl book)
     ::  [delete later] the second item in cell is ~ which is actually the return path we want the poke-ack to 
     ::  be sent on, but, we don't really care about it i don't think so we'll leave it null for now
-    [[%pass ~ %agent [our %graph-store] %poke graph-update-2+!>(update)] state]
+    [[[%pass /pokepath %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
     ::
-  ::  ::  %remove-book
-  ::  ::!!
-  ::  :::: create a graph update to remove the book based on the index and send it to local graph store 
-  ::  ::=/  update  (remove-book-update rid.command top.command now.bowl)
-  ::  ::[[%pass ~ %agent [our %graph-store] %poke %graph-update-1+!>(update)] state]
-  ::  ::
+      %remove-book
+    :: create a graph update to remove the book based on the index and send it to local graph store 
+    =/  update  *update:store :: (remove-book-update rid.command top.command now.bowl)
+    [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
+    ::
     ==
-  ::  ::  %library-proxy-action  !!
-  ::  ::=+  !<(action vase)
-  ::  ::?-    -.action
-  ::  ::    %add-comment
-  ::  ::  =/  rid  rid.action
-  ::  ::  =/  top  top.action
-  ::  ::  =/  prm=prim  (~(got by permissions) rid)  ::  get the prim associated with the given resource
-  ::  ::  ?>  (~(has ju prm) top author)             ::  assert that the ship created the comment
-  ::  ::  :: extract out above to core
-  ::  ::  =/  =comment:library  comment.action
-  ::  ::  =/  update  (add-comment-update rid top src.bowl now.bowl comment)
-  ::  ::  [[%pass ~ %agent [our %graph-store] %poke %graph-update-1+!>(update)] state]
-  ::  ::  ::
-  ::  ::    %remove-comment
-  ::  ::  ::  TODO how do we only allow author of comment to remove their own comment
-  ::  ::  ::  get old node, see if it the same author as src.bowl, only then allow removal
-  ::  ::  ::  only allow deletion of own comment
-  ::  ::  =/  rid            rid.action
-  ::  ::  =/  comment-index  index.action
-  ::  ::  =/  prim  (~(got by permissions) rid)
-  ::  ::  =/  update  .^(update:store %gx /graph-store/node/[rid]/[comment-index]/something)  ::  scry graph store for the index
-  ::  ::  ?>(%| -.mp.update)
-  ::  ::  =/  post ...
-  ::  ::  =/  comment-author  ~
-  ::  ::  ?>  =(comment-author src.bowl)
-  ::  ::  ::  assert the author of comment to match src.bowl
-  ::  ::  ::  extract above to permissions core
-  ::  ::  =/  update  (remove-comment-update rid comment-index now.bowl)
-  ::  ::  [[%pass ~ %agent [our %graph-store] %poke %graph-update-1+!>(update)] this]
-  ::    ::
+    ::
+      %library-proxy-action
+    =+  !<(=action vase)
+    ?-    -.action
+        %add-comment
+      =/  rid  rid.action
+      =/  top  top.action
+      =/  prm=prim  (~(got by permissions) rid)  ::  get the prim associated with the given resource      =/  =comment:library  comment.action
+      =/  update  *update:store  :: (add-comment-update rid top src.bowl now.bowl comment)
+      [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
+      ::
+        %remove-comment
+      ::  TODO how do we only allow author of comment to remove their own comment
+      ::  get old node, see if it the same author as src.bowl, only then allow removal
+      ::  only allow deletion of own comment
+      =/  rid            rid.action
+      =/  comment-index  index.action
+      =/  prim  (~(got by permissions) rid)
+      =/  update  .^(update:store %gx /graph-store/node/[rid]/[comment-index]/something)  ::  scry graph store for the index
+      ::?>(%& -.mp.update)
+      ::=/  post ...
+      =/  comment-author=ship  ~zod
+      ?>  =(comment-author src.bowl)
+      ::  assert the author of comment to match src.bowl
+      ::  extract above to permissions core
+      =/  update  *update:store  :: (remove-comment-update rid comment-index now.bowl)
+      [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
+    ==
   ==
   [cards this]
 ++  on-agent
