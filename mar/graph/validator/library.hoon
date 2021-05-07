@@ -9,7 +9,7 @@
   |=  [isbn=cord]
   ^-  ?
   =/  len  (lent isbn)
-  ?>  ?|  =(len 10)  =(len 13)
+  ?>  ?|(=(len 10) =(len 13))
   %.y
 --
 |_  i=indexed-post
