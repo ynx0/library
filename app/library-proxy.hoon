@@ -43,45 +43,42 @@
   `this(state !<(versioned-state old-state))
 ++  on-poke
   |=  [=mark =vase]
-  ^-  (quip card _this)  !!
-  ::=^  cards  state
-  ::?+    mark  (on-poke:def mark vase)
-  ::    %library-proxy-command
-  ::  ?>  =(our.bowl src.bowl)  :: only we can poke with a `command`
-  ::  ::?>  =((team:title our.bowl src.bowl) )  :: todo allow moons to act as ourselfs
-  ::  =+  !<(command vase)
-  ::  ?+    -.command  ~|("unhandled command {<-.command>}" !!)
-  ::      %update-permissions
-  ::    =/  rid    rid.command
-  ::    =/  top    top.command
-  ::    =/  ship   ship.command
-  ::    =/  prm=prim  (~(gut by permissions.state) rid *prim)  ::  get the prim associated with the given resource
-  ::    =.  prm  :: perform the modification then rebind the product to prm
-  ::    ?-  operation.command
-  ::      %add     (~(put ju prm) top ship)  :: add the ship to the set associated with top
-  ::      %remove  (~(del ju prm) top ship)  :: remove the ship to the set associated with top
-  ::    ==
-  ::    :: todo whats the best way to phrase the following operation?
-  ::    =.  permissions.state  (~(put by permissions) rid prm)
-  ::    [~ state]  :: replace the old prm with the new one
-  ::  ::
-  ::  ::    %add-book
-  ::  ::!!
-  ::  :::: create a graph update and send it to local graph store using the book
-  ::  ::=/  rid     rid.command
-  ::  ::=/  book    book.command
-  ::  ::=/  update  (add-book-update rid src.bowl now.bowl book)
-  ::  ::::  [delete later] the second item in cell is ~ which is actually the return path we want the poke-ack to 
-  ::  ::::  be sent on, but, we don't really care about it i don't think so we'll leave it null for now
-  ::  ::[[%pass ~ %agent [our %graph-store] %poke %graph-update-1+!>(update)] state]
-  ::  ::::
+  ^-  (quip card _this)
+  =^  cards  state
+  ?+    mark  (on-poke:def mark vase)
+      %library-proxy-command
+    ?>  =(our.bowl src.bowl)  :: only we can poke with a `command`
+    ::?>  =((team:title our.bowl src.bowl) )  :: todo allow moons to act as ourselfs
+    =+  !<(=command vase)
+    ?+    -.command  ~|("unhandled command {<-.command>}" !!)
+        %update-permissions
+      =/  rid    rid.command
+      =/  top    top.command
+      =/  ship   ship.command
+      =/  prm=prim  (~(gut by permissions.state) rid *prim)  ::  get the prim associated with the given resource
+      =.  prm  :: perform the modification then rebind the product to prm
+      ?-  operation.command
+        %add     (~(put ju prm) top ship)  :: add the ship to the set associated with top
+        %remove  (~(del ju prm) top ship)  :: remove the ship to the set associated with top
+      ==
+      [~ state(permissions (~(put by permissions) rid prm))]  :: replace the old prm with the new one
+    
+        %add-book
+    :: create a graph update and send it to local graph store using the book
+    =/  rid     rid.command
+    =/  book    book.command
+    =/  update  (add-book-update rid src.bowl now.bowl book)
+    ::  [delete later] the second item in cell is ~ which is actually the return path we want the poke-ack to 
+    ::  be sent on, but, we don't really care about it i don't think so we'll leave it null for now
+    [[%pass ~ %agent [our %graph-store] %poke graph-update-2+!>(update)] state]
+    ::
   ::  ::  %remove-book
   ::  ::!!
   ::  :::: create a graph update to remove the book based on the index and send it to local graph store 
   ::  ::=/  update  (remove-book-update rid.command top.command now.bowl)
   ::  ::[[%pass ~ %agent [our %graph-store] %poke %graph-update-1+!>(update)] state]
   ::  ::
-  ::  ::
+    ==
   ::  ::  %library-proxy-action  !!
   ::  ::=+  !<(action vase)
   ::  ::?-    -.action
@@ -112,8 +109,8 @@
   ::  ::  =/  update  (remove-comment-update rid comment-index now.bowl)
   ::  ::  [[%pass ~ %agent [our %graph-store] %poke %graph-update-1+!>(update)] this]
   ::    ::
-  ::==
-  ::[cards this]
+  ==
+  [cards this]
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
