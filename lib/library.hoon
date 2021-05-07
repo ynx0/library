@@ -53,12 +53,12 @@
 ++  make-meta-contents
   |=  [=book:library]
   ^-  (list content)
-  ~[[%text title.book] [%text isbn.book]]
+  ~[[%text (crip title.book)] [%text (crip isbn.book)]]
 ::
 ++  make-comment-contents
   |=  [comment-text=comment:library]
   ^-  (list content)
-  ~[[%text `@t`comment-text]]
+  ~[[%text (crip comment-text)]]
 ::
 ::
 ++  add-book-update
