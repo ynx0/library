@@ -82,10 +82,9 @@
       %fact
     =^  cards  state
       ?+  p.cage.sign  `state
-          %graph-update-1  !!
-        :: todo
-        ::=+  !<(update:graph q.cage.sign)
-        ::(handle-graph-update:hc !<(update:graph q.cage.sign))
+          %graph-update-2
+        =+  !<(update:store q.cage.sign)
+        (handle-graph-update:hc !<(update:store q.cage.sign))
         ::
       ==
   [cards this]
