@@ -18,6 +18,7 @@
 %-  agent:dbug
 =|  state-0
 =*  state  -
+=<
 ^-  agent:gall
 |_  =bowl:gall
 +*  this    .
