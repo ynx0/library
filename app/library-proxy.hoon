@@ -1,6 +1,6 @@
 /-  *resource, *library
 /+  store=graph-store, graph, default-agent,
-    dbug, verb, agentio
+    dbug, verb, agentio, *library
 |%
 +$  versioned-state
     $%  state-0
