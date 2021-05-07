@@ -46,7 +46,7 @@
   ^-  (quip card _this)
   =^  cards  state
   ?+    mark  (on-poke:def mark vase)
-      %library-proxy-command
+      %library-command
     ::?>  =(our.bowl src.bowl)  :: only we can poke with a `command`
     ?>  (team:title our.bowl src.bowl)  :: allow moons to act as ourselfs
     =+  !<(=command vase)
@@ -79,7 +79,7 @@
     ::
     ==
     ::
-      %library-proxy-action
+      %library-action
     =+  !<(=action vase)
     ?-    -.action
         %add-comment
