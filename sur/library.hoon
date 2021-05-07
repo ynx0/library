@@ -1,10 +1,10 @@
 /-  *resource, *graph-store
 |%
-+$  comment  cord
++$  comment  tape
 +$  book
   $:
-    title=cord
-    isbn=cord
+    title=tape
+    isbn=tape
   ==
 ::
 +$  prim  (jug atom ship)             :: list of ships allowed to access a single book, represented by top level atom of book node
