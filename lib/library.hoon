@@ -109,7 +109,7 @@
   :: creating a new comment
   |=  [rid=resource top=@ author=ship time-sent=time =comment:library]
   ^-  update
-  =/  comment-index=index:post  [top %comments time-sent]
+  =/  comment-index=index:post  ~[top %comments time-sent]
   =/  comment-contents     (make-comment-contents comment)
   =|  comment-post=post:post
   =:  author.comment-post     author
