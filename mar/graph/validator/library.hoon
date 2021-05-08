@@ -21,24 +21,11 @@
     |=  vip=vip-metadata:met
     ^-  permissions:graph
     !!
-    ::?+  index.p.i  !!
-    ::  [@ ~]          [%yes %yes %no]
-    ::  [@ %meta ~]    [%self %self %no]
-    ::  [@ %meta @ ~]  [%yes %self %no]
-    ::  [@ %pin ~]     [%self %self %no]
-    ::  [@ %pin @ ~]   [%self %self %no]
-    ::==
   ::
   ++  graph-permissions-remove
     |=  vip=vip-metadata:met
     ^-  permissions:graph
     !!
-    ::?+  index.p.i  !!
-    ::  [@ ~]          [%yes %self %no]
-    ::  [@ %meta ~]    [%no %no %no]
-    ::  [@ %meta @ ~]  [%yes %self %no]
-    ::  [@ %pin ~]     [%no %no %no]
-    ::  [@ %pin @ ~]   [%yes %self %no]
     ::==
   ++  transform-add-nodes
     |=  [=index =post =atom was-parent-modified=?]
