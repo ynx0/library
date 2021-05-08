@@ -76,24 +76,24 @@
   :+  %add-nodes  rid
   %-  ~(gas by *(map index node))
   :~
-      [~[top] [blank(index ~[top]) [%empty ~]]]
-      [~[top %meta] [blank(index ~[top %meta]) [%empty ~]]]
-      [~[top %meta 1] [blank(index ~[top %meta 1], contents meta-contents) [%empty ~]]]
-      [~[top %comments] [blank(index ~[top %comments]) [%empty ~]]]
+      [~[top] [[%.y blank(index ~[top])] [%empty ~]]]
+      [~[top %meta] [[%.y blank(index ~[top %meta])] [%empty ~]]]
+      [~[top %meta 1] [[%.y blank(index ~[top %meta 1], contents meta-contents)] [%empty ~]]]
+      [~[top %comments] [[%.y blank(index ~[top %comments])] [%empty ~]]]
   ==
 ::
 ++  remove-book-update
   |=  [rid=resource top=@ time-sent=time]
   ^-  update
   :-  time-sent
-  :+  %remove-nodes  rid
+  :+  %remove-posts  rid
   (sy ~[[top ~]])
 ::
 ++  revise-meta-update
   |=  [rid=resource last-revision-index=index author=ship time-sent=time =book:library]
   ^-  update
   =/  meta-index=index:post           (incr-index last-revision-index)
-  =/  meta-contents=(list content)    (make-meta-contents new-coords)
+  =/  meta-contents=(list content)    (make-meta-contents book)
   =|  meta-post=post
   =:  author.meta-post     author
       index.meta-post      meta-index
@@ -103,15 +103,15 @@
   :-  time-sent
   :+  %add-nodes  rid
   %-  ~(gas by *(map index node))
-  ~[[meta-index [meta-post [%empty ~]]]]
+  ~[[meta-index [[%.y meta-post] [%empty ~]]]]
 ::
 ++  add-comment-update
   :: creating a new comment
   |=  [rid=resource top=@ author=ship time-sent=time =comment:library]
   ^-  update
-  =/  comment-index=index:post  ~[top %comments time-sent]
+  =/  comment-index=index  ~[top %comments time-sent]
   =/  comment-contents     (make-comment-contents comment)
-  =|  comment-post=post:post
+  =|  comment-post=post
   =:  author.comment-post     author
       index.comment-post      comment-index
       time-sent.comment-post  time-sent
@@ -120,14 +120,14 @@
   :-  time-sent
   :+  %add-nodes  rid
   %-  ~(gas by *(map index node))
-  ~[[comment-index [comment-post [%empty ~]]]]
+  ~[[comment-index [[%.y comment-post] [%empty ~]]]]
 ::
 ++  remove-comment-update
   |=  [rid=resource comment-index=index time-sent=time]
   ^-  update
   ~|  "invalid index {<comment-index>} provided"
-  ?>  (lent comment-index 3)
+  ?>  =((lent comment-index) 3)
   :-  time-sent
-  :+  %remove-nodes  rid
-  (sy index)
+  :+  %remove-posts  rid
+  (sy ~[comment-index])
 --
