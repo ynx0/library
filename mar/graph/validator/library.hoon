@@ -89,10 +89,8 @@
       =/  contents  contents.p.ip
       ?>  ?=([[%text *] [%text *] ~] contents.p.ip)
       =/  title  (trip +.i.contents.p.ip)
-      ~|  "library: invalid title!"
       ?>  (is-title-valid title)
       =/  isbn  (trip +.i.t.contents.p.ip)
-      ~|  "library: invalid isbn!"
       ?>  (is-isbn-valid isbn)
       ip
     ::  comments section container
