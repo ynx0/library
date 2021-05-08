@@ -88,10 +88,10 @@
         [@ %meta @ ~]
       =/  contents  contents.p.ip
       ?>  ?=([[%text *] [%text *] ~] contents.p.ip)
-      =/  title  (scot %p (trip +.i.contents))
+      =/  title  (trip +.i.contents.p.ip)
       ~|  "library: invalid title!"
       ?>  (is-title-valid title)
-      =/  isbn  (scot %p (trip +.i.t.contents))
+      =/  isbn  (trip +.i.t.contents.p.ip)
       ~|  "library: invalid isbn!"
       ?>  (is-isbn-valid isbn)
       ip
@@ -114,4 +114,3 @@
   --
 ++  grad  %noun
 --
-
