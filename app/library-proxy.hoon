@@ -31,8 +31,8 @@
   ~&  >  '%library-proxy initialized successfully'
   :: subscribe to graph store updates here
   ::
-  ::[[%pass /updates/(scot %p our.bowl) [%agent [our.bowl %graph-store] [%watch /updates]]] this]
-  `this
+  [[[%pass /updates/(scot %p our.bowl) [%agent [our.bowl %graph-store] [%watch /updates]]] ~] this]
+  ::`this
 ++  on-save
   ^-  vase
   !>(state)
