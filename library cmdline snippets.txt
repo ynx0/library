@@ -1,0 +1,27 @@
+|mount %
+|commit %home
+-build-file %/app/library-proxy/hoon
+=library -build-file %/sur/library/hoon
+
+:graph-store|add-graph [our %library1] [~ %graph-validator-library] %.y
+:graph-store +dbug [%state 'graphs']
+
+:library-proxy +dbug [%state 'permissions']
+
+:: adding book without then with permissions
+:library-proxy &library-command [%add-book [our %library1] ["Dune" "isbnisbnis"]]
+:library-proxy &library-command [%update-permissions [our %library1] 1 ~zod %add]
+:library-proxy +dbug [%state 'permissions']
+:library-proxy &library-command [%add-book [our %library1] ["Dune" "isbnisbnis"]]
+
+
+:: add and remove from permissions
+:library-proxy &library-command [%update-permissions [our %library1] 1 ~nus %add]
+:library-proxy +dbug [%state 'permissions']
+:library-proxy &library-command [%update-permissions [our %library1] 1 ~nus %remove]
+:library-proxy +dbug [%state 'permissions']
+
+
+
+
+
