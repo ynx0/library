@@ -84,6 +84,7 @@
       ?+  p.cage.sign  `state
           %graph-update-2
         =+  !<(update:store q.cage.sign)
+        ::~&  sign
         (handle-graph-update:hc !<(update:store q.cage.sign))
         ::
       ==
@@ -120,6 +121,9 @@
   =^  cards  state
   ?-    -.command
         %update-permissions
+      :: todo potentially ensure that we don't add ourselves to the permissions
+      :: because we always have permissions by definition
+      ::?<  =(our.bowl, src.bowl) / (team:title our.bowl src.bowl)
       =/  rid    rid.command
       =/  top    top.command
       =/  ship   ship.command
@@ -180,10 +184,13 @@
     [cards state]
 ++  handle-graph-update
   |=  [update=update:store]
+  ^-  (quip card _state)
+  =^  cards  state
   ::  this is where we proxy / forward any graph store updates
   ::  to any subscriber based on
   ~&  "got graph update {<update>}"
-  !!
+  `state
+  [cards state]
 ::
 ++  poke-graph-store
   |=  *
