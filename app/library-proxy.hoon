@@ -162,11 +162,17 @@
   =^  cards  state
   ?-    -.action
         %add-comment
-      =/  rid      rid.action
-      =/  top      top.action
-      =/  comment  comment.action
-      =/  prm  (~(got by permissions) rid)  ::  get the prim associated with the given resource      =/  =comment:library  comment.action
-      =/  update  (add-comment-update rid top src.bowl now.bowl comment)
+      =/  rid        rid.action
+      =/  top        top.action
+      =/  author     src.bowl
+      =/  time-sent  now.bowl
+      =/  comment    comment.action
+      =/  prm        (~(got by permissions) rid)
+      ?>  ?|                               :: commenter must be either:
+            =(team:title our.bowl author)  :: us or our moon
+            (~(has ju prm) top author)     :: someone with permissions
+          ==
+      =/  update     (add-comment-update rid top author time-sent comment)
       [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
       ::
         %remove-comment
