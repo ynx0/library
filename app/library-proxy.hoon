@@ -127,33 +127,56 @@
   ^-  (quip card _state)
   =^  cards  state
   ?-    -.command
+        %create-library
+      =/  rid        rid.command
+      =/  time-sent  now.bowl
+      =/  update     (create-library-update rid time-sent)
+      =.  permissions.state  (~(put by permissions) rid *prim:library)  ::  init the prim based on the new library to create
+      [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
+    ::
+        %remove-library
+      =/  rid        rid.command
+      =/  time-sent  now.bowl
+      =/  update     (remove-library-update rid time-sent)
+      =.  permissions.state  (~(del by permissions) rid)  ::  remove the prim for the library to be deleted by clearing it
+      [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
+    ::
+        %add-book
+      =/  rid           rid.command
+      =/  author        src.bowl
+      =/  time-sent     now.bowl
+      =/  book          book.command
+      =/  update  (add-book-update rid author time-sent book)
+      [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
+    ::
+        %remove-book
+      =/  rid        rid.command 
+      =/  top        top.command
+      =/  time-sent  now.bowl
+      =/  update     (remove-book-update rid top time-sent)
+      ::  delete any permissions for this book
+      =/  prm  (~(got by permissions) rid)
+      =.  prm  (~(del by prm) top)
+      =.  permissions.state  (~(put by permissions) rid prm)
+      [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
+    ::
         %update-permissions
-      :: todo potentially ensure that we don't add ourselves to the permissions
-      :: because we always have permissions by definition
-      ::?<  =(our.bowl, src.bowl) / (team:title our.bowl src.bowl)
+      ::  ensure that we don't add ourselves or our moon to the permissions
+      ::  because we always have permissions by definition
       =/  rid    rid.command
       =/  top    top.command
       =/  ship   ship.command
-      =/  prm  (~(gut by permissions) rid *prim:library)  ::  get the prim associated with the given resource
+      ?<  (team:title our.bowl ship.command)
+      ::  todo debug printf ~|([dap.bowl "tried to update permissions for non-existent rid" rid] !!)
+      =/  prm  (~(got by permissions) rid)  ::  get the prim associated with the given resource
       =.  prm  :: perform the modification then rebind the product to prm
-      ?-  operation.command
-        %add     (~(put ju prm) top ship)  :: add the ship to the set associated with top
-        %remove  (~(del ju prm) top ship)  :: remove the ship to the set associated with top
-      ==
+        ?-  operation.command
+          %add     (~(put ju prm) top ship)  :: add the ship to the set associated with top
+          %remove  (~(del ju prm) top ship)  :: remove the ship to the set associated with top
+        ==
       [~ state(permissions (~(put by permissions) rid prm))]  :: replace the old prm with the new one
     ::
-        %add-book
-    :: create a graph update and send it to local graph store using the book
-    =/  rid     rid.command
-    =/  book    book.command
-    =/  update  (add-book-update rid src.bowl now.bowl book)
-    [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
-    ::
-      %remove-book
-    :: create a graph update to remove the book based on the index and send it to local graph store 
-    =/  update  (remove-book-update rid.command top.command now.bowl)
-    [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
-    ::
+
   ==
   [cards state]
 ++  handle-action
