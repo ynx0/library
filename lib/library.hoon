@@ -61,6 +61,23 @@
   ~[[%text (crip comment-text)]]
 ::
 ::
+++  create-library-update
+  |=  [[owner=ship name=@tas] time-sent=time]
+  ^-  update
+  :-  time-sent
+  :-  %add-graph
+  :~
+      [owner name]
+      *graph:store  :: the official thread uses (gas:orm ~ ~), which is equivalent
+      [~ %graph-validator-library]
+      %.y
+  ==
+++  remove-library-update
+  |=  [[owner=ship name=@tas] time-sent=time]
+  ^-  update
+  :-  time-sent
+  :-  %remove-graph
+  [owner name]
 ++  add-book-update
   :: creating a new book under a library
   |=  [rid=resource author=ship time-sent=time =book:library]
