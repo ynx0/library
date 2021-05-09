@@ -84,10 +84,14 @@
 ::
 ++  remove-book-update
   |=  [rid=resource top=@ time-sent=time]
+  :: todo this is broken. right now it clears the post content of the top level structural node, which is not what we want.
+  :: we'll have to think about this. when we "delete" a book, do we want to clear all of its revisions and comments, or just revisions.
+  :: i would think everything. so we need to have a list of the indexes of all [top %meta @] revisions and all [top %comments @]
   ^-  update
   :-  time-sent
   :+  %remove-posts  rid
-  (sy ~[[top ~]])
+  ~&  "heads up, removing a book don't work rn chief."
+  (sy ~[[top ~] ])
 ::
 ++  revise-meta-update
   |=  [rid=resource last-revision-index=index author=ship time-sent=time =book:library]

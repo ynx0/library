@@ -31,8 +31,8 @@
   ~&  >  '%library-proxy initialized successfully'
   :: subscribe to graph store updates here
   ::
-  [[[%pass /updates/(scot %p our.bowl) [%agent [our.bowl %graph-store] [%watch /updates]]] ~] this]
-  ::`this
+  ::[[[%pass /graph-updates/(scot %p our.bowl) [%agent [our.bowl %graph-store] [%watch /updates]]] ~] this]  :: maybe we don't need the wire...
+  [[[%pass ~ [%agent [our.bowl %graph-store] [%watch /updates]]] ~] this]
 ++  on-save
   ^-  vase
   !>(state)
@@ -57,6 +57,7 @@
     (handle-action:hc action)
   ==
   [cards this]
+::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
@@ -73,7 +74,6 @@
   :: if it is graph store update from foreign proxy
   :: assert that the resource of the update matches the src.bowl (i.e. disallow updates from imposter)
   :: ingest the update by poking the local graph store with it.
-
   ?+  -.sign  (on-agent:def wire sign)
       %kick
     ~&  >>>  "kicked from graph store subscription"
@@ -83,14 +83,19 @@
     =^  cards  state
       ?+  p.cage.sign  `state
           %graph-update-2
-        =+  !<(update:store q.cage.sign)
-        ::~&  sign
-        (handle-graph-update:hc !<(update:store q.cage.sign))
+        =+  !<(=update:store q.cage.sign)
+        ~&  wire
+        :: check src.bowl
+        :: if ourselves, send the graph update to all subscribers
+        :: if its someone else, then ingest it into our graph store
+        ?:  =(src.bowl our.bowl)
+          :: this is outgoign
+          (handle-graph-update-outgoing:hc update)
+        (handle-graph-update-incoming:hc update)
         ::
       ==
   [cards this]
   ==
-
 ::
 ++  on-watch
   |=  =path
@@ -182,12 +187,21 @@
       [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
     ==
     [cards state]
-++  handle-graph-update
+++  handle-graph-update-outgoing
   |=  [update=update:store]
   ^-  (quip card _state)
   =^  cards  state
-  ::  this is where we proxy / forward any graph store updates
-  ::  to any subscriber based on
+  ::  this is where we forward any graph store updates to any subscriber of ours
+  ~&  "got graph update {<update>}"
+  `state
+  [cards state]
+::
+++  handle-graph-update-incoming
+  |=  [update=update:store]
+  ^-  (quip card _state)
+  =^  cards  state
+  ::  this is where we ingest a graph store update
+  ::  from a foreign proxy that we've subscribed to
   ~&  "got graph update {<update>}"
   `state
   [cards state]
