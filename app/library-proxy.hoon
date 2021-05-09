@@ -176,8 +176,10 @@
       =/  rid            rid.action
       =/  comment-index  index.action
       =/  prim  (~(got by permissions) rid)
-      =/  update  .^(update:store %gx /graph-store/node/[rid]/[comment-index]/something)  ::  scry graph store for the index
-      ::?>(%& -.mp.update)
+      ~|  "%remove-comment is unimplemented"
+      !!
+      =/  prev-comment-update  .^(update:store %gx /graph-store/node/[rid]/[comment-index]/something)  ::  scry graph store for the index
+      ::?>(%& -.mp.prev-comment-update)
       ::=/  post ...
       =/  comment-author=ship  ~zod
       ?>  =(comment-author src.bowl)
