@@ -88,6 +88,7 @@
       contents.blank   ~
   ==
   =/  meta-contents  (make-meta-contents book)
+  ::  todo in scry .^  graph store for latest 
   =/  top  time-sent
   :-  time-sent
   :+  %add-nodes  rid

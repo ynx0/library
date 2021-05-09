@@ -119,6 +119,8 @@
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --
+::  General Commetn: the second item in cell of all the cards below is ~ which is actually the return wire we want the poke-ack to 
+::  be sent on, but, we don't really care about it i don't think so we'll leave it null for now
 |_  bowl=bowl:gall
 ++  handle-command
   |=  [=command:library]
@@ -145,8 +147,6 @@
     =/  rid     rid.command
     =/  book    book.command
     =/  update  (add-book-update rid src.bowl now.bowl book)
-    ::  [delete later] the second item in cell is ~ which is actually the return path we want the poke-ack to 
-    ::  be sent on, but, we don't really care about it i don't think so we'll leave it null for now
     [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
     ::
       %remove-book
