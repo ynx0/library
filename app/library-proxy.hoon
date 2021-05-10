@@ -61,7 +61,7 @@
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
-  :::: (in this model. each ship is responsible soley for sending out updates of resources it owns, and no one else.
+  :::: (in this model. each ship is responsible solely for sending out updates of resources it owns, and no one else.
   :::: as a result, we simply trust updates (after imposter check) from a given ship; that is, it is the sole source of truth).
   ::  CHECK dap.bowl , if graph store then we know its local, if proxy then we know someone else is
   ::  also check src.bowl
