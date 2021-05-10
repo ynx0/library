@@ -221,20 +221,28 @@
 ++  handle-graph-update-outgoing
   |=  [update=update:store]
   ^-  (quip card _state)
+  ~&  "got graph update {<update>}"
   =^  cards  state
   ::  this is where we forward any graph store updates to any subscriber of ours
-  ~&  "got graph update {<update>}"
+  ?>  =(our.bowl src.bowl)  :: we only forward updates for ourselves (todo we shouldn't for our moons right? idk)
+  ::  point of confusion: based on curent permissioning scheme, we know who deserves what specific update if they have permissions for a pre-existing book in a library
+  ::  but how do they get access to the library from the start, when it is created and no books exist?
+  ::  should everyone get some sort of 'initial' update? i.e. when they are added to permissions via %update-permissions,
+  ::  should they then get the original updates? would we scry the whole current graph and give that to them first?
+  ::  should the permissioning scheme be changed?
   `state
   [cards state]
 ::
 ++  handle-graph-update-incoming
-  |=  [update=update:store]
+  |=  [=update:store]
   ^-  (quip card _state)
+  ~&  "got foreign graph update {<update>} from {<src.bowl>}"
   =^  cards  state
   ::  this is where we ingest a graph store update
   ::  from a foreign proxy that we've subscribed to
-  ~&  "got graph update {<update>}"
-  `state
+  ::  todo do some sort of imposter check.
+  ::?>  
+  [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
   [cards state]
 ::
 ++  poke-graph-store
