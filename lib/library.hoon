@@ -1,4 +1,4 @@
-/-  *post, *resource, library, spider
+/-  *post, resource, library, spider
 /+  *graph-store, strandio
 |%
 :: Thread Only Functions: Can only be called as a strand/ in a spider context
@@ -66,9 +66,8 @@
   ^-  update
   :-  time-sent
   :-  %add-graph
-  :~
-      [owner name]
-      *graph:store  :: the official thread uses (gas:orm ~ ~), which is equivalent
+  :*  [owner name]
+      *graph  :: the official thread uses (gas:orm ~ ~), which is equivalent
       [~ %graph-validator-library]
       %.y
   ==
@@ -79,7 +78,6 @@
   :-  %remove-graph
   [owner name]
 ++  add-book-update
-  :: creating a new book under a library
   |=  [rid=resource author=ship time-sent=time =book:library]
   ^-  update
   =|  blank=post
@@ -88,7 +86,7 @@
       contents.blank   ~
   ==
   =/  meta-contents  (make-meta-contents book)
-  ::  todo in scry .^  graph store for latest 
+  ::  todo in scry .^  graph store for last update if doing ascending numeric order
   =/  top  time-sent
   :-  time-sent
   :+  %add-nodes  rid
@@ -105,11 +103,12 @@
   :: todo this is broken. right now it clears the post content of the top level structural node, which is not what we want.
   :: we'll have to think about this. when we "delete" a book, do we want to clear all of its revisions and comments, or just revisions.
   :: i would think everything. so we need to have a list of the indexes of all [top %meta @] revisions and all [top %comments @]
+  :: well also landscape does the same thing actually so im not gonna worry about it.
   ^-  update
   :-  time-sent
   :+  %remove-posts  rid
   ~&  "heads up, removing a book don't work rn chief."
-  (sy ~[[top ~] ])
+  (silt ~[[top ~]])
 ::
 ++  revise-meta-update
   |=  [rid=resource last-revision-index=index author=ship time-sent=time =book:library]
@@ -148,8 +147,8 @@
   |=  [rid=resource comment-index=index time-sent=time]
   ^-  update
   ~|  "invalid index {<comment-index>} provided"
-  ?>  =((lent comment-index) 3)
+  ?>  =([@ %comments @ ~] comment-index)
   :-  time-sent
   :+  %remove-posts  rid
-  (sy ~[comment-index])
+  (silt ~[comment-index])
 --
