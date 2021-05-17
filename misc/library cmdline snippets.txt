@@ -2,8 +2,12 @@
 |commit %home
 -build-file %/app/library-proxy/hoon
 =library -build-file %/sur/library/hoon
+=store -build-file %/sur/graph-store/hoon
 
-:graph-store|add-graph [our %library1] [~ %graph-validator-library] %.y
+::  :graph-store|add-graph [our %library1] [~ %graph-validator-library] %.y
+
+:library-proxy &library-command [%create-library [our %library1] [%open ~]]
+
 :graph-store +dbug [%state 'graphs']
 
 :library-proxy +dbug [%state 'permissions']
@@ -21,6 +25,10 @@
 :library-proxy &library-command [%update-permissions [our %library1] 1 ~nus %remove]
 :library-proxy +dbug [%state 'permissions']
 
+
+:: remove the library on ~zod's end
+
+:library-proxy &library-command [%remove-library [our %library1]]
 
 
 
