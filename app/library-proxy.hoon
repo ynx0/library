@@ -235,6 +235,7 @@
   [cards state]
 ::
 ++  poke-graph-store
-  |=  *
-  !!
+  |=  [=update:store]
+  ^-  (list card)
+  [%pass ~ %agent [our.bowl %graph-store] %poke [%graph-update-2 !>(update)]]~
 --
