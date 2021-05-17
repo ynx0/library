@@ -9,7 +9,8 @@
 +$  state-0  [%0 base-state-0]
 +$  base-state-0
   $:
-    =permissions:library
+    =readers:library
+    =policies:library
   ==
 ::
 +$  card  card:agent:gall
