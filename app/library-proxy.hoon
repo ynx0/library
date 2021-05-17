@@ -30,9 +30,7 @@
   ^-  (quip card _this)
   ~&  >  '%library-proxy initialized successfully'
   :: subscribe to graph store updates here
-  ::
-  ::[[[%pass /graph-updates/(scot %p our.bowl) [%agent [our.bowl %graph-store] [%watch /updates]]] ~] this]  :: maybe we don't need the wire...
-  [[[%pass ~ [%agent [our.bowl %graph-store] [%watch /updates]]] ~] this]
+  [[%pass ~ %agent [our.bowl %graph-store] [%watch /updates]]~ this]
 ++  on-save
   ^-  vase
   !>(state)
@@ -47,7 +45,6 @@
   =^  cards  state
   ?+    mark  (on-poke:def mark vase)
       %library-command
-    ::?>  =(our.bowl src.bowl)          :: allow only ourselves to use this poke
     ?>  (team:title our.bowl src.bowl)  :: allow ourselves and moons to use this poke
     =+  !<(=command:library vase)
     (handle-command:hc command)
@@ -57,7 +54,6 @@
     (handle-action:hc action)
   ==
   [cards this]
-::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
@@ -81,7 +77,7 @@
     ::
       %fact
     =^  cards  state
-      ?+  p.cage.sign  `state
+      ?+    p.cage.sign  `state
           %graph-update-2
         =+  !<(=update:store q.cage.sign)
         ~&  wire
@@ -89,7 +85,6 @@
         :: if ourselves, send the graph update to all subscribers
         :: if its someone else, then ingest it into our graph store
         ?:  =(src.bowl our.bowl)
-          :: this is outgoign
           (handle-graph-update-outgoing:hc update)
         (handle-graph-update-incoming:hc update)
         ::
@@ -109,12 +104,8 @@
     `state
   ==
   [cards this]
-
-::  on watch: someone is trying to subscribe to a pinboard on my local graph-store
-::  1. do some basic permissions logic based on the path
-::    a. dunno exactly how the paths would work here.
-::  2. if it passes, 
 ++  on-leave  on-leave:def
+:: todo sufrace available books in peek
 ++  on-peek   on-peek:def
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
@@ -176,7 +167,6 @@
         ==
       [~ state(permissions (~(put by permissions) rid prm))]  :: replace the old prm with the new one
     ::
-
   ==
   [cards state]
 ++  handle-action
@@ -224,12 +214,10 @@
   ~&  "got graph update {<update>}"
   =^  cards  state
   ::  this is where we forward any graph store updates to any subscriber of ours
-  ?>  =(our.bowl src.bowl)  :: we only forward updates for ourselves (todo we shouldn't for our moons right? idk)
-  ::  point of confusion: based on curent permissioning scheme, we know who deserves what specific update if they have permissions for a pre-existing book in a library
-  ::  but how do they get access to the library from the start, when it is created and no books exist?
-  ::  should everyone get some sort of 'initial' update? i.e. when they are added to permissions via %update-permissions,
-  ::  should they then get the original updates? would we scry the whole current graph and give that to them first?
-  ::  should the permissioning scheme be changed?
+  ::?>  =(our.bowl entity.resource.q.update)  :: we only forward updates for resources we own (todo we shouldn't for our moons right? idk)
+  ::  for each ship and prim in tap:by readers
+  ::  for each rid and indexes=(set atom) in prim
+  ::  [%pass /updates/[ship]/[rid] %agent [ship %library-proxy] %poke [%graph-update-2 !>(update)]]~
   `state
   [cards state]
 ::
