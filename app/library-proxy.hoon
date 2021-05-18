@@ -181,10 +181,10 @@
       =/  author     src.bowl
       =/  time-sent  now.bowl
       =/  comment    comment.action
-      =/  prm        (~(got by permissions) rid)
-      ?>  ?|                               :: commenter must be either:
-            =(team:title our.bowl author)  :: us or our moon
-            (~(has ju prm) top author)     :: someone with permissions
+      ::  commenter must be either:
+      =/  prm        (~(get by readers) author)
+      ?>  ?|  (team:title our.bowl author)  ::  us or our moon
+              (~(has ju (need prm)) rid top)       :: someone with permissions
           ==
       =/  update     (add-comment-update rid top author time-sent comment)
       [(poke-graph-store update) state]
