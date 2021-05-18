@@ -124,7 +124,7 @@
       =/  time-sent  now.bowl
       =/  update     (create-library-update rid time-sent)
       =.  permissions.state  (~(put by permissions) rid *prim:library)  ::  init the prim based on the new library to create
-      [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
+      [(poke-graph-store update) state]
     ::
         %remove-library
       =/  rid        rid.command
@@ -132,14 +132,15 @@
       =/  update     (remove-library-update rid time-sent)
       =.  permissions.state  (~(del by permissions) rid)  ::  remove the prim for the library to be deleted by clearing it
       [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
+      [(poke-graph-store update) state]
     ::
         %add-book
       =/  rid           rid.command
       =/  author        src.bowl
       =/  time-sent     now.bowl
       =/  book          book.command
-      =/  update  (add-book-update rid author time-sent book)
-      [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
+      =/  update        (add-book-update rid author time-sent book)
+      [(poke-graph-store update) state]
     ::
         %remove-book
       =/  rid        rid.command 
@@ -171,7 +172,7 @@
             (~(has ju prm) top author)     :: someone with permissions
           ==
       =/  update     (add-comment-update rid top author time-sent comment)
-      [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
+      [(poke-graph-store update) state]
       ::
         %remove-comment
       ::  TODO how do we only allow author of comment to remove their own comment
