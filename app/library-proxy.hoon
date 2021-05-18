@@ -126,8 +126,9 @@
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --
-::  General Commetn: the second item in cell of all the cards below is ~ which is actually the return wire we want the poke-ack to 
+::  General Comment: the second item in cell of all the cards below is ~ which is actually the return wire we want the poke-ack to 
 ::  be sent on, but, we don't really care about it i don't think so we'll leave it null for now
+::  i think it may be important when there is a poke-nack or smtn and you want to keep track of it
 |_  bowl=bowl:gall
 ++  handle-command
   |=  [=command:library]
@@ -137,16 +138,19 @@
         %create-library
       =/  rid        rid.command
       =/  time-sent  now.bowl
+      =/  policy     policy.command
       =/  update     (create-library-update rid time-sent)
-      =.  permissions.state  (~(put by permissions) rid *prim:library)  ::  init the prim based on the new library to create
+      =.  policies   (~(put by policies) rid policy)  :: set the policy for the given rid into the actual state
       [(poke-graph-store update) state]
     ::
         %remove-library
       =/  rid        rid.command
       =/  time-sent  now.bowl
       =/  update     (remove-library-update rid time-sent)
-      =.  permissions.state  (~(del by permissions) rid)  ::  remove the prim for the library to be deleted by clearing it
-      [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
+      =.  readers  
+        %-  ~(run by readers)
+        |=([prm=prim:library] (~(put by prm) rid *(set ship)))  :: clear the library from any existing readers
+      =.  policies   (~(del by policies) rid)                   ::  remove the policy for the given rid from
       [(poke-graph-store update) state]
     ::
         %add-book
@@ -158,15 +162,14 @@
       [(poke-graph-store update) state]
     ::
         %remove-book
-      =/  rid        rid.command 
+      =/  rid        rid.command
       =/  top        top.command
       =/  time-sent  now.bowl
       =/  update     (remove-book-update rid top time-sent)
-      ::  delete any permissions for this book
-      =/  prm  (~(got by permissions) rid)
-      =.  prm  (~(del by prm) top)
-      =.  permissions.state  (~(put by permissions) rid prm)
-      [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
+      =.  readers
+        %-  ~(run by readers)
+        |=([prm=prim:library] (~(del ju prm) rid top))  ::  stop tracking any readers for this book
+      [(poke-graph-store update) state]
     ::
   ==
   [cards state]
