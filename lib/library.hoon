@@ -100,14 +100,15 @@
 ::
 ++  remove-book-update
   |=  [rid=resource top=@ time-sent=time]
-  :: todo this is broken. right now it clears the post content of the top level structural node, which is not what we want.
-  :: we'll have to think about this. when we "delete" a book, do we want to clear all of its revisions and comments, or just revisions.
-  :: i would think everything. so we need to have a list of the indexes of all [top %meta @] revisions and all [top %comments @]
-  :: well also landscape does the same thing actually so im not gonna worry about it.
+  :: todo this could be improved.
+  :: right now it clears the post content of the top level structural node
+  :: what would be better is to clear all of the indexes
+  :: so we need to have a list of the indexes of all [top %meta @] revisions and all [top %comments @]
+  :: right now, landscape also just deletes the top level node, using it as a "this post has been marked deleted"
+  ::  and just hides the whole. so we can do this for now and have it be ok
   ^-  update
   :-  time-sent
   :+  %remove-posts  rid
-  ~&  "heads up, removing a book don't work rn chief."
   (silt ~[[top ~]])
 ::
 ++  revise-meta-update
