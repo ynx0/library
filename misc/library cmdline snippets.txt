@@ -1,33 +1,63 @@
 |mount %
 |commit %home
+
 -build-file %/app/library-proxy/hoon
 =library -build-file %/sur/library/hoon
 =store -build-file %/sur/graph-store/hoon
 
-::  :graph-store|add-graph [our %library1] [~ %graph-validator-library] %.y
+|start %library-proxy
 
+
+:: creating the library
 :library-proxy &library-command [%create-library [our %library1] [%open ~]]
+:graph-store +dbug [%state 'graphs']
+:library-proxy +dbug
 
+
+:: adding a book
+:library-proxy &library-command [%add-book [our %library1] ["Dune" "isbnisbnis"]]
+:library-proxy &library-command [%add-book [our %library1] ["ABC" "isbnisbnis"]]
 :graph-store +dbug [%state 'graphs']
 
-:library-proxy +dbug [%state 'permissions']
 
-:: adding book without then with permissions
-:library-proxy &library-command [%add-book [our %library1] ["Dune" "isbnisbnis"]]
-:library-proxy &library-command [%update-permissions [our %library1] 1 ~zod %add]
-:library-proxy +dbug [%state 'permissions']
-:library-proxy &library-command [%add-book [our %library1] ["Dune" "isbnisbnis"]]
+:: removing a book
+:library-proxy &library-command [%remove-book [our %library1] <top index of "ABC">]
+:graph-store +dbug [%state 'graphs']
 
 
-:: add and remove from permissions
-:library-proxy &library-command [%update-permissions [our %library1] 1 ~nus %add]
-:library-proxy +dbug [%state 'permissions']
-:library-proxy &library-command [%update-permissions [our %library1] 1 ~nus %remove]
-:library-proxy +dbug [%state 'permissions']
+:: trying to add a book from ~nus (fails)
+:~zod/library-proxy &library-command [%add-book [our %library1] ["fake book" "isbnisbnis"]]
 
 
-:: remove the library on ~zod's end
+:: ~zod adds comment on a book
+:library-proxy &library-action [%add-comment [our %library1] <top index of "Dune"> "I love dune"]
 
+:: ~nus tries to add comment on book, fails cause not part of readers
+:~zod/library-proxy &library-action [%add-comment [our %library1] <top index of "Dune"> "dune is ok"]
+
+:: ~nus scries for libraries available on ~zod
+... (finds %library1)
+
+:: ~nus scries for books available on ~zod/library1
+... (obtains top level index <some number>)
+
+
+:: todo where is ~nus supposed to subscribe to a specific library or book?
+
+:: ~nus pokes :~zod/library-proxy with %get-book to start tracking book and its comments
+
+:: ~nus tries to add comment again, is succesful
+:~zod/library-proxy &library-action [%add-comment [our %library1] <top index of "Dune"> "dune is ok"]
+
+
+:: ~zod deletes nus's comment
+
+:: ~nus tries to delete ~zod's comment, fails
+
+:: ~zod deletes the book (ensure that readers is cleared)
+
+
+:: ~zod deletes the library
 :library-proxy &library-command [%remove-library [our %library1]]
 
 
