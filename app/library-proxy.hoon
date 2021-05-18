@@ -192,21 +192,35 @@
         %remove-comment
       ::  TODO how do we only allow author of comment to remove their own comment
       ::  get old node, see if it the same author as src.bowl, only then allow removal
-      ::  only allow deletion of own comment
+      ::  only allow deletion of own comment, or by owner
       =/  rid            rid.action
       =/  comment-index  index.action
-      =/  prim  (~(got by permissions) rid)
+      ::  1. ensure index is of proper form (i.e. [@ %comments @])
+      ?>  =([@ %comments @ ~] index)
+      ::  2. scry for node at that index
+        ::=/  prev-comment-update  .^(=update:store %gx (weld /graph-store/node/(scot %p entity.rid)/[name.rid] (snoc `path`comment-index %noun))) 
+      ::  3. assert author of node is src.bowl or (team:title our.bowl)
+        ::?>  =(-.update %add-nodes)
+        ::=/  node  (snag 0 nodes.update)
+        ::=/  post  ?~(post.node !! p.post.node)
+        ::=/  comment-author  author.post
+        ::?>  =(comment-author src.bowl)
+        ::=/  remove-update  (remove-comment-update rid comment-index now.bowl)
+        ::[(poke-graph-store remove-update) state]
       ~|  "%remove-comment is unimplemented"
       !!
-      =/  prev-comment-update  .^(update:store %gx /graph-store/node/[rid]/[comment-index]/something)  ::  scry graph store for the index
-      ::?>(%& -.mp.prev-comment-update)
-      ::=/  post ...
-      =/  comment-author=ship  ~zod
-      ?>  =(comment-author src.bowl)
-      ::  assert the author of comment to match src.bowl
-      ::  extract above to permissions core
-      =/  update  (remove-comment-update rid comment-index now.bowl)
-      [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
+       %get-book
+      =/  rid    rid.action
+      =/  index  book-index.action
+      :: should only be able to do this if we are NOT the host. otherwise, we already have the book
+      :: 1. add the person to readers
+      ::  =/  prm  ?~  *prim  (~(get by readers) author)
+      ::  =.  prm  (~(put ju prm) rid index)
+      ::  =.  readers  (~(put by readers) rid prm)
+      :: 2. send them the graph update
+      ::=/  update  .^ scry for the node at the requested index
+      ::[[%pass /updates/[src.bowl]/[rid] %agent [src.bowl %library-proxy] %poke [%graph-update-2 !>(update)]]~ state]
+      !!
     ==
     [cards state]
 ++  handle-graph-update-outgoing
@@ -227,11 +241,12 @@
   ^-  (quip card _state)
   ~&  "got foreign graph update {<update>} from {<src.bowl>}"
   =^  cards  state
-  ::  this is where we ingest a graph store update
-  ::  from a foreign proxy that we've subscribed to
-  ::  todo do some sort of imposter check.
-  ::?>  
-  [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
+  ~&  "warning: handling of incoming graph updates is currently insecure!"
+  ::  question: if someone pokes me a graph store update from their proxy (adversarially)
+  ::  that is %add-signatures, there is not a resource but a uid.
+  ::  should i handle every update and extract the resource from the uid if present?
+  ::?>  =(src.bowl entity.resource.q.update)  :: only owners may send graph updates for resources they own
+  [(poke-graph-store update) state]
   [cards state]
 ::
 ++  poke-graph-store
