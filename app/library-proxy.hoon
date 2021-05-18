@@ -223,6 +223,7 @@
       :: 2. send them the graph update
       ::=/  update  .^ scry for the node at the requested index
       ::[[%pass /updates/[src.bowl]/[rid] %agent [src.bowl %library-proxy] %poke [%graph-update-2 !>(update)]]~ state]
+      ~|  "%get-book is unimplemented"
       !!
     ==
     [cards state]
