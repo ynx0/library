@@ -152,22 +152,6 @@
       =.  permissions.state  (~(put by permissions) rid prm)
       [[[%pass ~ %agent [our.bowl %graph-store] %poke %graph-update-2 !>(update)] ~] state]
     ::
-        %update-permissions
-      ::  ensure that we don't add ourselves or our moon to the permissions
-      ::  because we always have permissions by definition
-      =/  rid    rid.command
-      =/  top    top.command
-      =/  ship   ship.command
-      ?<  (team:title our.bowl ship.command)
-      ::  todo debug printf ~|([dap.bowl "tried to update permissions for non-existent rid" rid] !!)
-      =/  prm  (~(got by permissions) rid)  ::  get the prim associated with the given resource
-      =.  prm  :: perform the modification then rebind the product to prm
-        ?-  operation.command
-          %add     (~(put ju prm) top ship)  :: add the ship to the set associated with top
-          %remove  (~(del ju prm) top ship)  :: remove the ship to the set associated with top
-        ==
-      [~ state(permissions (~(put by permissions) rid prm))]  :: replace the old prm with the new one
-    ::
   ==
   [cards state]
 ++  handle-action
