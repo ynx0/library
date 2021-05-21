@@ -249,8 +249,7 @@
     =.  readers  (~(put by readers) src.bowl prm)
     :: 2. send them the graph update
     =/  update  .^(update:store %gx (weld /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid] (snoc `path`(turn comment-index (cury scot %ud)) %noun)))
-    ::[[%pass /updates/[src.bowl]/[rid] %agent [src.bowl %library-proxy] %poke [%graph-update-2 !>(update)]]~ state]
-    [[%pass ~ %agent [src.bowl %library-proxy] %poke [%graph-update-2 !>(update)]]~ state]    
+    [[%give %fact ~[/updates/(scot %p src.bowl)/[entity.rid]] [%graph-update-2 !>(update)]]~ state]
   ==
   [cards state]
 ++  handle-graph-update-outgoing
