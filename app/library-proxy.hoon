@@ -218,26 +218,26 @@
       [(poke-graph-store update) state]
       ::
         %remove-comment
-      ::  TODO how do we only allow author of comment to remove their own comment
-      ::  get old node, see if it the same author as src.bowl, only then allow removal
-      ::  only allow deletion of own comment, or by owner
       =/  rid            rid.action
       =/  comment-index  index.action
-      ::  1. ensure index is of proper form (i.e. [@ %comments @])
-      ?>  =([@ %comments @ ~] index)
-      ::  2. scry for node at that index
-        ::=/  prev-comment-update  .^(=update:store %gx (weld /graph-store/node/(scot %p entity.rid)/[name.rid] (snoc `path`comment-index %noun))) 
-      ::  3. assert author of node is src.bowl or (team:title our.bowl)
-        ::?>  =(-.update %add-nodes)
-        ::=/  node  (snag 0 nodes.update)
-        ::=/  post  ?~(post.node !! p.post.node)
-        ::=/  comment-author  author.post
-        ::?>  =(comment-author src.bowl)
-        ::=/  remove-update  (remove-comment-update rid comment-index now.bowl)
-        ::[(poke-graph-store remove-update) state]
-      ~|  "%remove-comment is unimplemented"
-      !!
-       %get-book
+      ::  ensure index is of proper form (i.e. [@ %comments @])
+      ?>  =([@ %comments @ ~] comment-index)
+      ::  scry for node at that index
+      =/  prev-comment-update  .^(update:store %gx (weld /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid] (snoc `path`(turn comment-index (cury scot %ud)) %noun)))
+      ::  todo clean up this junk lol
+      =/  prev-post
+        ?+  -.q.prev-comment-update  !!
+           %add-nodes
+          =/  comment-node  (~(got by nodes.q.prev-comment-update) idx)
+          ?+  -.post.comment-node  !!
+            %.y  p.post.comment-node
+          ==
+        ==
+      =/  prev-author  author.prev-post
+      ::  assert author of node is src.bowl ((team:title our.bowl) ?)
+      ?>  =(prev-author src.bowl)
+      =/  remove-update  (remove-comment-update rid comment-index now.bowl)
+      [(poke-graph-store remove-update) state]
       ::
       =/  rid    rid.action
       =/  index  book-index.action
