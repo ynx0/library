@@ -166,7 +166,7 @@
       =/  policy     policy.command
       =/  update     (create-library-update rid time-sent)
       =.  policies   (~(put by policies) rid policy)  :: set the policy for the given rid into the actual state
-      [(poke-graph-store update) state]
+      [(poke-local-store update) state]
     ::
         %remove-library
       =/  rid        rid.command
@@ -176,7 +176,7 @@
         %-  ~(run by readers)
         |=([prm=prim:library] (~(put by prm) rid *(set ship)))  :: clear the library from any existing readers
       =.  policies   (~(del by policies) rid)                   ::  remove the policy for the given rid from
-      [(poke-graph-store update) state]
+      [(poke-local-store update) state]
     ::
         %add-book
       =/  rid           rid.command
@@ -184,7 +184,7 @@
       =/  time-sent     now.bowl
       =/  book          book.command
       =/  update        (add-book-update rid author time-sent book)
-      [(poke-graph-store update) state]
+      [(poke-local-store update) state]
     ::
         %remove-book
       =/  rid        rid.command
@@ -194,7 +194,7 @@
       =.  readers
         %-  ~(run by readers)
         |=([prm=prim:library] (~(del ju prm) rid top))  ::  stop tracking any readers for this book
-      [(poke-graph-store update) state]
+      [(poke-local-store update) state]
     ::
   ==
   [cards state]
@@ -215,7 +215,7 @@
               (~(has ju (need prm)) rid top)       :: someone with permissions
           ==
       =/  update     (add-comment-update rid top author time-sent comment)
-      [(poke-graph-store update) state]
+      [(poke-local-store update) state]
       ::
         %remove-comment
       =/  rid            rid.action
@@ -237,7 +237,7 @@
       ::  assert author of node is src.bowl ((team:title our.bowl) ?)
       ?>  =(prev-author src.bowl)
       =/  remove-update  (remove-comment-update rid comment-index now.bowl)
-      [(poke-graph-store remove-update) state]
+      [(poke-local-store remove-update) state]
       ::
         %get-book
       =/  rid    rid.action
@@ -256,9 +256,9 @@
 ++  handle-graph-update-outgoing
   |=  [update=update:store]
   ^-  (quip card _state)
+  ::  this is where we forward any graph store updates to any subscriber of ours
   ~&  "got graph update {<update>}"
   =^  cards  state
-  ::  this is where we forward any graph store updates to any subscriber of ours
   ::?>  =(our.bowl entity.resource.q.update)  :: we only forward updates for resources we own (todo we shouldn't for our moons right? idk)
   ::  for each ship and prim in tap:by readers
   ::  for each rid and indexes=(set atom) in prim
@@ -276,10 +276,10 @@
   ::  that is %add-signatures, there is not a resource but a uid.
   ::  should i handle every update and extract the resource from the uid if present?
   ::?>  =(src.bowl entity.resource.q.update)  :: only owners may send graph updates for resources they own
-  [(poke-graph-store update) state]
+  [(poke-local-store update) state]
   [cards state]
 ::
-++  poke-graph-store
+++  poke-local-store
   |=  [=update:store]
   ^-  (list card)
   [%pass ~ %agent [our.bowl %graph-store] %poke [%graph-update-2 !>(update)]]~
