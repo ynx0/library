@@ -1,10 +1,11 @@
 |mount %
 |commit %home
 
--build-file %/app/library-proxy/hoon
 =library -build-file %/sur/library/hoon
 =store -build-file %/sur/graph-store/hoon
+=gra -build-file %/lib/graph-store/hoon
 
+-build-file %/app/library-proxy/hoon
 |start %library-proxy
 
 

@@ -30,8 +30,8 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%library-proxy initialized successfully'
-  :: subscribe to graph store updates here
-  [[%pass ~ %agent [our.bowl %graph-store] [%watch /updates]]~ this]
+  :: subscribe to /updates on graph store 
+  [[%pass /local-store %agent [our.bowl %graph-store] [%watch /updates]]~ this]
 ++  on-save
   ^-  vase
   !>(state)
@@ -213,6 +213,7 @@
       ~|  "%remove-comment is unimplemented"
       !!
        %get-book
+      ::
       =/  rid    rid.action
       =/  index  book-index.action
       :: should only be able to do this if we are NOT the host. otherwise, we already have the book
