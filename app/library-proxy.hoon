@@ -121,7 +121,7 @@
   ::==
   [cards this]
 ++  on-leave  on-leave:def
-:: todo sufrace available books in peek
+:: todo surface available books in peek
 ++  on-peek
   |=  pax=path
   ^-  (unit (unit cage))
