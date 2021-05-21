@@ -160,42 +160,41 @@
   ^-  (quip card _state)
   =^  cards  state
   ?-    -.command
-        %create-library
-      =/  rid        rid.command
-      =/  time-sent  now.bowl
-      =/  policy     policy.command
-      =/  update     (create-library-update rid time-sent)
-      =.  policies   (~(put by policies) rid policy)  :: set the policy for the given rid into the actual state
-      [(poke-local-store update) state]
-    ::
-        %remove-library
-      =/  rid        rid.command
-      =/  time-sent  now.bowl
-      =/  update     (remove-library-update rid time-sent)
-      =.  readers  
-        %-  ~(run by readers)
-        |=([prm=prim:library] (~(put by prm) rid *(set ship)))  :: clear the library from any existing readers
-      =.  policies   (~(del by policies) rid)                   ::  remove the policy for the given rid from
-      [(poke-local-store update) state]
-    ::
-        %add-book
-      =/  rid           rid.command
-      =/  author        src.bowl
-      =/  time-sent     now.bowl
-      =/  book          book.command
-      =/  update        (add-book-update rid author time-sent book)
-      [(poke-local-store update) state]
-    ::
-        %remove-book
-      =/  rid        rid.command
-      =/  top        top.command
-      =/  time-sent  now.bowl
-      =/  update     (remove-book-update rid top time-sent)
-      =.  readers
-        %-  ~(run by readers)
-        |=([prm=prim:library] (~(del ju prm) rid top))  ::  stop tracking any readers for this book
-      [(poke-local-store update) state]
-    ::
+      %create-library
+    =/  rid        rid.command
+    =/  time-sent  now.bowl
+    =/  policy     policy.command
+    =/  update     (create-library-update rid time-sent)
+    =.  policies   (~(put by policies) rid policy)  :: set the policy for the given rid into the actual state
+    [(poke-local-store update) state]
+  ::
+      %remove-library
+    =/  rid        rid.command
+    =/  time-sent  now.bowl
+    =/  update     (remove-library-update rid time-sent)
+    =.  readers  
+      %-  ~(run by readers)
+      |=([prm=prim:library] (~(put by prm) rid *(set ship)))  :: clear the library from any existing readers
+    =.  policies   (~(del by policies) rid)                   ::  remove the policy for the given rid from
+    [(poke-local-store update) state]
+  ::
+      %add-book
+    =/  rid           rid.command
+    =/  author        src.bowl
+    =/  time-sent     now.bowl
+    =/  book          book.command
+    =/  update        (add-book-update rid author time-sent book)
+    [(poke-local-store update) state]
+  ::
+      %remove-book
+    =/  rid        rid.command
+    =/  top        top.command
+    =/  time-sent  now.bowl
+    =/  update     (remove-book-update rid top time-sent)
+    =.  readers
+      %-  ~(run by readers)
+      |=([prm=prim:library] (~(del ju prm) rid top))  ::  stop tracking any readers for this book
+    [(poke-local-store update) state]
   ==
   [cards state]
 ++  handle-action
@@ -203,56 +202,57 @@
   ^-  (quip card _state)
   =^  cards  state
   ?-    -.action
-        %add-comment
-      =/  rid        rid.action
-      =/  top        top.action
-      =/  author     src.bowl
-      =/  time-sent  now.bowl
-      =/  comment    comment.action
-      ::  commenter must be either:
-      =/  prm        (~(get by readers) author)
-      ?>  ?|  (team:title our.bowl author)  ::  us or our moon
-              (~(has ju (need prm)) rid top)       :: someone with permissions
-          ==
-      =/  update     (add-comment-update rid top author time-sent comment)
-      [(poke-local-store update) state]
-      ::
-        %remove-comment
-      =/  rid            rid.action
-      =/  comment-index  index.action
-      ::  ensure index is of proper form (i.e. [@ %comments @])
-      ?>  =([@ %comments @ ~] comment-index)
-      ::  scry for node at that index
-      =/  prev-comment-update  .^(update:store %gx (weld /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid] (snoc `path`(turn comment-index (cury scot %ud)) %noun)))
-      ::  todo clean up this junk lol
-      =/  prev-post
-        ?+  -.q.prev-comment-update  !!
-           %add-nodes
-          =/  comment-node  (~(got by nodes.q.prev-comment-update) idx)
-          ?+  -.post.comment-node  !!
-            %.y  p.post.comment-node
-          ==
+      %add-comment
+    =/  rid        rid.action
+    =/  top        top.action
+    =/  author     src.bowl
+    =/  time-sent  now.bowl
+    =/  comment    comment.action
+    =/  prm        (~(get by readers) author)
+    ::                                      ::  commenter must be either:
+    ?>  ?|  (team:title our.bowl author)    ::  us or our moon
+            (~(has ju (need prm)) rid top)  ::  someone with permissions
         ==
-      =/  prev-author  author.prev-post
-      ::  assert author of node is src.bowl ((team:title our.bowl) ?)
-      ?>  =(prev-author src.bowl)
-      =/  remove-update  (remove-comment-update rid comment-index now.bowl)
-      [(poke-local-store remove-update) state]
-      ::
-        %get-book
-      =/  rid    rid.action
-      =/  index  book-index.action
-      :: should only be able to do this if we are NOT the host. otherwise, we already have the book
-      ?<  =(our.bowl src.bowl)
-      :: 1. add the person to readers
-      =/  prm  (fall (~(get by readers) src.bowl) *prim:library)
-      =.  prm  (~(put ju prm) rid index)
-      =.  readers  (~(put by readers) src.bowl prm)
-      :: 2. send them the graph update
-      =/  update  .^(update:store %gx (weld /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid] (snoc `path`(turn comment-index (cury scot %ud)) %noun)))
-      [[%pass /updates/[src.bowl]/[rid] %agent [src.bowl %library-proxy] %poke [%graph-update-2 !>(update)]]~ state]
-    ==
-    [cards state]
+    =/  update     (add-comment-update rid top author time-sent comment)
+    [(poke-local-store update) state]
+  ::
+      %remove-comment
+    =/  rid            rid.action
+    =/  comment-index  index.action
+    ::  ensure index is of proper form (i.e. [@ %comments @])
+    ?>  =([@ %comments @ ~] comment-index)
+    ::  scry for node at that index
+    =/  prev-comment-update  .^(update:store %gx (weld /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid] (snoc `path`(turn comment-index (cury scot %ud)) %noun)))
+    ::  todo clean up this junk lol
+    =/  prev-post
+      ?+  -.q.prev-comment-update  !!
+         %add-nodes
+        =/  comment-node  (~(got by nodes.q.prev-comment-update) idx)
+        ?+  -.post.comment-node  !!
+          %.y  p.post.comment-node
+        ==
+      ==
+    =/  prev-author  author.prev-post
+    ::  assert the person trying to delete is actually the author of node. todo what abt ((team:title our.bowl) ?)
+    ?>  =(prev-author src.bowl)
+    =/  remove-update  (remove-comment-update rid comment-index now.bowl)
+    [(poke-local-store remove-update) state]
+  ::
+      %get-book
+    =/  rid    rid.action
+    =/  index  book-index.action
+    :: should only be able to do this if we are NOT the host. otherwise, we already have the book
+    ?<  =(our.bowl src.bowl)
+    :: 1. add the person to readers
+    =/  prm  (fall (~(get by readers) src.bowl) *prim:library)
+    =.  prm  (~(put ju prm) rid index)
+    =.  readers  (~(put by readers) src.bowl prm)
+    :: 2. send them the graph update
+    =/  update  .^(update:store %gx (weld /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid] (snoc `path`(turn comment-index (cury scot %ud)) %noun)))
+    ::[[%pass /updates/[src.bowl]/[rid] %agent [src.bowl %library-proxy] %poke [%graph-update-2 !>(update)]]~ state]
+    [[%pass ~ %agent [src.bowl %library-proxy] %poke [%graph-update-2 !>(update)]]~ state]    
+  ==
+  [cards state]
 ++  handle-graph-update-outgoing
   |=  [update=update:store]
   ^-  (quip card _state)
