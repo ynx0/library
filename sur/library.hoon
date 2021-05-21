@@ -15,12 +15,13 @@
       [%remove-library rid=resource]
       [%add-book rid=resource =book]
       [%remove-book rid=resource top=@]
+      [%request-book rid=resource top=@]  :: this is the only poke which targets a foreign resrouce ONLY!
   ==
 ::
 +$  action
   $%  [%add-comment rid=resource top=@ =comment]  :: anyone can add if they are allowed
       [%remove-comment rid=resource =index]       :: anyone can remove their own comment
-      [%get-book rid=resource book-index=atom]    :: someone else wants to now get the data for a book and hear about its updates
+      [%get-book rid=resource book-index=atom]    :: someone else wants to now get the data for a book and hear about its updates. we should only ever hear this from a foreign library-proxy and never us ourself
   ==
 ::
 +$  policies  (map resource policy)
