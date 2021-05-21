@@ -239,18 +239,18 @@
       =/  remove-update  (remove-comment-update rid comment-index now.bowl)
       [(poke-graph-store remove-update) state]
       ::
+        %get-book
       =/  rid    rid.action
       =/  index  book-index.action
       :: should only be able to do this if we are NOT the host. otherwise, we already have the book
+      ?<  =(our.bowl src.bowl)
       :: 1. add the person to readers
-      ::  =/  prm  ?~  *prim  (~(get by readers) author)
-      ::  =.  prm  (~(put ju prm) rid index)
-      ::  =.  readers  (~(put by readers) rid prm)
+      =/  prm  (fall (~(get by readers) src.bowl) *prim:library)
+      =.  prm  (~(put ju prm) rid index)
+      =.  readers  (~(put by readers) src.bowl prm)
       :: 2. send them the graph update
-      ::=/  update  .^ scry for the node at the requested index
-      ::[[%pass /updates/[src.bowl]/[rid] %agent [src.bowl %library-proxy] %poke [%graph-update-2 !>(update)]]~ state]
-      ~|  "%get-book is unimplemented"
-      !!
+      =/  update  .^(update:store %gx (weld /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid] (snoc `path`(turn comment-index (cury scot %ud)) %noun)))
+      [[%pass /updates/[src.bowl]/[rid] %agent [src.bowl %library-proxy] %poke [%graph-update-2 !>(update)]]~ state]
     ==
     [cards state]
 ++  handle-graph-update-outgoing
