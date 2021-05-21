@@ -122,7 +122,32 @@
   [cards this]
 ++  on-leave  on-leave:def
 :: todo sufrace available books in peek
-++  on-peek   on-peek:def
+++  on-peek
+  |=  pax=path
+  ^-  (unit (unit cage))
+  ?+    pax  (on-peek:def pax)
+      [%x %libraries ~]
+    ::  1. scry for all graph keys in our local graph store
+    ::  .^(update:store %gx /=graph-store=/keys/noun)
+    ::  [p=~2021.5.21..15.59.10..037e q=[%keys resources={[entity=~zod name=%library1]}]]
+    ::  2. for list of graph keys, generate a list of their marks by scrying for /graph-mark
+    ::  .^((unit @tas) %gx /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/graph-mark/(scot %p our.bowl)/%library1/noun)
+    ::  [~ %graph-validator-library]
+    ::  3. filter out graph marks that are not %graph-validator-library
+    ::  %-  skim  ...
+    ::  
+    ::  alternatively, return key:by policies
+    ``noun+!>(~)
+    ::      
+      [%x %books @ ~]
+    =/  name  i.t.t.path
+    ::  for a given library name,
+    ::  scry our local graph store /graph/OUR/NAME
+    ::  .^((unit @tas) %gx /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/graph/(scot %p our)/[path]/noun)
+    ::  return key:orm:store for the atoms
+    ``noun+!>(~)
+    ::
+  ==
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --
