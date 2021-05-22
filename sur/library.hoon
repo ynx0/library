@@ -10,12 +10,13 @@
 +$  prim     (jug resource atom)  :: for a given resource, what indexes does the reader want to hear about?
 +$  readers  (map ship prim)      :: given a ship, what are the resources and books that it cares about?
 ::  TODO most things that take a rid can theoretically be just a name=@tas because entity=@p is always gonna be the owner of the proxy
+::  TODO rename some `top`s to `book-index`
 +$  command  ::  only host can poke
   $%  [%create-library rid=resource =policy]
       [%remove-library rid=resource]
       [%add-book rid=resource =book]
       [%remove-book rid=resource top=@]
-      [%request-book rid=resource top=@]  :: this is the only poke which targets a foreign resrouce ONLY!
+      [%request-book rid=resource top=@]  :: this is the only poke which targets a foreign resource (and never a local one!)
   ==
 ::
 +$  action

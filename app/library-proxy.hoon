@@ -14,7 +14,6 @@
   ==
 ::
 +$  card  card:agent:gall
-::
 --
 %-  agent:dbug
 =|  state-0
@@ -30,7 +29,6 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%library-proxy initialized successfully'
-  :: subscribe to /updates on graph store 
   [[%pass /local-store %agent [our.bowl %graph-store] [%watch /updates]]~ this]
 ++  on-save
   ^-  vase
@@ -49,7 +47,7 @@
     ?>  (team:title our.bowl src.bowl)  :: allow ourselves and moons to use this poke
     =+  !<(=command:library vase)
     (handle-command:hc command)
-    ::
+  ::
       %library-action
     =+  !<(=action:library vase)
     (handle-action:hc action)
@@ -58,39 +56,24 @@
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
-  :::: (in this model. each ship is responsible solely for sending out updates of resources it owns, and no one else.
-  :::: as a result, we simply trust updates (after imposter check) from a given ship; that is, it is the sole source of truth).
-  ::  CHECK dap.bowl , if graph store then we know its local, if proxy then we know someone else is
-  ::  also check src.bowl
-
-  :: if it is graph store update from local graph-store
-  :: check if it is a resource we own. if it is not, do not send out any updates for it
-  :: if it is, build a list of ships that deserve to get the update (potentially taking into account its type and stuff)
-  :: then send the updates out.
-
-  :: if it is graph store update from foreign proxy
-  :: assert that the resource of the update matches the src.bowl (i.e. disallow updates from imposter)
-  :: ingest the update by poking the local graph store with it.
-  ?+  -.sign  (on-agent:def wire sign)
+  :: (in this model. each ship is responsible solely for sending out updates of resources it owns, and no one else.
+  :: as a result, we simply trust updates (after imposter check) from a given ship; that is, it is the sole source of truth).
+  ?+    -.sign  (on-agent:def wire sign)
       %kick
     ~&  >>>  "kicked from graph store subscription"
     `this
-    ::
+  ::
       %fact
     =^  cards  state
       ?+    p.cage.sign  `state
           %graph-update-2
         =+  !<(=update:store q.cage.sign)
         ~&  wire
-        :: check src.bowl
-        :: if ourselves, send the graph update to all subscribers
-        :: if its someone else, then ingest it into our graph store
         ?:  =(src.bowl our.bowl)
           (handle-graph-update-outgoing:hc update)
         (handle-graph-update-incoming:hc update)
-        ::
       ==
-  [cards this]
+    [cards this]
   ==
 ::
 ++  on-watch
@@ -220,9 +203,9 @@
     =/  rid            rid.action
     =/  comment-index  index.action
     ?>  =([@ %comments @ ~] comment-index)  ::  ensure index is of proper form
-    ::  scry for node at that index
     ::  TODO convert to tall form
     ::  TODO refactor out
+    ::  scry for node at that index
     =/  prev-comment-update  
       .^(update:store %gx (weld /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid] (snoc `path`(turn comment-index (cury scot %ud)) %noun)))
     =/  prev-post
@@ -241,13 +224,14 @@
     =/  index  book-index.action
     :: should only be able to do this if we are NOT the host. otherwise, we already have the book
     ?<  =(our.bowl src.bowl)
+    ::  todo if dap is foreign app, then assert that it is also a %library-proxy
     :: 1. add the person to readers
     =/  prm  (fall (~(get by readers) src.bowl) *prim:library)
     =.  prm  (~(put ju prm) rid index)
     =.  readers  (~(put by readers) src.bowl prm)
     :: 2. send them the graph update
     =/  update  .^(update:store %gx (weld /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid] (snoc `path`(turn comment-index (cury scot %ud)) %noun)))
-    [[%give %fact ~[/updates/(scot %p src.bowl)/[entity.rid]] [%graph-update-2 !>(update)]]~ state]
+    [[%give %fact ~[/updates/(scot %p src.bowl)/[entity.rid]/[name.rid]] [%graph-update-2 !>(update)]]~ state]
   ==
   [cards state]
 ++  handle-graph-update-outgoing
