@@ -219,21 +219,19 @@
       %remove-comment
     =/  rid            rid.action
     =/  comment-index  index.action
-    ::  ensure index is of proper form (i.e. [@ %comments @])
-    ?>  =([@ %comments @ ~] comment-index)
+    ?>  =([@ %comments @ ~] comment-index)  ::  ensure index is of proper form
     ::  scry for node at that index
-    =/  prev-comment-update  .^(update:store %gx (weld /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid] (snoc `path`(turn comment-index (cury scot %ud)) %noun)))
-    ::  todo clean up this junk lol
+    ::  TODO convert to tall form
+    ::  TODO refactor out
+    =/  prev-comment-update  
+      .^(update:store %gx (weld /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid] (snoc `path`(turn comment-index (cury scot %ud)) %noun)))
     =/  prev-post
-      ?+  -.q.prev-comment-update  !!
-         %add-nodes
-        =/  comment-node  (~(got by nodes.q.prev-comment-update) idx)
-        ?+  -.post.comment-node  !!
-          %.y  p.post.comment-node
-        ==
-      ==
+      ?>  ?=(%add-nodes -.q.prev-comment-update)
+      =/  comment-node  (~(got by nodes.q.prev-comment-update) comment-index)
+      ?>  ?=(%.y -.post.comment-node)
+      p.post.comment-node
     =/  prev-author  author.prev-post
-    ::  assert the person trying to delete is actually the author of node. todo what abt ((team:title our.bowl) ?)
+    ::  assert the person trying to delete is actually the author of node. TODO what abt ((team:title our.bowl) ?)
     ?>  =(prev-author src.bowl)
     =/  remove-update  (remove-comment-update rid comment-index now.bowl)
     [(poke-local-store remove-update) state]
