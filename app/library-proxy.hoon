@@ -234,17 +234,17 @@
   ::
       %get-book
     =/  rid    rid.action
-    =/  index  book-index.action
+    =/  top    book-index.action
     :: should only be able to do this if we are NOT the host. otherwise, we already have the book
     ?<  =(our.bowl src.bowl)
     ::  todo if dap is foreign app, then assert that it is also a %library-proxy
     :: 1. add the person to readers
     =/  prm  (fall (~(get by readers) src.bowl) *prim:library)
-    =.  prm  (~(put ju prm) rid index)
+    =.  prm  (~(put ju prm) rid top)
     =.  readers  (~(put by readers) src.bowl prm)
     :: 2. send them the graph update
-    =/  update  .^(update:store %gx (weld /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid] (snoc `path`(turn comment-index (cury scot %ud)) %noun)))
-    [[%give %fact ~[/updates/(scot %p src.bowl)/[entity.rid]/[name.rid]] [%graph-update-2 !>(update)]]~ state]
+    =/  update  .^(update:store %gx /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid]/top/noun)
+    [[%give %fact ~[/updates/(scot %p src.bowl)/(scot %p entity.rid)/[name.rid]] [%graph-update-2 !>(update)]]~ state]
   ==
   [cards state]
 ++  handle-graph-update-outgoing
