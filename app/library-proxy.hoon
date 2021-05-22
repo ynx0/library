@@ -36,7 +36,7 @@
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
-  ~&  graph
+  ::~&  graph
   ~&  >  '%library-proxy recompiled successfully'
   `this(state !<(versioned-state old-state))
 ++  on-poke
@@ -256,9 +256,10 @@
   ~&  "got graph update"
   ~&  update
   =^  cards  state
-  ::=/  update-rid  (resource-for-update:graph !>(update))
-  ::?~  update-rid  `state  :: if theres no resource, we don't forward cause we can't tell if its something based on our own resource
-  ::?>  =(our.bowl entity.update-rid)  :: we only forward updates for resources we own (todo we shouldn't for our moons right? idk)
+  =/  update-rids  (resource-for-update:graph !>(update))
+  ?~  update-rids  `state  :: if theres no resource, we don't forward cause we can't tell if its something based on our own resource
+  =/  update-rid   i.update-rids
+  ?>  =(our.bowl entity.update-rid)  :: we only forward updates for resources we own (todo we shouldn't for our moons right? idk)
   `state
   ::=/  cards
   ::  %+  murn  ~(tap by readers)  :: for each reader, prim in readers
@@ -280,9 +281,10 @@
   ^-  (quip card _state)
   ~&  "got foreign graph update {<update>} from {<src.bowl>}"
   =^  cards  state
-    ::=/  rid  (resource-for-update:graph update)
-    ::?~  rid  `state
-    ::?>  =(src.bowl entity.rid)  :: only owners may send graph updates for resources they own
+    =/  rids  (resource-for-update:graph !>(update))
+    ?~  rids  `state
+    =/  rid   i.rids
+    ?>  =(src.bowl entity.rid)  :: only owners may send graph updates for resources they own
     [(poke-local-store update) state]
   [cards state]
 ::
