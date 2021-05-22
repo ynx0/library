@@ -1,4 +1,4 @@
-/-  *resource, *graph-store
+/-  *resource, store=graph-store
 |%
 +$  comment  tape
 +$  book
@@ -21,7 +21,7 @@
 ::
 +$  action
   $%  [%add-comment rid=resource top=@ =comment]  :: anyone can add if they are allowed
-      [%remove-comment rid=resource =index]       :: anyone can remove their own comment
+      [%remove-comment rid=resource =index:store]       :: anyone can remove their own comment
       [%get-book rid=resource book-index=atom]    :: someone else wants to now get the data for a book and hear about its updates. we should only ever hear this from a foreign library-proxy and never us ourself
   ==
 ::
