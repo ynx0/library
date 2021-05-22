@@ -251,16 +251,29 @@
   ==
   [cards state]
 ++  handle-graph-update-outgoing
-  |=  [update=update:store]
+  |=  [=update:store]
   ^-  (quip card _state)
   ::  this is where we forward any graph store updates to any subscriber of ours
-  ~&  "got graph update {<update>}"
+  ~&  "got graph update"
+  ~&  update
+  ~&  "unsafe forwarding enabled!"
   =^  cards  state
+  =/  res  (resource-for-update:graph !>(update))
+  ?~  res  `state  :: if theres no resource, we don't forward
   ::?>  =(our.bowl entity.resource.q.update)  :: we only forward updates for resources we own (todo we shouldn't for our moons right? idk)
-  ::  for each ship and prim in tap:by readers
-  ::  for each rid and indexes=(set atom) in prim
-  ::  [%pass /updates/[ship]/[rid] %agent [ship %library-proxy] %poke [%graph-update-2 !>(update)]]~
-  `state
+  =.  cards
+    %+  murn  ~(tap by readers)  :: for each reader, prim in readers
+    |=  [a=(pair ship prim)]
+    =/  ship  p.a
+    =/  prim  q.a
+    %+  turn  ~(tap by prim)     :: for each rid, set of book-indexes in prim
+    |=  [b=(pair resource (set atom))]
+    =/  rid           p.b
+    =/  book-indexes  q.b
+    %+  turn  ~(tap in book-indexes)
+    |=  [book-index=atom]        :: for each book index in book-indexes
+    ::  if the update 
+    [%give %fact ~[/updates/(scot %p src.bowl)/[name.rid]] [%graph-update-2 !>(update)]
   [cards state]
 ::
 ++  handle-graph-update-incoming
