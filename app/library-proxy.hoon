@@ -126,7 +126,7 @@
     ``noun+!>(library-keys)
     ::      
       [%x %books @ ~]
-    =/  name  i.t.t.path
+    =/  name  i.t.t.pax
     ::  for a given library name,
     ::  scry our local graph store /graph/OUR/NAME
       ::.^((unit @tas) %gx /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/graph/(scot %p our)/[path]/noun)
