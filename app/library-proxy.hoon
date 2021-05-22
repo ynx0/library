@@ -181,6 +181,16 @@
       %-  ~(run by readers)
       |=([prm=prim:library] (~(del ju prm) rid top))  ::  stop tracking any readers for this book
     [(poke-local-store update) state]
+  ::
+      %request-book
+    =/  rid  rid.command
+    =/  top  top.command
+    =/  =action:library  [%get-book rid top]
+    =/  cards
+      :~  [%pass ~ %agent [entity.rid %library-proxy] [%watch /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid]]]
+          [%pass /book-request %agent [entity.rid %library-proxy] %poke [%library-action !>(action)]]
+      ==
+    [cards state]
   ==
   [cards state]
 ++  handle-action
