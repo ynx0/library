@@ -216,7 +216,7 @@
       %remove-comment
     =/  rid            rid.action
     =/  comment-index  index.action
-    ?>  =([@ %comments @ ~] comment-index)  ::  ensure index is of proper form
+    ?>  ?=([@ %comments @ ~] comment-index)  ::  ensure index is of proper form
     ::  TODO convert to tall form
     ::  TODO refactor out
     ::  scry for node at that index
