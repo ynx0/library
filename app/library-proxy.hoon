@@ -1,6 +1,6 @@
 /-  *resource, library
 /+  store=graph-store, graph, default-agent,
-    dbug, verb, agentio, *library
+    dbug, verb, agentio, libr=library
 |%
 +$  versioned-state
     $%  state-0
@@ -36,6 +36,7 @@
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
+  ~&  graph
   ~&  >  '%library-proxy recompiled successfully'
   `this(state !<(versioned-state old-state))
 ++  on-poke
@@ -151,14 +152,14 @@
     =/  rid        rid.command
     =/  time-sent  now.bowl
     =/  policy     policy.command
-    =/  update     (create-library-update rid time-sent)
+    =/  update     (create-library-update:libr rid time-sent)
     =.  policies   (~(put by policies) rid policy)  :: set the policy for the given rid into the actual state
     [(poke-local-store update) state]
   ::
       %remove-library
     =/  rid        rid.command
     =/  time-sent  now.bowl
-    =/  update     (remove-library-update rid time-sent)
+    =/  update     (remove-library-update:libr rid time-sent)
     =.  readers  
       %-  ~(run by readers)
       |=([prm=prim:library] (~(put by prm) rid *(set ship)))  :: clear the library from any existing readers
@@ -170,14 +171,14 @@
     =/  author        src.bowl
     =/  time-sent     now.bowl
     =/  book          book.command
-    =/  update        (add-book-update rid author time-sent book)
+    =/  update        (add-book-update:libr rid author time-sent book)
     [(poke-local-store update) state]
   ::
       %remove-book
     =/  rid        rid.command
     =/  top        top.command
     =/  time-sent  now.bowl
-    =/  update     (remove-book-update rid top time-sent)
+    =/  update     (remove-book-update:libr rid top time-sent)
     =.  readers
       %-  ~(run by readers)
       |=([prm=prim:library] (~(del ju prm) rid top))  ::  stop tracking any readers for this book
@@ -210,7 +211,7 @@
     ?>  ?|  (team:title our.bowl author)    ::  us or our moon
             (~(has ju (need prm)) rid top)  ::  someone with permissions
         ==
-    =/  update     (add-comment-update rid top author time-sent comment)
+    =/  update     (add-comment-update:libr rid top author time-sent comment)
     [(poke-local-store update) state]
   ::
       %remove-comment
@@ -230,7 +231,7 @@
     =/  prev-author  author.prev-post
     ::  assert the person trying to delete is actually the author of node. TODO what abt ((team:title our.bowl) ?)
     ?>  =(prev-author src.bowl)
-    =/  remove-update  (remove-comment-update rid comment-index now.bowl)
+    =/  remove-update  (remove-comment-update:libr rid comment-index now.bowl)
     [(poke-local-store remove-update) state]
   ::
       %get-book
@@ -255,22 +256,23 @@
   ~&  "got graph update"
   ~&  update
   =^  cards  state
-  =/  update-rid  (resource-for-update:graph !>(update))
-  ?~  update-rid  `state  :: if theres no resource, we don't forward cause we can't tell if its something based on our own resource
-  ?>  =(our.bowl entity.update-rid)  :: we only forward updates for resources we own (todo we shouldn't for our moons right? idk)
-  =.  cards
-    %+  murn  ~(tap by readers)  :: for each reader, prim in readers
-    |=  [a=(pair ship prim)]
-    =/  ship  p.a
-    =/  prim  q.a
-    %+  turn  ~(tap by prim)     :: for each rid, set of book-indexes in prim
-    |=  [b=(pair resource (set atom))]
-    =/  rid           p.b
-    =/  book-indexes  q.b
-    %+  turn  ~(tap in book-indexes)
-    |=  [book-index=atom]        :: for each book index in book-indexes
-    ::  if the update 
-    [%give %fact ~[/updates/(scot %p src.bowl)/[name.rid]] [%graph-update-2 !>(update)]
+  ::=/  update-rid  (resource-for-update:graph !>(update))
+  ::?~  update-rid  `state  :: if theres no resource, we don't forward cause we can't tell if its something based on our own resource
+  ::?>  =(our.bowl entity.update-rid)  :: we only forward updates for resources we own (todo we shouldn't for our moons right? idk)
+  `state
+  ::=/  cards
+  ::  %+  murn  ~(tap by readers)  :: for each reader, prim in readers
+  ::  |=  [a=(pair ship prim)]
+  ::  =/  ship  p.a
+  ::  =/  prim  q.a
+  ::  %+  turn  ~(tap by prim)     :: for each rid, set of book-indexes in prim
+  ::  |=  [b=(pair resource (set atom))]
+  ::  =/  rid           p.b
+  ::  =/  book-indexes  q.b
+  ::  ::  if the 
+  ::  %+  turn  ~(tap in book-indexes)
+  ::  |=  [book-index=atom]        :: for each book index in book-indexes
+  ::  [%give %fact ~[/updates/(scot %p src.bowl)/[name.rid]] [%graph-update-2 !>(update)]
   [cards state]
 ::
 ++  handle-graph-update-incoming
@@ -278,10 +280,11 @@
   ^-  (quip card _state)
   ~&  "got foreign graph update {<update>} from {<src.bowl>}"
   =^  cards  state
-  =/  rid  (resource-for-update:graph update)
-  ?~  rid  `state
-  ?>  =(src.bowl entity.rid)  :: only owners may send graph updates for resources they own
-  [(poke-local-store update) state]
+    ::=/  rid  (resource-for-update:graph update)
+    ::?~  rid  `state
+    ::?>  =(src.bowl entity.rid)  :: only owners may send graph updates for resources they own
+    [(poke-local-store update) state]
+  [cards state]
 ::
 ++  poke-local-store
   |=  [=update:store]
