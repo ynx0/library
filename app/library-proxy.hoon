@@ -268,13 +268,10 @@
   ^-  (quip card _state)
   ~&  "got foreign graph update {<update>} from {<src.bowl>}"
   =^  cards  state
-  ~&  "warning: handling of incoming graph updates is currently insecure!"
-  ::  question: if someone pokes me a graph store update from their proxy (adversarially)
-  ::  that is %add-signatures, there is not a resource but a uid.
-  ::  should i handle every update and extract the resource from the uid if present?
-  ::?>  =(src.bowl entity.resource.q.update)  :: only owners may send graph updates for resources they own
+  =/  rid  (resource-for-update:graph update)
+  ?~  rid  `state
+  ?>  =(src.bowl entity.rid)  :: only owners may send graph updates for resources they own
   [(poke-local-store update) state]
-  [cards state]
 ::
 ++  poke-local-store
   |=  [=update:store]
