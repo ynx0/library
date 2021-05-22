@@ -80,28 +80,29 @@
   |=  =path
   ^-  (quip card _this)
   =^  cards  state
-  `state
-  ::?+    path  (on-watch:def path)
-  ::    [%updates resource ship ~]
-  ::  ::  path format: /updates/[rid]/[ship]
-  ::  =/  name  i.t.t.path
-  ::  =/  ship  (slav %p (snag 2 path))
-  ::  ?>  =(src.bowl ship)  :: check for imposter (sus)
-  ::  =/  policy  (~(got by policies) [our.bowl name])
-  ::  =/  is-allowed=?
-  ::  ?-  -.policy
-  ::      %open       %.y
-  ::      %children   (team:title our.bowl src.bowl)
-  ::      %whitelist  (~(has in ships.policy) ship)
-  ::  ==
-  ::  ?>  is-allowed
-  ::  =/  cards=(list card)  ~
-  ::  :: no "initial" update, no being added to readers.
-  ::  :: readers are whos actually interested, and wants to hear updates
-  ::  :: implicitly, having a successful subscription means you have permission, not necessarily are interested in hearing about anything yet.
-  ::  [~ state]
-  ::  ::
-  ::==
+  ::`state
+  ?+    path  (on-watch:def path)
+      [%updates @ @ @ ~]
+    ::  path format: /updates/[subscriber-ship]/[entity.rid]/[name.rid]
+    ::  entity.rid must always be us, its redundant
+    =/  subscriber  (slav %p i.t.path)
+    =/  us          (slav %p i.t.t.path)
+    =/  name        i.t.t.t.path
+    ?>  =(subscriber src.bowl)  :: check for imposter (sus)
+    =/  policy  (~(got by policies) [our.bowl name])
+    =/  is-allowed=?
+    ?-  -.policy
+        %open       %.y
+        %children   (team:title our.bowl src.bowl)
+        %whitelist  (~(has in ships.policy) src.bowl)
+    ==
+    ?>  is-allowed
+    :: no "initial" update, no being added to readers.
+    :: readers are whos actually interested, and wants to hear updates
+    :: implicitly, having a successful subscription means you have permission, not necessarily are interested in hearing about anything yet.
+    [~ state]
+    ::
+  ==
   [cards this]
 ++  on-leave  on-leave:def
 :: todo surface available books in peek
