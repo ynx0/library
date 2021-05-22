@@ -243,11 +243,10 @@
   ::  this is where we forward any graph store updates to any subscriber of ours
   ~&  "got graph update"
   ~&  update
-  ~&  "unsafe forwarding enabled!"
   =^  cards  state
-  =/  res  (resource-for-update:graph !>(update))
-  ?~  res  `state  :: if theres no resource, we don't forward
-  ::?>  =(our.bowl entity.resource.q.update)  :: we only forward updates for resources we own (todo we shouldn't for our moons right? idk)
+  =/  update-rid  (resource-for-update:graph !>(update))
+  ?~  update-rid  `state  :: if theres no resource, we don't forward cause we can't tell if its something based on our own resource
+  ?>  =(our.bowl entity.update-rid)  :: we only forward updates for resources we own (todo we shouldn't for our moons right? idk)
   =.  cards
     %+  murn  ~(tap by readers)  :: for each reader, prim in readers
     |=  [a=(pair ship prim)]
