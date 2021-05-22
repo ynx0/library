@@ -111,22 +111,25 @@
   ?+    pax  (on-peek:def pax)
       [%x %libraries ~]
     ::  1. scry for all graph keys in our local graph store
-    ::  .^(update:store %gx /=graph-store=/keys/noun)
-    ::  [p=~2021.5.21..15.59.10..037e q=[%keys resources={[entity=~zod name=%library1]}]]
-    ::  2. for list of graph keys, generate a list of their marks by scrying for /graph-mark
-    ::  .^((unit @tas) %gx /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/graph-mark/(scot %p our.bowl)/%library1/noun)
-    ::  [~ %graph-validator-library]
-    ::  3. filter out graph marks that are not %graph-validator-library
-    ::  %-  skim  ...
-    ::  
+    =/  keys  
+      =/  key-update  .^(update:store %gx /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/keys/noun)
+      ?>  ?=(%keys -.q.key-update)
+      resources.q.key-update
+    =/  library-keys
+      %+  skim  ~(tap in keys)
+      |=  [key=resource]
+      ::  invariant: entity.key == our.bowl
+      =/  mark  .^((unit @tas) %gx /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/graph-mark/(scot %p entity.key)/[name.key]/noun)
+      =([~ %graph-validator-library] mark)
     ::  alternatively, return key:by policies
-    ``noun+!>(~)
+    ::  todo should this be %noun or (set resource)
+    ``noun+!>(library-keys)
     ::      
       [%x %books @ ~]
     =/  name  i.t.t.path
     ::  for a given library name,
     ::  scry our local graph store /graph/OUR/NAME
-    ::  .^((unit @tas) %gx /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/graph/(scot %p our)/[path]/noun)
+      ::.^((unit @tas) %gx /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/graph/(scot %p our)/[path]/noun)
     ::  return key:orm:store for the atoms
     ``noun+!>(~)
     ::
