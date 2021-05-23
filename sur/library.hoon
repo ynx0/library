@@ -16,7 +16,8 @@
       [%remove-library rid=resource]
       [%add-book rid=resource =book]
       [%remove-book rid=resource top=@]
-      [%request-book rid=resource top=@]  :: this is the only poke which targets a foreign resource (and never a local one!)
+      [%request-library rid=resource]
+      [%request-book rid=resource top=@]
   ==
 ::
 +$  action
