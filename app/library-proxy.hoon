@@ -252,7 +252,9 @@
     =.  prm  (~(put ju prm) rid top)
     =.  readers  (~(put by readers) src.bowl prm)
     :: 2. send them the graph update
-    =/  update  .^(update:store %gx /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid]/top/noun)
+    =/  pax  `path`/(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid]/(scot %ud top)/noun
+    ~&  pax
+    =/  update  .^(update:store %gx pax)
     [[%give %fact ~[/updates/(scot %p src.bowl)/(scot %p entity.rid)/[name.rid]] [%graph-update-2 !>(update)]]~ state]
   ==
   [cards state]
