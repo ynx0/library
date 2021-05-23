@@ -148,6 +148,8 @@
 ::  be sent on, but, we don't really care about it i don't think so we'll leave it null for now
 ::  i think it may be important when there is a poke-nack or smtn and you want to keep track of it
 |_  bowl=bowl:gall
++*  gra   ~(. graph bowl)
+::
 ++  handle-command
   |=  [=command:library]
   ^-  (quip card _state)
@@ -261,7 +263,7 @@
   ~&  "got graph update"
   ~&  update
   =^  cards  state
-  =/  update-rids  (resource-for-update:graph !>(update))
+  =/  update-rids  (resource-for-update:gra !>(update))
   ?~  update-rids  `state  :: if theres no resource, we don't forward cause we can't tell if its something based on our own resource
   =/  update-rid   i.update-rids
   ?>  =(our.bowl entity.update-rid)  :: we only forward updates for resources we own (todo we shouldn't for our moons right? idk)
@@ -286,7 +288,7 @@
   ^-  (quip card _state)
   ~&  "got foreign graph update {<update>} from {<src.bowl>}"
   =^  cards  state
-    =/  rids  (resource-for-update:graph !>(update))
+    =/  rids  (resource-for-update:gra !>(update))
     ?~  rids  `state
     =/  rid   i.rids
     ?>  =(src.bowl entity.rid)  :: only owners may send graph updates for resources they own
