@@ -148,7 +148,7 @@
   |=  [rid=resource comment-index=index time-sent=time]
   ^-  update
   ~|  "invalid index {<comment-index>} provided"
-  ?>  =([@ %comments @ ~] comment-index)
+  ?>  ?=([@ %comments @ ~] comment-index)
   :-  time-sent
   :+  %remove-posts  rid
   (silt ~[comment-index])
