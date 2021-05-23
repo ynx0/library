@@ -137,7 +137,7 @@
     ::  for a given library name,
     ::  scry our local graph store /graph/OUR/NAME
       ::.^((unit @tas) %gx /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/graph/(scot %p our)/[path]/noun)
-    ::  return key:orm:store for the atoms
+    ::  return key:orm:store for the atoms  (key doesn't work?)
     ``noun+!>(~)
     ::
   ==
@@ -274,19 +274,33 @@
   =/  update-rid   i.update-rids
   ?.  =(our.bowl entity.update-rid)  `state  :: we only forward updates for resources we own (todo we shouldn't for our moons right? idk)
   `state
-  ::=/  cards
-  ::  %+  murn  ~(tap by readers)  :: for each reader, prim in readers
-  ::  |=  [a=(pair ship prim)]
-  ::  =/  ship  p.a
-  ::  =/  prim  q.a
-  ::  %+  turn  ~(tap by prim)     :: for each rid, set of book-indexes in prim
-  ::  |=  [b=(pair resource (set atom))]
-  ::  =/  rid           p.b
-  ::  =/  book-indexes  q.b
-  ::  ::  if the 
-  ::  %+  turn  ~(tap in book-indexes)
-  ::  |=  [book-index=atom]        :: for each book index in book-indexes
-  ::  [%give %fact ~[/updates/(scot %p src.bowl)/[name.rid]] [%graph-update-2 !>(update)]
+  ::
+  :: we need to switch on type of graph update, most we just forward without any change or special handling
+  :: but for %add-nodes we need to be picky about what we send
+  =/  cards
+  ~
+  :: use |^ and name bodies of loops
+  :: use ^-  to signal result of turn/murn
+  :: split out bottom level check for applicability of this update
+  :: build from bottom up
+  :: skim the nodes for %add-nodes based 
+    ::%-  zing
+    ::^-  (list card)
+    ::%+  murn  ~(tap by readers)  :: for each reader, prim in readers
+    ::|=  [reader-ship=ship prm=prim]
+    ::^-  (unit card)
+    ::::
+    ::%+  murn  ~(tap by prim)     :: for each rid, set of book-indexes in prim
+    ::|=  [b=(pair resource (set atom))]
+    ::^-  (unit card)
+    ::=/  [rid book-indexes]  b
+    ::::  if the resource matches nodes.resource
+    ::::  and if 
+    ::%+  turn  ~(tap in book-indexes)
+    ::|=  [book-index=atom]        :: for each book index in book-indexes
+    ::^-  (unit card)
+    :::: check if top level index of current update is in this update
+    ::[%give %fact ~[/updates/(scot %p src.bowl)/[name.rid]] [%graph-update-2 !>(update)]
   [cards state]
 ::
 ++  handle-graph-update-incoming

@@ -3,38 +3,43 @@
 
 =library -build-file %/sur/library/hoon
 =store -build-file %/sur/graph-store/hoon
-=gra -build-file %/lib/graph-store/hoon
+=libstore -build-file %/lib/graph-store/hoon
+=libgraph -build-file %/lib/graph/hoon
 
 -build-file %/app/library-proxy/hoon
 |start %library-proxy
 
 
-:: creating the library
-:library-proxy &library-command [%create-library [our %library1] [%open ~]]
+:: handy state inspections
 :graph-store +dbug [%state 'graphs']
 :library-proxy +dbug
 
 
-:: adding a book
+:: appetizers of all commands
+:library-proxy &library-command [%create-library [our %library1] [%open ~]]
+:library-proxy &library-command [%remove-library [our %library1]]
+
+:: isbn must be either length 10 or length 13
 :library-proxy &library-command [%add-book [our %library1] ["Dune" "isbnisbnis"]]
-:library-proxy &library-command [%add-book [our %library1] ["ABC" "isbnisbnis"]]
-:graph-store +dbug [%state 'graphs']
+:library-proxy &library-command [%remove-book [our %library1] 123.456]
 
 
-:: removing a book
-:library-proxy &library-command [%remove-book [our %library1] <top index of "ABC">]
-:graph-store +dbug [%state 'graphs']
+:library-proxy &library-action [%add-comment [our %library1] 123.456 "this is a comment."]
+:library-proxy &library-action [%add-comment [our %library1] ~[123.456 8.319.395.793.566.789.475 789.654]]
 
 
-:: trying to add a book from ~nus (fails)
-:~zod/library-proxy &library-command [%add-book [our %library1] ["fake book" "isbnisbnis"]]
+:: ~zod creates a library called %library1
+:library-proxy &library-command [%create-library [our %library1] [%open ~]]
 
+:: ~zod adds two books adding a book
+:library-proxy &library-command [%add-book [our %library1] ["Dune" "isbnisbnis"]]
+:library-proxy &library-command [%add-book [our %library1] ["ABC" "isbnisbnis123"]]
 
-:: ~zod adds comment on a book
-:library-proxy &library-action [%add-comment [our %library1] <top index of "Dune"> "I love dune"]
+::: replace with the top level index fragment of the book titled "Dune"
+=top-of-dune 170.141.184.505.067.084.173.349.631.314.681.135.104
 
-:: ~nus tries to add comment on book, fails cause not part of readers
-:~zod/library-proxy &library-action [%add-comment [our %library1] <top index of "Dune"> "dune is ok"]
+:: ~zod adds comment on book "Dune"
+:library-proxy &library-action [%add-comment [our %library1] top-of-dune "I love dune"]
 
 :: ~nus scries for libraries available on ~zod
 ... (finds %library1)
@@ -42,23 +47,40 @@
 :: ~nus scries for books available on ~zod/library1
 ... (obtains top level index <some number>)
 
+:: ~nus tries to add a book, fails because isn't in readers yet
+:~zod/library-proxy &library-command [%add-book [~zod %library1] ["fake book" "isbnisbnis"]]
 
-:: todo where is ~nus supposed to subscribe to a specific library or book?
+:: ~nus tries to add comment on book, fails cause not part of readers
+:~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune "dune is ok"]
 
-:: ~nus pokes :~zod/library-proxy with %get-book to start tracking book and its comments
+:: ~nus issues %request-library poke to start recieving updates %library1
+:library-proxy &library-command [%request-library [~zod %library1]]
 
-:: ~nus tries to add comment again, is succesful
-:~zod/library-proxy &library-action [%add-comment [our %library1] <top index of "Dune"> "dune is ok"]
+:: ~nus tries to add comment again, is successful
+:~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune "dune is ok"]
 
+:: ~nus adds a second comment again, is successful
+:~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune "in my opinion"]
 
-:: ~zod deletes nus's comment
+:: ~nus deletes own comment, succeeds
+:~zod/library-proxy &library-action [%remove-comment [~zod %library1] ~[<index of comment by ~nus>]]
+
+:: ~zod deletes nus's comment, succeeds
+:library-proxy &library-action [%remove-comment [our %library1] ~[<index of comment by ~nus>]]
 
 :: ~nus tries to delete ~zod's comment, fails
+:~zod/library-proxy &library-action [%remove-comment [~zod %library1] ~[<index of comment by ~zod>]]
 
-:: ~zod deletes the book (ensure that readers is cleared)
+:: ~nus tries to delete ~zod's book, fails
+:~zod/library-proxy &library-command [%remove-book [~zod %library1] top-of-dune]
 
+:: ~nus tries to delete ~zod's library, fails
+:~zod/library-proxy &library-command [%remove-library [~zod %library1]]
 
-:: ~zod deletes the library
+:: ~zod deletes book with title "Dune", succeeds. appropriate state in proxy is cleared
+:library-proxy &library-command [%remove-book [our %library1] top-of-dune]
+
+:: ~zod deletes the library, succeeds
 :library-proxy &library-command [%remove-library [our %library1]]
 
 
