@@ -237,8 +237,11 @@
       ?>  ?=(%.y -.post.comment-node)
       p.post.comment-node
     =/  prev-author  author.prev-post
-    ::  assert the person trying to delete is actually the author of node. TODO what abt ((team:title our.bowl) ?)
-    ?>  =(prev-author src.bowl)
+    ::  TODO what abt ((team:title our.bowl) ?)
+    ::  assert the person trying to delete is:
+    ?>  ?|  =(our.bowl src.bowl)     :: the owner of the proxy (us)
+            =(prev-author src.bowl)  :: the author of node.
+        ==
     =/  remove-update  (remove-comment-update:libr rid comment-index now.bowl)
     [(poke-local-store remove-update) state]
   ::
