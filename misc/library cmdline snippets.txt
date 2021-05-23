@@ -19,8 +19,7 @@
 :library-proxy &library-command [%create-library [our %library1] [%open ~]]
 :library-proxy &library-command [%remove-library [our %library1]]
 
-:: isbn must be either length 10 or length 13
-:library-proxy &library-command [%add-book [our %library1] ["Dune" "isbnisbnis"]]
+:library-proxy &library-command [%add-book [our %library1] ["Dune" "isbnisbnis"]]  :: isbn must be length 10 or 13
 :library-proxy &library-command [%remove-book [our %library1] 123.456]
 
 
