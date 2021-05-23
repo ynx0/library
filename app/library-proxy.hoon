@@ -199,11 +199,8 @@
     =/  rid  rid.command
     =/  top  top.command
     =/  =action:library  [%get-book rid top]
-    =/  cards
-      :~  [%pass ~ %agent [entity.rid %library-proxy] [%watch /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid]]]
-          [%pass /book-request %agent [entity.rid %library-proxy] %poke [%library-action !>(action)]]
-      ==
-    [cards state]
+    :: todo crashes if we haven't %request-library'd first. is this ok?
+    [[%pass /book-request %agent [entity.rid %library-proxy] %poke [%library-action !>(action)]]~ state]
   ==
   [cards state]
 ++  handle-action
