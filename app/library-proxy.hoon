@@ -191,6 +191,10 @@
       |=([prm=prim:library] (~(del ju prm) rid top))  ::  stop tracking any readers for this book
     [(poke-local-store update) state]
   ::
+      %request-library
+    =/  rid        rid.command
+    [[%pass ~ %agent [entity.rid %library-proxy] [%watch /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid]]]~ state]
+  ::
       %request-book
     =/  rid  rid.command
     =/  top  top.command
