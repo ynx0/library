@@ -21,10 +21,11 @@
 =<
 ^-  agent:gall
 |_  =bowl:gall
-+*  this    .
-    def   ~(. (default-agent this %|) bowl)
-    hc    ~(. +> bowl)
-    io    ~(. agentio bowl)
++*  this        .
+    def       ~(. (default-agent this %|) bowl)
+    hc        ~(. +> bowl)
+    io        ~(. agentio bowl)
+    libgraph  ~(. graph bowl)
 ::
 ++  on-init
   ^-  (quip card _this)
@@ -98,11 +99,15 @@
         %whitelist  (~(has in ships.policy) src.bowl)
     ==
     ?>  is-allowed
-    :: no "initial" update, no being added to readers.
-    :: readers are whos actually interested, and wants to hear updates
+    ::  we scry the original graph just to get its original creation time
+    ::  otherwise, it is discarded. what is actually sent is an empty graph
+    ::  todo refactor for readability
+    =/  original-time-sent      p:(scry-for:libgraph update:store /graph/(scot %p our.bowl)/[name])
+    =/  initial-library-update  (create-library-update:libr [our.bowl name] original-time-sent)
+    :: readers are who's? actually interested, and wants to hear updates
     :: implicitly, having a successful subscription means you have permission, not necessarily are interested in hearing about anything yet.
-    [~ state]
     ::
+    [[%give %fact ~[/updates/(scot %p src.bowl)/(scot %p us)/[name]] [%graph-update-2 !>(initial-library-update)]]~ state]
   ==
   [cards this]
 ++  on-leave  on-leave:def
