@@ -266,7 +266,7 @@
   =/  update-rids  (resource-for-update:gra !>(update))
   ?~  update-rids  `state  :: if theres no resource, we don't forward cause we can't tell if its something based on our own resource
   =/  update-rid   i.update-rids
-  ?>  =(our.bowl entity.update-rid)  :: we only forward updates for resources we own (todo we shouldn't for our moons right? idk)
+  ?.  =(our.bowl entity.update-rid)  `state  :: we only forward updates for resources we own (todo we shouldn't for our moons right? idk)
   `state
   ::=/  cards
   ::  %+  murn  ~(tap by readers)  :: for each reader, prim in readers
