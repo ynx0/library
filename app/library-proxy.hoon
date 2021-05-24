@@ -128,17 +128,17 @@
       ::  invariant: entity.key == our.bowl
       =/  mark  .^((unit @tas) %gx /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/graph-mark/(scot %p entity.key)/[name.key]/noun)
       =([~ %graph-validator-library] mark)
-    ::  alternatively, return key:by policies
+    ::  alternatively, return key:by policies, more flakey
     ::  todo should this be %noun or (set resource)
     ``noun+!>(library-keys)
     ::      
       [%x %books @ ~]
-    =/  name  i.t.t.pax
-    ::  for a given library name,
-    ::  scry our local graph store /graph/OUR/NAME
-      ::.^((unit @tas) %gx /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/graph/(scot %p our)/[path]/noun)
-    ::  return key:orm:store for the atoms  (key doesn't work?)
-    ``noun+!>(~)
+    =/  name=@tas  i.t.t.pax
+    =/  update  (scry-for:libgraph update:store /graph/(scot %p our.bowl)/[name])
+    ?>  ?=(%add-graph -.q.update)
+    =/  the-graph  graph.update
+    =/  book-tops  (silt (turn (tap:orm:libstore the-graph) head))
+    ``noun+!>(book-tops)
     ::
   ==
 ++  on-arvo   on-arvo:def
