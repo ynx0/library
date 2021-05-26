@@ -136,8 +136,8 @@
     =/  name=@tas  i.t.t.pax
     =/  update  (scry-for:libgraph update:store /graph/(scot %p our.bowl)/[name])
     ?>  ?=(%add-graph -.q.update)
-    =/  the-graph  graph.update
-    =/  book-tops  (silt (turn (tap:orm:libstore the-graph) head))
+    =/  the-graph  graph.q.update
+    =/  book-tops  (silt (turn (tap:orm:store the-graph) head))
     ``noun+!>(book-tops)
     ::
   ==
