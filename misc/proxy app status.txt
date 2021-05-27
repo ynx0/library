@@ -1,21 +1,25 @@
 proxy app status
 
 - scries
-	- [%x %libraries ~] is implemented, needs testing
-	- [%x %books @ ~] is implemented, needs testing
+	- [%x %libraries ~] works
+	- [%x %books @ ~] works
 
 - commands
 	- %create-library works
 	- %remove-library works
 	- %add-book works
-	- %remove-book is implemented, needs testing
+	- %remove-book works
 	- %request-book works from 1/2 flow, needs handle-graph-update-outgoing to be implemented
 
 - actions
 	- %add-comment works
 	- %remove-comment works
-	- %get-book is implemented, needs testing (we have to implement handle-graph-update-outgoing for this to be tested)
+	- %get-book needs testing (we have to implement handle-graph-update-outgoing for this to be tested)
 
 - on-agent
-	- handle-graph-update-incoming works im pretty sure
+	- handle-graph-update-incoming works (probably)
 	- handle-graph-update-outgoing needs to be implemented
+
+- on-watch
+	- basic subscription works
+	- policy mechanisms need testing

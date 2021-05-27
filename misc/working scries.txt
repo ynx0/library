@@ -11,6 +11,11 @@
 {[entity=~zod name=%library1]}
 
 
+.^((set atom) %gx /=library-proxy=/books/library1/noun)
+
+.^((set resource:store) %gx /=library-proxy=/libraries/noun)
+
+
 
 
 
