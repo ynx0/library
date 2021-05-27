@@ -270,41 +270,36 @@
   |=  [=update:store]
   ^-  (quip card _state)
   ::  this is where we forward any graph store updates to any subscriber of ours
-  ~&  "got graph update"
-  ~&  update
+  ::~&  "got graph update"
+  ::~&  update
   =^  cards  state
-  =/  update-rids  (resource-for-update:gra !>(update))
-  ?~  update-rids  `state  :: if theres no resource, we don't forward cause we can't tell if its something based on our own resource
-  =/  update-rid   i.update-rids
-  ?.  =(our.bowl entity.update-rid)  `state  :: we only forward updates for resources we own (todo we shouldn't for our moons right? idk)
-  `state
-  ::
-  :: we need to switch on type of graph update, most we just forward without any change or special handling
-  :: but for %add-nodes we need to be picky about what we send
-  =/  cards
-  ~
-  :: use |^ and name bodies of loops
-  :: use ^-  to signal result of turn/murn
-  :: split out bottom level check for applicability of this update
-  :: build from bottom up
-  :: skim the nodes for %add-nodes based 
-    ::%-  zing
-    ::^-  (list card)
-    ::%+  murn  ~(tap by readers)  :: for each reader, prim in readers
-    ::|=  [reader-ship=ship prm=prim]
-    ::^-  (unit card)
-    ::::
-    ::%+  murn  ~(tap by prim)     :: for each rid, set of book-indexes in prim
-    ::|=  [b=(pair resource (set atom))]
-    ::^-  (unit card)
-    ::=/  [rid book-indexes]  b
-    ::::  if the resource matches nodes.resource
-    ::::  and if 
-    ::%+  turn  ~(tap in book-indexes)
-    ::|=  [book-index=atom]        :: for each book index in book-indexes
-    ::^-  (unit card)
-    :::: check if top level index of current update is in this update
-    ::[%give %fact ~[/updates/(scot %p src.bowl)/[name.rid]] [%graph-update-2 !>(update)]
+    :: resource-for-update always returns a list of one (1) resource
+    =/  update-rid-wrapped  (resource-for-update:gra !>(update))
+    ?~  update-rid-wrapped  `state  :: if theres no resource, we don't forward cause we can't tell if its something based on our own resource
+    =/  update-rid           i.update-rid-wrapped
+    ?.  =(our.bowl entity.update-rid)  `state  :: we only broadcast updates for resources we own (todo we shouldn't for our moons right? idk)
+    ::  for now we just no-op on any update we can't handle but default behavior should be to forward blindly
+    :_  state
+    ?+    -.q.update  ~&("ignoring update {<-.q.update>}" `state)  ::  todo extract default case to arm
+        %add-nodes
+      ::  potentially cleanup into a |^
+      ^-  (list card)
+      %-  zing
+      %+  murn  ~(tap by readers)
+      |=  [her=ship prm=prim:library]
+      =/  tracked-books=(unit (set @))
+        (~(get by prm) update-rid)
+      ?~  tracked-books  ~  :: if no tracked books for this resource, don't bother making any cards
+      %+  murn  ~(tap by nodes.q.update)
+      ::
+      |=  [idx=index:store *]
+      ?.  (~(has in tracked-books) (head idx))  ~  :: only forward this update if they are tracking this book
+      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
+    ::
+        %remove-posts
+        :: TODO needs special handling: based on indices, forward only to people who care
+      `state
+    ==
   [cards state]
 ::
 ++  handle-graph-update-incoming
