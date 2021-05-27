@@ -10,10 +10,10 @@
 > ?+  -.q.upd  !!  %keys  resources.q.upd  ==
 {[entity=~zod name=%library1]}
 
+=libraries .^((set resource:store) %gx /=library-proxy=/libraries/noun)
 
-.^((set atom) %gx /=library-proxy=/books/library1/noun)
+=available-books  .^((set atom) %gx /=library-proxy=/books/library1/noun)
 
-.^((set resource:store) %gx /=library-proxy=/libraries/noun)
 
 
 

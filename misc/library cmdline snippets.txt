@@ -41,10 +41,12 @@
 :library-proxy &library-action [%add-comment [our %library1] top-of-dune "I love dune"]
 
 :: ~nus scries for libraries available on ~zod
-... (finds %library1)
+
+=libraries .^((set resource:store) %gx /=library-proxy=/libraries/noun)
 
 :: ~nus scries for books available on ~zod/library1
-... (obtains top level index <some number>)
+=available-books  .^((set atom) %gx /=library-proxy=/books/library1/noun)
+
 
 :: ~nus tries to add a book, fails because isn't in readers yet
 :~zod/library-proxy &library-command [%add-book [~zod %library1] ["fake book" "isbnisbnis"]]

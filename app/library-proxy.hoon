@@ -1,6 +1,7 @@
 /-  *resource, library
 /+  store=graph-store, graph, default-agent,
     dbug, verb, agentio, libr=library
+::  TODO use agentio instead of raw cards
 |%
 +$  versioned-state
     $%  state-0
@@ -249,8 +250,8 @@
     [(poke-local-store remove-update) state]
   ::
       %get-book
-    =/  rid    rid.action
-    =/  top    book-index.action
+    =/  rid  rid.action
+    =/  top  book-index.action
     :: should only be able to do this if we are NOT the host. otherwise, we already have the book
     ?<  =(our.bowl src.bowl)
     ::  todo if dap is foreign app, then assert that it is also a %library-proxy
