@@ -122,7 +122,10 @@
       =/  key-update  .^(update:store %gx /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/keys/noun)
       ?>  ?=(%keys -.q.key-update)
       resources.q.key-update
-    =/  library-keys
+    ::  this also has the same redundancy
+    ::  where the entity.rid is always our.bowl
+    =/  library-keys=(set resource)
+      %-  silt
       %+  skim  ~(tap in keys)
       |=  [key=resource]
       ::  invariant: entity.key == our.bowl
@@ -138,7 +141,7 @@
     ?>  ?=(%add-graph -.q.update)
     =/  the-graph  graph.q.update
     =/  book-tops  (silt (turn (tap:orm:store the-graph) head))
-    ``noun+!>(book-tops)
+    ``noun+!>(`(set atom)`book-tops)
     ::
   ==
 ++  on-arvo   on-arvo:def
