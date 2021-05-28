@@ -296,7 +296,6 @@
       |=  [idx=index:store *]
       ?.  (~(has in u.tracked-books) (head idx))  ~  :: only forward this update if they are tracking this book
       `[%give %fact ~[/updates/(scot %p her)/(scot %p entity.update-rid)/[name.update-rid]] [%graph-update-2 !>(update)]]
-    ::          
         %remove-posts
         :: TODO needs special handling: based on indices, forward only to people who care
       ~

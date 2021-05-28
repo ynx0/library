@@ -91,8 +91,7 @@
   :-  time-sent
   :+  %add-nodes  rid
   %-  ~(gas by *(map index node))
-  :~
-      [~[top] [[%.y blank(index ~[top])] [%empty ~]]]
+  :~  [~[top] [[%.y blank(index ~[top])] [%empty ~]]]
       [~[top %meta] [[%.y blank(index ~[top %meta])] [%empty ~]]]
       [~[top %meta 1] [[%.y blank(index ~[top %meta 1], contents meta-contents)] [%empty ~]]]
       [~[top %comments] [[%.y blank(index ~[top %comments])] [%empty ~]]]

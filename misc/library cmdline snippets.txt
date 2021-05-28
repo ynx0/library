@@ -5,6 +5,7 @@
 =store -build-file %/sur/graph-store/hoon
 =libstore -build-file %/lib/graph-store/hoon
 =libgraph -build-file %/lib/graph/hoon
+=liblibrary -build-file %/lib/library/hoon
 
 -build-file %/app/library-proxy/hoon
 |start %library-proxy
@@ -25,6 +26,9 @@
 
 :library-proxy &library-action [%add-comment [our %library1] 123.456 "this is a comment."]
 :library-proxy &library-action [%add-comment [our %library1] ~[123.456 8.319.395.793.566.789.475 789.654]]
+
+
+==========================================
 
 
 :: ~zod creates a library called %library1

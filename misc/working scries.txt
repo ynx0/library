@@ -5,7 +5,7 @@
 .^(update:store %gx /=graph-store=/graph/(scot %p our)/library1/noun)
 
 =idx ~[170.141.184.505.067.084.173.349.631.314.681.135.104 8.319.395.793.566.789.475 170.141.184.505.067.091.826.073.283.725.486.981.120]
-.^(=update:store %gx (weld /=graph-store=/node/(scot %p our)/library1 (snoc `path`(turn idx (cury scot %ud)) %noun)))
+.^(update:store %gx (weld /=graph-store=/node/(scot %p our)/library1 (snoc `path`(turn idx (cury scot %ud)) %noun)))
 
 > ?+  -.q.upd  !!  %keys  resources.q.upd  ==
 {[entity=~zod name=%library1]}
