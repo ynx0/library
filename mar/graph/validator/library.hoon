@@ -51,7 +51,8 @@
 ++  grab
   |%
   ++  noun
-    |=  p=*
+    ::  p is a custom bunt, the simplest indexed-post that will validate
+    |:  p=`*`%*(. *indexed-post index.p [0 ~])
     =/  ip  ;;(indexed-post p)
     ?+    index.p.ip  !!
     ::  top level node: book
