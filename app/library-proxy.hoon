@@ -280,25 +280,26 @@
     ?.  =(our.bowl entity.update-rid)  `state  :: we only broadcast updates for resources we own (todo we shouldn't for our moons right? idk)
     ::  for now we just no-op on any update we can't handle but default behavior should be to forward blindly
     :_  state
-    ?+    -.q.update  ~&("ignoring update {<-.q.update>}" `state)  ::  todo extract default case to arm
+    ^-  (list card)
+    ?+    -.q.update  ~&("ignoring update {<-.q.update>}" ~)  ::  todo extract default case to arm
         %add-nodes
-      ::  potentially cleanup into a |^
-      ^-  (list card)
+      :: potentially cleanup into a |^
       %-  zing
       %+  murn  ~(tap by readers)
       |=  [her=ship prm=prim:library]
       =/  tracked-books=(unit (set @))
         (~(get by prm) update-rid)
-      ?~  tracked-books  ~  :: if no tracked books for this resource, don't bother making any cards
+      :: if no tracked books for this resource, don't bother making any cards
+      ?~  tracked-books  ~
+      %-  some
       %+  murn  ~(tap by nodes.q.update)
-      ::
       |=  [idx=index:store *]
-      ?.  (~(has in tracked-books) (head idx))  ~  :: only forward this update if they are tracking this book
-      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
-    ::
+      ?.  (~(has in u.tracked-books) (head idx))  ~  :: only forward this update if they are tracking this book
+      `[%give %fact ~[/updates/(scot %p her)/(scot %p entity.update-rid)/[name.update-rid]] [%graph-update-2 !>(update)]]
+    ::          
         %remove-posts
         :: TODO needs special handling: based on indices, forward only to people who care
-      `state
+      ~
     ==
   [cards state]
 ::
