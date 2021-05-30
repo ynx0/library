@@ -174,7 +174,7 @@
     =/  update     (remove-library-update:libr rid time-sent)
     =.  readers  
       %-  ~(run by readers)
-      |=([prm=prim:library] (~(put by prm) rid *(set ship)))  :: clear the library from any existing readers
+      |=([prm=prim:library] (~(del by prm) rid))  :: clear the library from any existing readers
     =.  policies   (~(del by policies) rid)                   ::  remove the policy for the given rid from
     [(poke-local-store update) state]
   ::
