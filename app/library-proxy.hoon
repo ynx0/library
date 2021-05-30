@@ -90,7 +90,7 @@
     ::  entity.rid must always be us, its redundant
     =/  subscriber  (slav %p i.t.path)
     =/  us          (slav %p i.t.t.path)
-    =/  name        i.t.t.t.path
+    =/  name        `@tas`i.t.t.t.path
     ?>  =(subscriber src.bowl)  :: check for imposter (sus)
     =/  policy  (~(got by policies) [our.bowl name])
     =/  is-allowed=?
@@ -108,6 +108,7 @@
     :: readers are who's? actually interested, and wants to hear updates
     :: implicitly, having a successful subscription means you have permission, not necessarily are interested in hearing about anything yet.
     ::
+    =.  readers  (~(put by readers) subscriber (~(gas by *prim:library) [[[us name] *(set atom)] ~]))
     [[%give %fact ~[/updates/(scot %p src.bowl)/(scot %p us)/[name]] [%graph-update-2 !>(initial-library-update)]]~ state]
   ==
   [cards this]
