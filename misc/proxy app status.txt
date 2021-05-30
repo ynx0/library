@@ -1,6 +1,6 @@
 proxy app status
 
-- scries
+- scries (only work locally!)
 	- [%x %libraries ~] works
 	- [%x %books @ ~] works
 
@@ -9,17 +9,36 @@ proxy app status
 	- %remove-library works
 	- %add-book works
 	- %remove-book works
-	- %request-book works from 1/2 flow, needs handle-graph-update-outgoing to be implemented
+	- %request-book works
 
 - actions
 	- %add-comment works
 	- %remove-comment works
-	- %get-book needs testing (we have to implement handle-graph-update-outgoing for this to be tested)
+	- %get-book works
 
 - on-agent
-	- handle-graph-update-incoming works (probably)
-	- handle-graph-update-outgoing needs to be implemented
+	- handle-graph-update-incoming works
+	- handle-graph-update-outgoing works*
+		- only forwards %add-nodes, so i.e. deleting doesn't work yet
 
 - on-watch
 	- basic subscription works
 	- policy mechanisms need testing
+
+
+
+--------
+
+may 29
+
+- broadcasting graph updates seem to work!! this was the last major roadblock
+- scries only work locally!??
+	- make %request-libraries poke, which responds with a poke back %libraries or smtn which is the result of /x/libraries
+	- make %request-books poke, which server responds back with scry /x/books/@
+
+- still need to forward rest of the updates
+- still need to test out other policies (shouldn't be hard)
+- will just test locally to make sure code works for a 3rd ship, but not necessary to document
+- (side question) how do i manually close a subscription from dojo? %leave?
+	- answer: debug poke that runs a %leave
+
