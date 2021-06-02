@@ -26,8 +26,7 @@ proxy app status
 
 - on-watch
 	- basic subscription works
-	- policy mechanisms need testing
-		- kinda work, but getting weird subscribe wire not unique, meaning old wire being reused?
+	- policy enforcement logic works
 
 
 --------

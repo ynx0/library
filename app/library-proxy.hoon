@@ -2,6 +2,7 @@
 /+  store=graph-store, graph, default-agent,
     dbug, verb, agentio, libr=library
 ::  TODO use agentio instead of raw cards
+::  TODO i still don't know what wires to put for my `%watch`s
 |%
 +$  versioned-state
     $%  state-0
@@ -96,6 +97,7 @@
     =/  name        `@tas`i.t.t.t.path
     ?>  =(subscriber src.bowl)  :: check for imposter (sus)
     =/  policy  (~(got by policies) [our.bowl name])
+    ::  todo refactor this to make the assertion per branch rather to have a better stack trace
     =/  is-allowed=?
     ?-  -.policy
         %open       %.y
@@ -200,9 +202,10 @@
     [(poke-local-store update) state]
   ::
       %request-library
-    =/  rid        rid.command
-    ~&  rid
-    [[%pass ~ %agent [entity.rid %library-proxy] [%watch /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid]]]~ state]
+    =/  rid  rid.command
+    =/  pax  /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid]
+    :: TODO hack with the subscription wire to prevent running in to %wire-not-unique or wahtever
+    [[%pass /request-library/(scot %p entity.rid)/[name.rid]/(scot %da now.bowl) %agent [entity.rid %library-proxy] [%watch pax]]~ state]
   ::
       %request-book
     =/  rid  rid.command
