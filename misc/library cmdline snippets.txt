@@ -48,11 +48,11 @@
 :: ~zod adds comment on book "Dune"
 :library-proxy &library-action [%add-comment [our %library1] top-of-dune "I love dune"]
 
-:: ~nus $ for libraries available on ~zod
-.^((set resource:store) %gx /(scot %p ~zod)/library-proxy/(scot %da now)/libraries/noun)
+:: ~nus issues poke %get-libraries for libraries available on ~zod
+:~zod/library-proxy &library-action [%get-libraries ~]
 
-:: ~nus $ for books available on ~zod/library1
-=available-books .^((set atom) %gx /(scot %p ~zod)/library-proxy/(scot %da now)/books/library1/noun)
+:: ~nus issues poke %get-books for books available on ~zod/library1
+:~zod/library-proxy &library-action [%get-books [~zod %library1]]
 
 :: ~nus tries to add a book, fails because isn't in readers yet
 :~zod/library-proxy &library-command [%add-book [~zod %library1] ["fake book" "isbnisbnis"]]
