@@ -262,7 +262,6 @@
     ::  todo if dap is foreign app, then assert that it is also a %library-proxy
     :: 1. add the person to readers
     =/  prm  (fall (~(get by readers) src.bowl) *prim:library)
-    =.  prm  (~(put ju prm) rid top)
     =.  prm  (~(put ju prm) rid top)  :: this line doesn't appear to be happening
     =.  readers  (~(put by readers) src.bowl prm)
     ::~&  "in %get-book"
