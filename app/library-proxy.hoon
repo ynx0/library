@@ -272,6 +272,7 @@
     ~&  pax
     =/  update  .^(update:store %gx pax)
     [[%give %fact ~[/updates/(scot %p src.bowl)/(scot %p entity.rid)/[name.rid]] [%graph-update-2 !>(update)]]~ state]
+  ::
       %get-libraries
     `state
   ::

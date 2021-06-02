@@ -103,12 +103,12 @@
 :: ~nus tries to join %children-only, fails (tested)
 :library-proxy &library-command [%request-library [~zod %children-only]]
 
-:: ~dinted-bitmer-dozzod-dozzod, moon of ~zod, tries to join %children-only, succeeds
+:: ~sampel-palnet-dozzod-dozzod, moon of ~zod, tries to join %children-only, succeeds
 :library-proxy &library-command [%request-library [~zod %children-only]]
 
 :::
 
-:: ~dinted-bitmer-dozzod-dozzod, moon of ~zod, tries to join %frens-only, fails
+:: ~sampel-palnet-dozzod-dozzod, moon of ~zod, tries to join %frens-only, fails
 :library-proxy &library-command [%request-library [~zod %frens-only]]
 
 :: ~nus and sun try to join %frens-only, succeed (tested)

@@ -15,16 +15,19 @@ proxy app status
 	- %add-comment works
 	- %remove-comment works
 	- %get-book works
+	- %get-libraries works
+	- %get-books works
 
 - on-agent
 	- handle-graph-update-incoming works
 	- handle-graph-update-outgoing works*
-		- only forwards %add-nodes, so i.e. deleting doesn't work yet
+		- %add-nodes tested
+		- others implemented, need testing
 
 - on-watch
 	- basic subscription works
 	- policy mechanisms need testing
-
+		- kinda work, but getting weird subscribe wire not unique, meaning old wire being reused?
 
 
 --------
