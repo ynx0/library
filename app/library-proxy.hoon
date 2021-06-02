@@ -305,11 +305,25 @@
     =/  update-rid           i.update-rid-wrapped
     ?.  =(our.bowl entity.update-rid)  `state  :: we only broadcast updates for resources we own (todo we shouldn't for our moons right? idk)
     ::  for now we just no-op on any update we can't handle but default behavior should be to forward blindly
+    ::  TODO potentially cleanup following into a |^
     :_  state
     ^-  (list card)
-    ?+    -.q.update  ~&("ignoring update {<-.q.update>}" ~)  ::  todo extract default case to arm
+    ?+    -.q.update  ~&("ignoring update {<-.q.update>}" ~)  :: todo extract out default case to arm
+        %add-graph         ~  :: do not forward add graph to anyone. this gets manually forwarded in on-watch
+        :: i think the following pokes are only meant to be sent by the local user to his local graph-store
+        %archive-graph     ~
+        %unarchive-graph   ~
+        %run-updates       ~
+    ::
+        %remove-graph
+      %+  murn  ~(tap by readers)
+      |=  [her=ship prm=prim:library]
+      :: if her is not tracking this resource, don't send the update
+      =/  tracked-libraries  ~(key by prm)
+      ?.  (~(has in tracked-libraries) update-rid)  ~
+      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
+    ::
         %add-nodes
-      :: potentially cleanup into a |^
       %-  zing
       %+  murn  ~(tap by readers)
       |=  [her=ship prm=prim:library]
@@ -321,10 +335,66 @@
       %+  murn  ~(tap by nodes.q.update)
       |=  [idx=index:store *]
       ?.  (~(has in u.tracked-books) (head idx))  ~  :: only forward this update if they are tracking this book
-      `[%give %fact ~[/updates/(scot %p her)/(scot %p entity.update-rid)/[name.update-rid]] [%graph-update-2 !>(update)]]
+      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
+    ::
+        %add-signatures
+      %+  murn  ~(tap by readers)
+      |=  [her=ship prm=prim:library]
+      =/  tracked-books=(unit (set @))
+        (~(get by prm) update-rid)
+      :: if no tracked books for this resource, don't bother making any cards
+      ?~  tracked-books  ~
+      ?.  (~(has in u.tracked-books) (head index.uid.q.update))  ~  :: only forward this update if they are tracking this book
+      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
+    ::
+        %remove-signatures
+      :: XX Duplicate of %add-signatures, refactor
+      %+  murn  ~(tap by readers)
+      |=  [her=ship prm=prim:library]
+      =/  tracked-books=(unit (set @))
+        (~(get by prm) update-rid)
+      :: if no tracked books for this resource, don't bother making any cards
+      ?~  tracked-books  ~
+      ?.  (~(has in u.tracked-books) (head index.uid.q.update))  ~  :: only forward this update if they are tracking this book
+      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
+    ::
+        %add-tag
+      :: XX Duplicate of %add-signatures, refactor
+      %+  murn  ~(tap by readers)
+      |=  [her=ship prm=prim:library]
+      =/  tracked-books=(unit (set @))
+        (~(get by prm) update-rid)
+      :: if no tracked books for this resource, don't bother making any cards
+      ?~  tracked-books  ~
+      ?.  (~(has in u.tracked-books) (head index.uid.q.update))  ~  :: only forward this update if they are tracking this book
+      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
+    ::
+        %remove-tag
+      :: XX Duplicate of %add-signatures, refactor
+      %+  murn  ~(tap by readers)
+      |=  [her=ship prm=prim:library]
+      =/  tracked-books=(unit (set @))
+        (~(get by prm) update-rid)
+      :: if no tracked books for this resource, don't bother making any cards
+      ?~  tracked-books  ~
+      ?.  (~(has in u.tracked-books) (head index.uid.q.update))  ~  :: only forward this update if they are tracking this book
+      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
+    ::
         %remove-posts
-        :: TODO needs special handling: based on indices, forward only to people who care
-      ~
+      %+  murn  ~(tap by readers)
+      |=  [her=ship prm=prim:library]
+      =/  tracked-books=(unit (set @))
+        (~(get by prm) update-rid)
+      :: if no tracked books for this resource, don't bother making any cards
+      ?~  tracked-books  ~
+      :: ensure that users who receive a remove-posts
+      :: only receive it for indices that they would have
+      ::=.  indices.q.update
+      ::  %-  silt
+      ::  %+  skim  ~(tap in indices.q.update)
+      ::  |=  [idx=index:store]
+      ::  (~(has in u.tracked-books) (head idx))
+      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
     ==
   [cards state]
 ::
