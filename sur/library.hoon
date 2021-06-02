@@ -5,6 +5,7 @@
   $:
     title=tape
     isbn=tape
+    :: TODO fulltext=tape ? 
   ==
 ::
 +$  prim     (jug resource atom)  :: for a given resource, what indexes does the reader want to hear about?
@@ -25,7 +26,7 @@
 ::  anyone can poke us with an action, incl. ourselves
 +$  action
   $%  [%add-comment rid=resource top=@ =comment]   :: anyone can add if they are allowed
-      [%remove-comment rid=resource =index:store   :: anyone can remove their own comment
+      [%remove-comment rid=resource =index:store]  :: anyone can remove their own comment
       [%get-book rid=resource book-index=atom]     :: someone else wants to now get the data for a book and hear about its updates. we should only ever hear this from a foreign library-proxy and never us ourself
       ::  scry wrappers
       ::  todo extract out into request top level type?
