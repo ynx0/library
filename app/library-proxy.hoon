@@ -54,6 +54,10 @@
       %library-action
     =+  !<(=action:library vase)
     (handle-action:hc action)
+  ::
+      %library-response
+    =+  !<(=response:library vase)
+    (handle-response:hc response)
   ==
   [cards this]
 ++  on-agent
@@ -265,6 +269,24 @@
     ~&  pax
     =/  update  .^(update:store %gx pax)
     [[%give %fact ~[/updates/(scot %p src.bowl)/(scot %p entity.rid)/[name.rid]] [%graph-update-2 !>(update)]]~ state]
+      %get-libraries
+    `state
+  ::
+      %get-books
+    `state
+  ==
+  [cards state]
+++  handle-response
+  |=  [=response:library]
+  ^-  (quip card _state)
+  =^  cards  state
+  ?-    -.response
+      %available-libraries
+    `state
+  ::
+      %available-books
+    =/  rid  rid.response
+  `state
   ==
   [cards state]
 ++  handle-graph-update-outgoing
