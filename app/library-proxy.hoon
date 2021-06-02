@@ -274,10 +274,13 @@
     [[%give %fact ~[/updates/(scot %p src.bowl)/(scot %p entity.rid)/[name.rid]] [%graph-update-2 !>(update)]]~ state]
   ::
       %get-libraries
-    `state
+    =/  libraries  .^((set resource) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/libraries/noun)
+    [[%pass ~ %agent [src.bowl %library-proxy] %poke [%library-response !>([%available-libraries libraries])]]~ state]
   ::
       %get-books
-    `state
+    =/  rid  rid.action
+    =/  book-indexes  .^((set atom) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/books/[name.rid]/noun)
+    [[%pass ~ %agent [src.bowl %library-proxy] %poke [%library-response !>([%available-books rid book-indexes])]]~ state]
   ==
   [cards state]
 ++  handle-response
