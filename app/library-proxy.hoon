@@ -283,16 +283,17 @@
 ++  handle-response
   |=  [=response:library]
   ^-  (quip card _state)
-  =^  cards  state
   ?-    -.response
       %available-libraries
+    ~&  libraries.response
     `state
   ::
       %available-books
-    =/  rid  rid.response
-  `state
+    ~&  rid.response
+    ~&  book-indexes.response
+    `state
   ==
-  [cards state]
+  
 ++  handle-graph-update-outgoing
   |=  [=update:store]
   ^-  (quip card _state)
