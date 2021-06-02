@@ -27,6 +27,10 @@
 :library-proxy &library-action [%add-comment [our %library1] 123.456 "this is a comment."]
 :library-proxy &library-action [%add-comment [our %library1] ~[123.456 8.319.395.793.566.789.475 789.654]]
 
+=libraries .^((set resource:store) %gx /(scot %p our)/library-proxy/(scot %da now)/libraries/noun)
+=available-books .^((set atom) %gx /(scot %p our)/library-proxy/(scot %da now)/books/library1/noun)
+
+
 
 ==========================================
 
@@ -44,13 +48,11 @@
 :: ~zod adds comment on book "Dune"
 :library-proxy &library-action [%add-comment [our %library1] top-of-dune "I love dune"]
 
-:: ~nus scries for libraries available on ~zod
-:: doesn't work foreign i.e. from nus? but works locally
-=libraries .^((set resource:store) %gx /(scot %p ~zod)/library-proxy/(scot %da now)/libraries/noun)
+:: ~nus $ for libraries available on ~zod
+.^((set resource:store) %gx /(scot %p ~zod)/library-proxy/(scot %da now)/libraries/noun)
 
-:: ~nus scries for books available on ~zod/library1
+:: ~nus $ for books available on ~zod/library1
 =available-books .^((set atom) %gx /(scot %p ~zod)/library-proxy/(scot %da now)/books/library1/noun)
-
 
 :: ~nus tries to add a book, fails because isn't in readers yet
 :~zod/library-proxy &library-command [%add-book [~zod %library1] ["fake book" "isbnisbnis"]]
@@ -95,21 +97,21 @@
 :: testing out policies
 
 :library-proxy &library-command [%create-library [our %children-only] [%children ~]]
-:library-proxy &library-command [%create-library [our %frens-only] [%whitelist (silt ~[~nus ~sun]) ~]]
+:library-proxy &library-command [%create-library [our %frens-only] [%whitelist (silt ~[~nus ~sun])]]
 
 
-:: ~nus tries to join %children-only, fails
-:~zod/library-proxy &library-command [%request-library [~zod %children-only]]
+:: ~nus tries to join %children-only, fails (tested)
+:library-proxy &library-command [%request-library [~zod %children-only]]
 
 :: ~dinted-bitmer-dozzod-dozzod, moon of ~zod, tries to join %children-only, succeeds
-:~zod/library-proxy &library-command [%request-library [~zod %children-only]]
+:library-proxy &library-command [%request-library [~zod %children-only]]
 
 :::
 
 :: ~dinted-bitmer-dozzod-dozzod, moon of ~zod, tries to join %frens-only, fails
-:~zod/library-proxy &library-command [%request-library [~zod %frens-only]]
+:library-proxy &library-command [%request-library [~zod %frens-only]]
 
-:: ~nus and sun try to join %frens-only, succeed
-:~zod/library-proxy &library-command [%request-library [~zod %frens-only]]
+:: ~nus and sun try to join %frens-only, succeed (tested)
+:library-proxy &library-command [%request-library [~zod %frens-only]]
 
 

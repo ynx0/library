@@ -67,7 +67,7 @@
   :: as a result, we simply trust updates (after imposter check) from a given ship; that is, it is the sole source of truth).
   ?+    -.sign  (on-agent:def wire sign)
       %kick
-    ~&  >>>  "kicked from graph store subscription"
+    ~&  >>>  "kicked from a subscription"
     `this
   ::
       %fact
@@ -87,7 +87,6 @@
   |=  =path
   ^-  (quip card _this)
   =^  cards  state
-  ::`state
   ?+    path  (on-watch:def path)
       [%updates @ @ @ ~]
     ::  path format: /updates/[subscriber-ship]/[entity.rid]/[name.rid]
@@ -179,7 +178,7 @@
     =.  readers  
       %-  ~(run by readers)
       |=([prm=prim:library] (~(del by prm) rid))  :: clear the library from any existing readers
-    =.  policies   (~(del by policies) rid)                   ::  remove the policy for the given rid from
+    =.  policies   (~(del by policies) rid)       ::  remove the policy for the given rid from
     [(poke-local-store update) state]
   ::
       %add-book
@@ -202,13 +201,14 @@
   ::
       %request-library
     =/  rid        rid.command
+    ~&  rid
     [[%pass ~ %agent [entity.rid %library-proxy] [%watch /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid]]]~ state]
   ::
       %request-book
     =/  rid  rid.command
     =/  top  top.command
     =/  =action:library  [%get-book rid top]
-    :: todo crashes if we haven't %request-library'd first. is this ok?
+    :: crashes if we haven't %request-library'd first. is this ok?
     [[%pass /book-request %agent [entity.rid %library-proxy] %poke [%library-action !>(action)]]~ state]
   ==
   [cards state]
@@ -263,7 +263,11 @@
     :: 1. add the person to readers
     =/  prm  (fall (~(get by readers) src.bowl) *prim:library)
     =.  prm  (~(put ju prm) rid top)
+    =.  prm  (~(put ju prm) rid top)  :: this line doesn't appear to be happening
     =.  readers  (~(put by readers) src.bowl prm)
+    ::~&  "in %get-book"
+    ::~&  readers
+    ::~&  state
     :: 2. send them the graph update
     =/  pax  `path`/(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid]/(scot %ud top)/noun
     ~&  pax

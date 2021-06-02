@@ -33,11 +33,12 @@ may 29
 
 - broadcasting graph updates seem to work!! this was the last major roadblock
 - scries only work locally!??
+	- remote scrying doesn't exist
 	- make %request-libraries poke, which responds with a poke back %libraries or smtn which is the result of /x/libraries
 	- make %request-books poke, which server responds back with scry /x/books/@
 
-- still need to forward rest of the updates
-- still need to test out other policies (shouldn't be hard)
+- still need to forward rest of the updates (implemented, needs testing)
+- still need to test out other policies
 - will just test locally to make sure code works for a 3rd ship, but not necessary to document
 - (side question) how do i manually close a subscription from dojo? %leave?
 	- answer: debug poke that runs a %leave
