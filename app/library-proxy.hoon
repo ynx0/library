@@ -286,16 +286,16 @@
     ?~  policy  `state  :: if there is no policy set for the given rid, it is an invalid request. ignore
     ::  TODO refactor, copied from +on-watch
     =/  is-allowed=?
-      ?-  -.policy
+      ?-  -.u.policy
           %open       %.y
           %children   (team:title our.bowl src.bowl)
-          %whitelist  (~(has in ships.policy) src.bowl)
+          %whitelist  (~(has in ships.u.policy) src.bowl)
       ==
     ?.  is-allowed  `state  :: only give them list of books if they are allowed
     ::  todo refactor this to make the assertion per branch rather to have a better stack trace
-    =/  book-indexes  .^((set atom) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/books/[name.rid]/noun)
     ::  todo if/when full-text/extra info is enabled, this can be a set of book-indexes along with just title and isbn without(!)
     ::  fulltext, so that you only download the fulltext of books that you care about, and you have more metadata to judge by
+    =/  book-indexes  .^((set atom) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/books/[name.rid]/noun)
     [[%pass ~ %agent [src.bowl %library-proxy] %poke [%library-response !>([%available-books rid book-indexes])]]~ state]
   ==
   [cards state]
