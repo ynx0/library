@@ -355,6 +355,9 @@
       `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
     ::
         %remove-posts
+      ::  need to clear reader state *after* creating cards, cause we can't create card without state
+      :_   =.  state  (remove-book state update-rid indices.q.update)
+      state
       %+  murn  ~(tap by readers)
       |=  [her=ship prm=prim:library]
       =/  tracked-books=(unit (set @))
