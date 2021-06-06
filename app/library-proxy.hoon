@@ -366,12 +366,8 @@
       ?~  tracked-books  ~
       :: ensure that users who receive a remove-posts
       :: only receive it for indices that they would have
-      ::=.  indices.q.update
-      ::  %-  silt
-      ::  %+  skim  ~(tap in indices.q.update)
-      ::  |=  [idx=index:store]
-      ::  (~(has in u.tracked-books) (head idx))
-      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
+      =.  indices.q.update  (filter-indices indices.q.update u.tracked-books)
+      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]        
     ==
   [cards state]
   ::
