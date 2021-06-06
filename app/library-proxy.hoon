@@ -196,9 +196,8 @@
     =/  top        top.command
     =/  time-sent  now.bowl
     =/  update     (remove-book-update:libr rid top time-sent)
-    =.  readers
-      %-  ~(run by readers)
-      |=([prm=prim:library] (~(del ju prm) rid top))  ::  stop tracking any readers for this book
+    ::  removing the book from `readers` is handled during the handling of %remove-graph
+    ::  because it needs the metadata to know who to send the update to
     [(poke-local-store update) state]
   ::
       %request-library
