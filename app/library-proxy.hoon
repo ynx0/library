@@ -321,33 +321,30 @@
     ?~  update-rid-wrapped  `state             :: if theres no resource, we don't forward cause we can't tell if its something based on our own resource
     =/  update-rid          i.update-rid-wrapped
     ?.  =(our.bowl entity.update-rid)  `state  :: we only broadcast updates for resources we own (todo we shouldn't for our moons right? idk)
-    ::  for now we just no-op on any update we can't handle but default behavior should be to forward blindly
-    ::  TODO potentially cleanup following into a |^
-    :_  state
-    ^-  (list card)
-    ?+    -.q.update  ~&("ignoring update {<-.q.update>}" ~)  :: todo extract out default case to arm
-        %add-graph         ~  :: do not forward add graph to anyone. this gets manually forwarded in on-watch
-        :: i think the following pokes are only meant to be sent by the local user to his local graph-store
-        %archive-graph     ~
-        %unarchive-graph   ~
-        %run-updates       ~
+    ?+    -.q.update  ~&("ignoring update {<-.q.update>}" `state)  :: todo extract out default case to arm
+        %add-graph          `state  :: do not forward add graph to anyone. this gets manually forwarded in on-watch
+    ::
+        ::  i think the following pokes are only meant to be sent by the local user to his local graph-store
+        %archive-graph      `state
+        %unarchive-graph    `state
+        %run-updates        `state
+    ::
     ::
         %remove-graph
+      :_  state
       %+  murn  ~(tap by readers)
       |=  [her=ship prm=prim:library]
-      :: if her is not tracking this resource, don't send the update
-      =/  tracked-libraries  ~(key by prm)
+      =/  tracked-libraries  ~(key by prm)  :: if her is not tracking this resource, don't send the update
       ?.  (~(has in tracked-libraries) update-rid)  ~
       `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
     ::
         %add-nodes
+      :_  state
       %-  zing
       %+  murn  ~(tap by readers)
       |=  [her=ship prm=prim:library]
-      =/  tracked-books=(unit (set @))
-        (~(get by prm) update-rid)
-      :: if no tracked books for this resource, don't bother making any cards
-      ?~  tracked-books  ~
+      =/  tracked-books=(unit (set @))  (~(get by prm) update-rid)
+      ?~  tracked-books  ~  :: if no tracked books for this resource, don't bother making any cards
       %-  some
       %+  murn  ~(tap by nodes.q.update)
       |=  [idx=index:store *]
