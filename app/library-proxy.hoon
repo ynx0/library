@@ -308,10 +308,9 @@
     ~&  book-indexes.response
     `state
   ==
-  
 ++  handle-graph-update-outgoing
   |=  [=update:store]
-  ^-  (quip card _state)
+  |^  ^-  (quip card _state) :: make helper functions for 
   ::  this is where we forward any graph store updates to any subscriber of ours
   ::~&  "got graph update"
   ::~&  update
@@ -329,6 +328,10 @@
         %unarchive-graph    `state
         %run-updates        `state
     ::
+        %add-signatures     [(send-if-tracking-uid update update-rid index.uid.q.update) state]
+        %remove-signatures  [(send-if-tracking-uid update update-rid index.uid.q.update) state]
+        %add-tag            [(send-if-tracking-uid update update-rid index.uid.q.update) state]
+        %remove-tag         [(send-if-tracking-uid update update-rid index.uid.q.update) state]
     ::
         %remove-graph
       :_  state
@@ -351,49 +354,6 @@
       ?.  (~(has in u.tracked-books) (head idx))  ~  :: only forward this update if they are tracking this book
       `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
     ::
-        %add-signatures
-      %+  murn  ~(tap by readers)
-      |=  [her=ship prm=prim:library]
-      =/  tracked-books=(unit (set @))
-        (~(get by prm) update-rid)
-      :: if no tracked books for this resource, don't bother making any cards
-      ?~  tracked-books  ~
-      ?.  (~(has in u.tracked-books) (head index.uid.q.update))  ~  :: only forward this update if they are tracking this book
-      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
-    ::
-        %remove-signatures
-      :: XX Duplicate of %add-signatures, refactor
-      %+  murn  ~(tap by readers)
-      |=  [her=ship prm=prim:library]
-      =/  tracked-books=(unit (set @))
-        (~(get by prm) update-rid)
-      :: if no tracked books for this resource, don't bother making any cards
-      ?~  tracked-books  ~
-      ?.  (~(has in u.tracked-books) (head index.uid.q.update))  ~  :: only forward this update if they are tracking this book
-      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
-    ::
-        %add-tag
-      :: XX Duplicate of %add-signatures, refactor
-      %+  murn  ~(tap by readers)
-      |=  [her=ship prm=prim:library]
-      =/  tracked-books=(unit (set @))
-        (~(get by prm) update-rid)
-      :: if no tracked books for this resource, don't bother making any cards
-      ?~  tracked-books  ~
-      ?.  (~(has in u.tracked-books) (head index.uid.q.update))  ~  :: only forward this update if they are tracking this book
-      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
-    ::
-        %remove-tag
-      :: XX Duplicate of %add-signatures, refactor
-      %+  murn  ~(tap by readers)
-      |=  [her=ship prm=prim:library]
-      =/  tracked-books=(unit (set @))
-        (~(get by prm) update-rid)
-      :: if no tracked books for this resource, don't bother making any cards
-      ?~  tracked-books  ~
-      ?.  (~(has in u.tracked-books) (head index.uid.q.update))  ~  :: only forward this update if they are tracking this book
-      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
-    ::
         %remove-posts
       %+  murn  ~(tap by readers)
       |=  [her=ship prm=prim:library]
@@ -411,6 +371,51 @@
       `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
     ==
   [cards state]
+  ::
+  ++  filter-indices
+    |=  [indices=(set index:store) tracked-books=(set @)]
+    ::  return indices that only pertain to the books that are being tracked
+    ^-  (set index:store)
+    %-  silt
+    %+  skim  ~(tap in indices)
+    |=  [idx=index:store]
+    (~(has in tracked-books) (head idx))
+  ++  send-if-tracking-uid
+    |=  [=update:store update-rid=resource idx=index:store]
+    ^-  (list card)
+    %+  murn  ~(tap by readers)
+    |=  [her=ship prm=prim:library]
+    =/  tracked-books=(unit (set @))
+      (~(get by prm) update-rid)
+    :: if no tracked books for this resource, don't bother making any cards
+    ?~  tracked-books  ~
+    ?.  (~(has in u.tracked-books) (head idx))  ~  :: only forward this update if they are tracking this book
+    `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
+  ++  remove-book
+    ::  todo rename
+    |=  [old=_state rid=resource indices=(set index:store)]
+    ^-  _state
+    ::  switch on length of elm of ~(tap by indices)
+    ::  if len 3, [@ %comments @ ~] or [@ %meta @ ~], no change in state (for now)
+    ::  if len 2, [@ %comments ~] or  [@ %meta ~], we are deleting a structural node which is weird but no change in state
+    ::  if len 1, [@ ~], then we are deleting a book, remove the entry [rid top] from the prm
+      ::  for each reader,
+      ::  remove the [rid top] from prm
+      ::
+    ::
+    =/  new-readers
+      %-  ~(run by readers.old)
+      |=  prm=prim:library
+      =/  index-list  ~(tap by indices)
+      |-
+      ?~  index-list  prm
+      =/  idx=index:store  i.index-list
+      ?:  ?=([@ ~] idx)  $(index-list t.index-list )
+      $(index-list t.index-list, prm (~(del ju prm) rid (head idx))  ::  stop tracking any readers for this book
+
+        prm         :: leave unchanged if not a book being removed
+    old(readers new-readers)
+  --
 ::
 ++  handle-graph-update-incoming
   |=  [=update:store]
