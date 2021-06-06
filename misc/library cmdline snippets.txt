@@ -7,6 +7,8 @@
 =libgraph -build-file %/lib/graph/hoon
 =liblibrary -build-file %/lib/library/hoon
 
+
+
 -build-file %/app/library-proxy/hoon
 |start %library-proxy
 
@@ -15,6 +17,8 @@
 :graph-store +dbug [%state 'graphs']
 :library-proxy +dbug
 
+:: ~zod and moon ota setup
+|merge %kids our %home
 
 :: appetizers of all commands
 :library-proxy &library-command [%create-library [our %library1] [%open ~]]
@@ -43,7 +47,7 @@
 :library-proxy &library-command [%add-book [our %library1] ["ABC" "isbnisbnis123"]]
 
 ::: replace with the top level index fragment of the book titled "Dune"
-=top-of-dune 170.141.184.505.078.271.068.567.547.854.022.770.688
+=top-of-dune 170.141.184.505.085.304.029.083.925.866.675.699.712
 
 :: ~zod adds comment on book "Dune"
 :library-proxy &library-action [%add-comment [our %library1] top-of-dune "I love dune"]
@@ -58,7 +62,7 @@
 :~zod/library-proxy &library-command [%add-book [~zod %library1] ["fake book" "isbnisbnis"]]
 
 :: ~nus tries to add comment on book, fails cause not part of readers
-:~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune "dune is ok"]
+:~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune "failing comment"]
 
 :: ~nus issues %request-library poke to start recieving updates to %library1
 :library-proxy &library-command [%request-library [~zod %library1]]
@@ -73,13 +77,13 @@
 :~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune "in my opinion"]
 
 :: ~nus deletes own comment, succeeds
-:~zod/library-proxy &library-action [%remove-comment [~zod %library1] ~[top-of-dune %comments 170.141.184.505.078.214.409.234.373.568.270.172.160]]
+:~zod/library-proxy &library-action [%remove-comment [~zod %library1] ~[top-of-dune %comments <index-frag of comment by ~nus>]]
 
 :: ~zod deletes nus's comment, succeeds
-:library-proxy &library-action [%remove-comment [our %library1] ~[<index of comment by ~nus>]]
+:library-proxy &library-action [%remove-comment [our %library1] ~[top-of-dune %comments <index-frag of other comment by ~nus>]]
 
 :: ~nus tries to delete ~zod's comment, fails
-:~zod/library-proxy &library-action [%remove-comment [~zod %library1] ~[<index of comment by ~zod>]]
+:~zod/library-proxy &library-action [%remove-comment [~zod %library1] ~[top-of-dune %comments <index-frag of comment by ~zod>]]
 
 :: ~nus tries to delete ~zod's book, fails
 :~zod/library-proxy &library-command [%remove-book [~zod %library1] top-of-dune]

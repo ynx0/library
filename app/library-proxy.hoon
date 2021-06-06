@@ -99,11 +99,11 @@
     =/  policy  (~(got by policies) [our.bowl name])
     ::  todo refactor this to make the assertion per branch rather to have a better stack trace
     =/  is-allowed=?
-    ?-  -.policy
-        %open       %.y
-        %children   (team:title our.bowl src.bowl)
-        %whitelist  (~(has in ships.policy) src.bowl)
-    ==
+      ?-  -.policy
+          %open       %.y
+          %children   (team:title our.bowl src.bowl)
+          %whitelist  (~(has in ships.policy) src.bowl)
+      ==
     ?>  is-allowed
     ::  we scry the original graph just to get its original creation time
     ::  otherwise, it is discarded. what is actually sent is an empty graph
@@ -267,9 +267,6 @@
     =/  prm  (fall (~(get by readers) src.bowl) *prim:library)
     =.  prm  (~(put ju prm) rid top)  :: this line doesn't appear to be happening
     =.  readers  (~(put by readers) src.bowl prm)
-    ::~&  "in %get-book"
-    ::~&  readers
-    ::~&  state
     :: 2. send them the graph update
     =/  pax  `path`/(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid]/(scot %ud top)/noun
     ~&  pax
@@ -322,8 +319,8 @@
   =^  cards  state
     :: resource-for-update always returns a list of one (1) resource
     =/  update-rid-wrapped  (resource-for-update:gra !>(update))
-    ?~  update-rid-wrapped  `state  :: if theres no resource, we don't forward cause we can't tell if its something based on our own resource
-    =/  update-rid           i.update-rid-wrapped
+    ?~  update-rid-wrapped  `state             :: if theres no resource, we don't forward cause we can't tell if its something based on our own resource
+    =/  update-rid          i.update-rid-wrapped
     ?.  =(our.bowl entity.update-rid)  `state  :: we only broadcast updates for resources we own (todo we shouldn't for our moons right? idk)
     ::  for now we just no-op on any update we can't handle but default behavior should be to forward blindly
     ::  TODO potentially cleanup following into a |^
