@@ -174,9 +174,6 @@
     =/  rid        rid.command
     =/  time-sent  now.bowl
     =/  update     (remove-library-update:libr rid time-sent)
-    =.  readers  
-      %-  ~(run by readers)
-      |=([prm=prim:library] (~(del by prm) rid))  :: clear the library from any existing readers
     =.  policies   (~(del by policies) rid)       ::  remove the policy for the given rid from
     [(poke-local-store update) state]
   ::
@@ -330,7 +327,9 @@
         %remove-tag         [(send-if-tracking-uid update update-rid index.uid.q.update) state]
     ::
         %remove-graph
-      :_  state
+      ::  todo this style and code sucks please someone help lol
+      :_  =.  state  (remove-library state update-rid)
+      state
       %+  murn  ~(tap by readers)
       |=  [her=ship prm=prim:library]
       =/  tracked-libraries  ~(key by prm)  :: if her is not tracking this resource, don't send the update
@@ -387,6 +386,14 @@
     ?~  tracked-books  ~
     ?.  (~(has in u.tracked-books) (head idx))  ~  :: only forward this update if they are tracking this book
     `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
+  ++  remove-library
+    |=  [old=_state rid=resource]
+    ^-  _state
+    =/  new-readers
+      %-  ~(run by readers.old)
+      |=  prm=prim:library
+      (~(del by prm) rid)
+    old(readers new-readers)
   ++  remove-book
     ::  todo rename
     |=  [old=_state rid=resource indices=(set index:store)]
