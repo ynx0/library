@@ -391,17 +391,16 @@
     ::  todo rename
     |=  [old=_state rid=resource indices=(set index:store)]
     ^-  _state
+    =/  index-list  ~(tap by indices)
     =/  new-readers
       %-  ~(run by readers.old)
       |=  prm=prim:library
-      =/  index-list  ~(tap by indices)
+      ^-  prim:library
       |-
-      ?~  index-list  prm
+      ?~  index-list  prm  :: we've processed all indexes, return the modified prim
       =/  idx=index:store  i.index-list
-      ?:  ?=([@ ~] idx)  $(index-list t.index-list )
-      $(index-list t.index-list, prm (~(del ju prm) rid (head idx))  ::  stop tracking any readers for this book
-
-        prm         :: leave unchanged if not a book being removed
+      ?.  ?=([@ ~] idx)  $(index-list t.index-list)                   ::  this isn't a book to be deleted, so we don't handle it here
+      $(index-list t.index-list, prm (~(del ju prm) rid (head idx)))  ::  stop tracking any readers for this book
     old(readers new-readers)
   --
 ::
