@@ -12,15 +12,19 @@
 -build-file %/app/library-proxy/hoon
 |start %library-proxy
 
+:: ~zod and moon ota setup
+|ota ~zod %kids
+|merge %kids our %home
+
 
 :: handy state inspections
 :graph-store +dbug [%state 'graphs']
 :library-proxy +dbug
 
-:: ~zod and moon ota setup
-|merge %kids our %home
 
 :: appetizers of all commands
+::  TODO Create proper appetizer section/document that is easier to read that test cases
+
 :library-proxy &library-command [%create-library [our %library1] [%open ~]]
 :library-proxy &library-command [%remove-library [our %library1]]
 

@@ -8,6 +8,7 @@
     :: TODO fulltext=tape ? 
   ==
 ::
+::  TODO better / clearer name for prim
 +$  prim     (jug resource atom)  :: for a given resource, what indexes does the reader want to hear about?
 +$  readers  (map ship prim)      :: given a ship, what are the resources and books that it cares about?
 ::  TODO most things that take a rid can theoretically be just a name=@tas because entity=@p is always gonna be the owner of the proxy

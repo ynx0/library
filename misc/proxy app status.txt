@@ -50,12 +50,10 @@ may 29
 jun 5
 
 - most of the tests run and pass
-- readers handling needs work, main blocker
-
-
 - need to fix handling readers
 	- move state handling to first part of :_, just have another switch/if statement, modify state there,
 	- refactor repetative stuff out into |^ arms.
+
 - need to fix breaking changes to graph store validators
 - need to do final testing, esp. of update forwarding for non-%add-nodes
 

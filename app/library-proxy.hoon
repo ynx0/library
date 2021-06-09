@@ -3,6 +3,7 @@
     dbug, verb, agentio, libr=library
 ::  TODO use agentio instead of raw cards
 ::  TODO i still don't know what wires to put for my `%watch`s
+::  TODO use scry-for:libgraph rather than direct scries
 |%
 +$  versioned-state
     $%  state-0
@@ -39,7 +40,6 @@
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
-  ::~&  graph
   ~&  >  '%library-proxy recompiled successfully'
   `this(state !<(versioned-state old-state))
 ++  on-poke
@@ -93,7 +93,7 @@
     ::  path format: /updates/[subscriber-ship]/[entity.rid]/[name.rid]
     ::  entity.rid must always be us, its redundant
     =/  subscriber  (slav %p i.t.path)
-    =/  us          (slav %p i.t.t.path)
+    =/  us          (slav %p i.t.t.path)  :: redundant
     =/  name        `@tas`i.t.t.t.path
     ?>  =(subscriber src.bowl)  :: check for imposter (sus)
     =/  policy  (~(got by policies) [our.bowl name])
@@ -113,12 +113,10 @@
     :: readers are who's? actually interested, and wants to hear updates
     :: implicitly, having a successful subscription means you have permission, not necessarily are interested in hearing about anything yet.
     ::
-    =.  readers  (~(put by readers) subscriber (~(gas by *prim:library) [[[us name] *(set atom)] ~]))
-    [[%give %fact ~[/updates/(scot %p src.bowl)/(scot %p us)/[name]] [%graph-update-2 !>(initial-library-update)]]~ state]
+    =.  readers  (~(put by readers) subscriber (~(gas by *prim:library) [[[our.bowl name] *(set atom)] ~]))
+    [[%give %fact ~[/updates/(scot %p src.bowl)/(scot %p our.bowl)/[name]] [%graph-update-2 !>(initial-library-update)]]~ state]
   ==
   [cards this]
-++  on-leave  on-leave:def
-:: todo surface available books in peek
 ++  on-peek
   |=  pax=path
   ^-  (unit (unit cage))
@@ -138,8 +136,6 @@
       ::  invariant: entity.key == our.bowl
       =/  mark  .^((unit @tas) %gx /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/graph-mark/(scot %p entity.key)/[name.key]/noun)
       =([~ %graph-validator-library] mark)
-    ::  alternatively, return key:by policies, more flakey
-    ::  todo should this be %noun or (set resource)
     ``noun+!>(library-keys)
     ::      
       [%x %books @ ~]
@@ -151,6 +147,7 @@
     ``noun+!>(`(set atom)`book-tops)
     ::
   ==
+++  on-leave  on-leave:def
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --
@@ -261,7 +258,6 @@
     =/  top  book-index.action
     :: should only be able to do this if we are NOT the host. otherwise, we already have the book
     ?<  =(our.bowl src.bowl)
-    ::  todo if dap is foreign app, then assert that it is also a %library-proxy
     :: 1. add the person to readers
     =/  prm  (fall (~(get by readers) src.bowl) *prim:library)
     =.  prm  (~(put ju prm) rid top)  :: this line doesn't appear to be happening
@@ -356,6 +352,7 @@
     ::
         %remove-posts
       ::  need to clear reader state *after* creating cards, cause we can't create card without state
+      ::  todo this style and code sucks please someone help lol
       :_   =.  state  (remove-book state update-rid indices.q.update)
       state
       %+  murn  ~(tap by readers)
@@ -394,14 +391,6 @@
     ::  todo rename
     |=  [old=_state rid=resource indices=(set index:store)]
     ^-  _state
-    ::  switch on length of elm of ~(tap by indices)
-    ::  if len 3, [@ %comments @ ~] or [@ %meta @ ~], no change in state (for now)
-    ::  if len 2, [@ %comments ~] or  [@ %meta ~], we are deleting a structural node which is weird but no change in state
-    ::  if len 1, [@ ~], then we are deleting a book, remove the entry [rid top] from the prm
-      ::  for each reader,
-      ::  remove the [rid top] from prm
-      ::
-    ::
     =/  new-readers
       %-  ~(run by readers.old)
       |=  prm=prim:library
