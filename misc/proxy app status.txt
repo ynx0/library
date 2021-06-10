@@ -57,9 +57,23 @@ jun 5
 - need to fix breaking changes to graph store validators
 - need to do final testing, esp. of update forwarding for non-%add-nodes
 
+---
+
+jun 9
+
+- all test cases seem to work
+- sending a remove graph update seems to net 2 remove graph store updates on receiving end? not a deal-breaker but eh
+- sending stuff like %add/remove-signatures needs to be tested eventually, but not a deal breaker.
+
+---
+
+jun 10
 
 
-
+todo
+- test out requesting your own library and book, and do something, see if it causes a loop. currently this is not asserted against
+- test out state removal properly working across multiple resources (works for a single one)
+- sending stuff like %add/remove-signatures needs to be tested eventually, but not a deal breaker.
 
 
 

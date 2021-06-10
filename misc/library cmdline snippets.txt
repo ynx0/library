@@ -46,12 +46,15 @@
 :: ~zod creates a library called %library1
 :library-proxy &library-command [%create-library [our %library1] [%open ~]]
 
+:: ~zod tries to add a book with invalid isbn length, fails
+:library-proxy &library-command [%add-book [our %library1] ["Dune" "not10or13chars"]]
+
 :: ~zod adds two books adding a book
 :library-proxy &library-command [%add-book [our %library1] ["Dune" "isbnisbnis"]]
 :library-proxy &library-command [%add-book [our %library1] ["ABC" "isbnisbnis123"]]
 
 ::: replace with the top level index fragment of the book titled "Dune"
-=top-of-dune 170.141.184.505.085.304.029.083.925.866.675.699.712
+=top-of-dune 170.141.184.505.000.000.000.000.000.000.000.000.000
 
 :: ~zod adds comment on book "Dune"
 :library-proxy &library-action [%add-comment [our %library1] top-of-dune "I love dune"]
@@ -74,7 +77,7 @@
 :: ~nus issues %request-library poke to start recieving updates %library1
 :library-proxy &library-command [%request-book [~zod %library1] top-of-dune]
 
-:: ~nus tries to add comment again, is successful
+:: ~nus tries to add comment, is successful
 :~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune "dune is ok"]
 
 :: ~nus adds a second comment again, is successful

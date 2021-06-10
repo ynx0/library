@@ -195,12 +195,14 @@
     [(poke-local-store update) state]
   ::
       %request-library
+    ::?<  =(our.bowl src.bowl)  :: we should never request our own library, this may cause a loop
     =/  rid  rid.command
     =/  pax  /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid]
     :: TODO hack with the subscription wire to prevent running in to %wire-not-unique or wahtever
     [[%pass /request-library/(scot %p entity.rid)/[name.rid]/(scot %da now.bowl) %agent [entity.rid %library-proxy] [%watch pax]]~ state]
   ::
       %request-book
+    ::?<  =(our.bowl src.bowl)  :: we should never request our own library
     =/  rid  rid.command
     =/  top  top.command
     =/  =action:library  [%get-book rid top]
