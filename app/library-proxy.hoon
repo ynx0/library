@@ -332,11 +332,18 @@
       ::  todo this style and code sucks please someone help lol
       :_  =.  state  (remove-library state update-rid)
       state
+      %-  zing
       %+  murn  ~(tap by readers)
       |=  [her=ship prm=prim:library]
       =/  tracked-libraries  ~(key by prm)  :: if her is not tracking this resource, don't send the update
       ?.  (~(has in tracked-libraries) update-rid)  ~
-      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
+      ~&  "sending remove graph update {<update-rid>} to {<her>}"
+      %-  some
+      =/  paths  ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]]
+      :~  [%give %fact paths [%graph-update-2 !>(update)]]
+          [%give %kick paths `her]
+      ==
+
     ::
         %add-nodes
       :_  state
