@@ -17,6 +17,51 @@
   |%
   ++  noun  i
   ::
+  ++  graph-indexed-post
+    ^-  indexed-post
+    ?+    index.p.i  !!
+    ::  top level node: book
+    ::  structural node with no content
+    ::
+        [@ ~]
+      ~|  "top level book node should be empty!"
+      ?>  ?=(~ contents.p.i)
+      i
+    ::  metadata revision container
+    ::  structural node with no content
+    ::
+        [@ %meta ~]
+      ~|  "metadata revision container should be empty!"
+      ?>  ?=(~ contents.p.i)
+      i
+    ::  single metadata revision
+    ::  content node. first %text element is treated as title,
+    ::  second is treated as isbn
+    ::
+        [@ %meta @ ~]
+      =/  contents  contents.p.i
+      ?>  ?=([[%text *] [%text *] ~] contents.p.i)
+      =/  title  (trip +.i.contents.p.i)
+      ?>  (is-title-valid title)
+      =/  isbn  (trip +.i.t.contents.p.i)
+      ?>  (is-isbn-valid isbn)
+      i
+    ::  comments section container
+    ::  structural node with no content
+    ::
+        [@ %comments ~]
+      ~|  "comments section container should be empty!"
+      ?>  ?=(~ contents.p.i)
+      i
+    ::  comment
+    ::
+        [@ %comments @ ~]
+      :: we could allow any content eventually
+      ::?>  ?=(* contents.p.i)  :: any content is allowed.
+      ?>  ?=([[%text *] ~] contents.p.i)  :: only a single %text content is allowed
+      =/  contents  contents.p.i
+      i
+    ==
   ++  graph-permissions-add
     |=  vip=vip-metadata:met
     ^-  permissions:graph
@@ -50,53 +95,7 @@
   --
 ++  grab
   |%
-  ++  noun
-    ::  p is a custom bunt, the simplest indexed-post that will validate
-    |:  p=`*`%*(. *indexed-post index.p [0 ~])
-    =/  ip  ;;(indexed-post p)
-    ?+    index.p.ip  !!
-    ::  top level node: book
-    ::  structural node with no content
-    ::
-        [@ ~]
-      ~|  "top level book node should be empty!"
-      ?>  ?=(~ contents.p.ip)
-      ip
-    ::  metadata revision container
-    ::  structural node with no content
-    ::
-        [@ %meta ~]
-      ~|  "metadata revision container should be empty!"
-      ?>  ?=(~ contents.p.ip)
-      ip
-    ::  single metadata revision
-    ::  content node. first %text element is treated as title,
-    ::  second is treated as isbn
-    ::
-        [@ %meta @ ~]
-      =/  contents  contents.p.ip
-      ?>  ?=([[%text *] [%text *] ~] contents.p.ip)
-      =/  title  (trip +.i.contents.p.ip)
-      ?>  (is-title-valid title)
-      =/  isbn  (trip +.i.t.contents.p.ip)
-      ?>  (is-isbn-valid isbn)
-      ip
-    ::  comments section container
-    ::  structural node with no content
-    ::
-        [@ %comments ~]
-      ~|  "comments section container should be empty!"
-      ?>  ?=(~ contents.p.ip)
-      ip
-    ::  comment
-    ::
-        [@ %comments @ ~]
-      :: we could allow any content eventually
-      ::?>  ?=(* contents.p.ip)  :: any content is allowed.
-      ?>  ?=([[%text *] ~] contents.p.ip)  :: only a single %text content is allowed
-      =/  contents  contents.p.ip
-      ip
-    ==
+  ++  noun  indexed-post
   --
 ++  grad  %noun
 --
