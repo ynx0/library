@@ -269,6 +269,7 @@
   ::
       %get-libraries
     =/  libraries  .^((set resource) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/libraries/noun)
+    :: todo filter based on visibility / policy
     [[%pass ~ %agent [src.bowl %library-proxy] %poke [%library-response !>([%available-libraries libraries])]]~ state]
   ::
       %get-books
@@ -307,15 +308,13 @@
   |=  [=update:store]
   |^  ^-  (quip card _state) :: make helper functions for 
   ::  this is where we forward any graph store updates to any subscriber of ours
-  ::~&  "got graph update"
-  ::~&  update
   =^  cards  state
     :: resource-for-update always returns a list of one (1) resource
     =/  update-rid-wrapped  (resource-for-update:gra !>(update))
     ?~  update-rid-wrapped  `state             :: if theres no resource, we don't forward cause we can't tell if its something based on our own resource
     =/  update-rid          i.update-rid-wrapped
-    ?.  =(our.bowl entity.update-rid)  `state  :: we only broadcast updates for resources we own (todo we shouldn't for our moons right? idk)
-    ?+    -.q.update  ~&("ignoring update {<-.q.update>}" `state)  :: todo extract out default case to arm
+    ?.  =(our.bowl entity.update-rid)  `state  :: we only broadcast updates for resources we own
+    ?+    -.q.update        ~&("ignoring update {<-.q.update>}" `state)
         %add-graph          `state  :: do not forward add graph to anyone. this gets manually forwarded in on-watch
     ::
         ::  i think the following pokes are only meant to be sent by the local user to his local graph-store
@@ -337,13 +336,11 @@
       |=  [her=ship prm=prim:library]
       =/  tracked-libraries  ~(key by prm)  :: if her is not tracking this resource, don't send the update
       ?.  (~(has in tracked-libraries) update-rid)  ~
-      ~&  "sending remove graph update {<update-rid>} to {<her>}"
       %-  some
       =/  paths  ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]]
       :~  [%give %fact paths [%graph-update-2 !>(update)]]
           [%give %kick paths `her]
       ==
-
     ::
         %add-nodes
       :_  state
