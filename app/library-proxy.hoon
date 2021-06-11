@@ -48,7 +48,8 @@
   =^  cards  state
   ?+    mark  (on-poke:def mark vase)
       %library-command
-    ?>  (team:title our.bowl src.bowl)  :: allow ourselves and moons to use this poke
+    ::?>  (team:title our.bowl src.bowl)  :: allow ourselves and moons to use this poke
+    ?>  =(our.bowl src.bowl)  :: only allow ourselves to use this poke
     =+  !<(=command:library vase)
     (handle-command:hc command)
   ::
@@ -223,7 +224,8 @@
     =/  comment    comment.action
     =/  prm        (~(get by readers) author)
     ::                                      ::  commenter must be either:
-    ?>  ?|  (team:title our.bowl author)    ::  us or our moon
+    ?>  ?|  =(our.bowl author)              ::  us
+            ::  (team:title our.bowl author)    ::  us or our moon
             (~(has ju (need prm)) rid top)  ::  someone with permissions
         ==
     =/  update     (add-comment-update:libr rid top author time-sent comment)
@@ -244,7 +246,6 @@
       ?>  ?=(%.y -.post.comment-node)
       p.post.comment-node
     =/  prev-author  author.prev-post
-    ::  TODO what abt ((team:title our.bowl) ?)
     ::  assert the person trying to delete is:
     ?>  ?|  =(our.bowl src.bowl)     :: the owner of the proxy (us)
             =(prev-author src.bowl)  :: the author of node.
