@@ -207,7 +207,7 @@
     =/  rid  rid.command
     =/  top  top.command
     =/  =action:library  [%get-book rid top]
-    :: crashes if we haven't %request-library'd first. is this ok?
+    :: crashes if we haven't %request-library'd first. this is probably ok
     [[%pass /book-request %agent [entity.rid %library-proxy] %poke [%library-action !>(action)]]~ state]
   ==
   [cards state]
@@ -215,67 +215,67 @@
   |=  [=action:library]
   |^  ^-  (quip card _state)
   =^  cards  state
-  ?-    -.action
-      %add-comment
-    =/  rid        rid.action
-    =/  top        top.action
-    =/  author     src.bowl
-    =/  time-sent  now.bowl
-    =/  comment    comment.action
-    =/  prm        (~(get by readers) author)
-    ::                                          ::  commenter must be either:
-    ?>  ?|  (is-owner author)                   ::  us
-            ::  (team:title our.bowl author)    ::  us or our moon
-            (~(has ju (need prm)) rid top)      ::  someone with permissions
-        ==
-    =/  update     (add-comment-update:libr rid top author time-sent comment)
-    [(poke-local-store update) state]
-  ::
-      %remove-comment
-    ::  TODO convert scry to tall form
-    =/  rid            rid.action
-    =/  comment-index  index.action
-    ?>  ?=([@ %comments @ ~] comment-index)  ::  ensure index is of proper form
-    =/  prev-comment-update  
-      .^(update:store %gx (weld /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid] (snoc (index-to-path:libr comment-index) %noun)))
-    ?.  (can-remove-comment src.bowl comment-index prev-comment-update)
-      `state  :: if src cannot remove comment, silently ignore
-    =/  remove-update  (remove-comment-update:libr rid comment-index now.bowl)
-    [(poke-local-store remove-update) state]
-  ::
-      %get-book
-    =/  rid  rid.action
-    =/  top  book-index.action
-    ?<  (is-owner src.bowl)  :: invalid, disallow ourselves from requesting from our own library
-    :: 1. add the person to readers
-    =/  prm  (fall (~(get by readers) src.bowl) *prim:library)
-    =.  prm  (~(put ju prm) rid top)  :: this line doesn't appear to be happening
-    =.  readers  (~(put by readers) src.bowl prm)
-    :: 2. send them the graph update
-    =/  pax  `path`/(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid]/(scot %ud top)/noun
-    ~&  pax
-    =/  update  .^(update:store %gx pax)
-    [[%give %fact ~[/updates/(scot %p src.bowl)/(scot %p entity.rid)/[name.rid]] [%graph-update-2 !>(update)]]~ state]
-  ::
-      %get-libraries
-    =/  libraries  .^((set resource) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/libraries/noun)
-    =?  libraries  !(is-owner src.bowl)  :: filter out allowed libraries if requester isn't the owner
-      %+  skim  ~(tap in libraries)
-      |=  [rid=resource]
+    ?-    -.action
+        %add-comment
+      =/  rid        rid.action
+      =/  top        top.action
+      =/  author     src.bowl
+      =/  time-sent  now.bowl
+      =/  comment    comment.action
+      =/  prm        (~(get by readers) author)
+      ::                                          ::  commenter must be either:
+      ?>  ?|  (is-owner author)                   ::  us
+              ::  (team:title our.bowl author)    ::  us or our moon
+              (~(has ju (need prm)) rid top)      ::  someone with permissions
+          ==
+      =/  update     (add-comment-update:libr rid top author time-sent comment)
+      [(poke-local-store update) state]
+    ::
+        %remove-comment
+      ::  TODO convert scry to tall form
+      =/  rid            rid.action
+      =/  comment-index  index.action
+      ?>  ?=([@ %comments @ ~] comment-index)  ::  ensure index is of proper form
+      =/  prev-comment-update  
+        .^(update:store %gx (weld /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid] (snoc (index-to-path:libr comment-index) %noun)))
+      ?.  (can-remove-comment src.bowl comment-index prev-comment-update)
+        `state  :: if src cannot remove comment, silently ignore
+      =/  remove-update  (remove-comment-update:libr rid comment-index now.bowl)
+      [(poke-local-store remove-update) state]
+    ::
+        %get-book
+      =/  rid  rid.action
+      =/  top  book-index.action
+      ?<  (is-owner src.bowl)  :: invalid, disallow ourselves from requesting from our own library
+      :: 1. add the person to readers
+      =/  prm  (fall (~(get by readers) src.bowl) *prim:library)
+      =.  prm  (~(put ju prm) rid top)  :: this line doesn't appear to be happening
+      =.  readers  (~(put by readers) src.bowl prm)
+      :: 2. send them the graph update
+      =/  pax  `path`/(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid]/(scot %ud top)/noun
+      ~&  pax
+      =/  update  .^(update:store %gx pax)
+      [[%give %fact ~[/updates/(scot %p src.bowl)/(scot %p entity.rid)/[name.rid]] [%graph-update-2 !>(update)]]~ state]
+    ::
+        %get-libraries
+      =/  libraries  .^((set resource) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/libraries/noun)
+      =?  libraries  !(is-owner src.bowl)  :: filter out allowed libraries if requester isn't the owner
+        %+  skim  ~(tap in libraries)
+        |=  [rid=resource]
+        =/  policy  (~(get by policies) rid)
+        (is-allowed:libr ship policy)
+      [[%pass ~ %agent [src.bowl %library-proxy] %poke [%library-response !>([%available-libraries libraries])]]~ state]
+    ::
+        %get-books
+      ::  todo if/when full-text/extra info is enabled, the resulting data could be a set of book-indexes along with just title and isbn without(!)
+      ::  fulltext, so that you only download the fulltext of books that you care about, and you have more metadata to judge by
+      =/  rid  rid.action
       =/  policy  (~(get by policies) rid)
-      (is-allowed:libr ship policy)
-    [[%pass ~ %agent [src.bowl %library-proxy] %poke [%library-response !>([%available-libraries libraries])]]~ state]
-  ::
-      %get-books
-    ::  todo if/when full-text/extra info is enabled, the resulting data could be a set of book-indexes along with just title and isbn without(!)
-    ::  fulltext, so that you only download the fulltext of books that you care about, and you have more metadata to judge by
-    =/  rid  rid.action
-    =/  policy  (~(get by policies) rid)
-    ?~  policy  `state                               :: if there is no policy set for the given rid, it is an invalid request. ignore
-    ?.  (is-allowed:libr src.bowl u.policy)  `state  :: only give them list of books if they are allowed
-    =/  book-indexes  .^((set atom) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/books/[name.rid]/noun)
-    [[%pass ~ %agent [src.bowl %library-proxy] %poke [%library-response !>([%available-books rid book-indexes])]]~ state]
-  ==
+      ?~  policy  `state                               :: if there is no policy set for the given rid, it is an invalid request. ignore
+      ?.  (is-allowed:libr src.bowl u.policy)  `state  :: only give them list of books if they are allowed
+      =/  book-indexes  .^((set atom) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/books/[name.rid]/noun)
+      [[%pass ~ %agent [src.bowl %library-proxy] %poke [%library-response !>([%available-books rid book-indexes])]]~ state]
+    ==
   [cards state]
   ::
   ++  can-remove-comment
@@ -307,7 +307,7 @@
   ==
 ++  handle-graph-update-outgoing
   |=  [=update:store]
-  |^  ^-  (quip card _state) :: make helper functions for 
+  |^  ^-  (quip card _state)
   ::  this is where we forward any graph store updates to any subscriber of ours
   =^  cards  state
     :: resource-for-update always returns a list of one (1) resource

@@ -1,10 +1,11 @@
 /-  *post, resource, library, spider
 /+  *graph-store, strandio
 |%
+::  TODO maybe refactor in an arm for is-owner to replace =(our.bowl src.bowl)
 ++  incr-index
   :: increments the last value in the index by 1
-  |=  [=index:post]
-  ^-  index:post
+  |=  [=index:store]
+  ^-  index:store
   =/  last=@  (sub (lent index) 1)  :: calculate the array index of the last item
   =/  old-revision-count=atom  (snag last index)  :: get the last item
   (snap index last (add 1 old-revision-count))    :: replace the value of last item with 1 added to it

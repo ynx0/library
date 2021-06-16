@@ -42,7 +42,7 @@ nice to haves (only after mvp + documentation released)
 - allow revising the metadata of a book
 - give back the title and/or isbn of the book as well, rather than simply the book's indicies.
 - the printf response for %get-books and %get-libraries is fine as a user interface for a proof of concept displaying the backend. however, if the goal is for this to be easily frontend-able, then there is still a non-trivial gap for the data to get across to the web in a structured manner i think. i need to revisit airlock to see if we can easily get access to poke data, or rather what's the best way to do this.
-
+- do cleanup refactor pass (redundant code, using agentio, getting a code review)
 
 --------
 
@@ -105,15 +105,23 @@ did
 - refactored out is-allowed
 - filtered the %get-libraries scry based on policy
 
+---
+june 16
+
+did
+- code
+	* added assertion against %get-ing your own library and book
+	* refactor owner check logic to is-owner arm
+	* refactor out comment removal checking logic to arm in barket
+	* allow owner to see all books
+	* create arm index-to-path
+
 
 todo
 
 - code
-	* add assertion against requesting your own library and book
-		+ potentially test out what happens without the assertion for fun, but honestly it doesn't seem valid to ever request your own library or book
 	* test out state removal properly working across multiple resources (works for a single one)
-
-
+	* fix subscription logic
 
 
 
