@@ -86,7 +86,6 @@
   ~[[meta-index [[%.y meta-post] [%empty ~]]]]
 ::
 ++  add-comment-update
-  :: creating a new comment
   |=  [rid=resource top=@ author=ship time-sent=time =comment:library]
   ^-  update
   =/  comment-index=index  ~[top %comments time-sent]

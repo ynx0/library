@@ -71,13 +71,15 @@ jun 10
 
 
 todo
-- allow revising the metadata of a book. forgot about this lol.
 - filter the %get-libraries scry based on policy, so as not to leak libraries you're not supposed to know about
 - test out requesting your own library and book, and do something, see if it causes a loop. currently this is not asserted against
 - test out state removal properly working across multiple resources (works for a single one)
+
+nice to haves (will only do if time budget allows)
+
 - sending stuff like %add/remove-signatures needs to be tested eventually, but not a deal breaker. we can skip this until someone complains lol
-
-
+- allow revising the metadata of a book. forgot about this lol.
+- give back the title and/or isbn of the book as well, rather than simply the book's indicies.
 
 
 

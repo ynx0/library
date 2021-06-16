@@ -69,6 +69,7 @@
   :: as a result, we simply trust updates (after imposter check) from a given ship; that is, it is the sole source of truth).
   ?+    -.sign  (on-agent:def wire sign)
       %kick
+    :: TODO proper resubscribe semantics
     ~&  >>>  "kicked from a subscription"
     `this
   ::
@@ -90,6 +91,11 @@
   ^-  (quip card _this)
   =^  cards  state
   ?+    path  (on-watch:def path)
+  ::  TODO do readable type alias for watch path (is there any perf hit to a bunch of aliases)
+  ::  or even a comment
+  ::  +$  subscriber-ship  atom
+  ::  +$  us               atom
+  ::  +$  name             atom
       [%updates @ @ @ ~]
     ::  path format: /updates/[subscriber-ship]/[entity.rid]/[name.rid]
     ::  entity.rid must always be us, its redundant
@@ -243,6 +249,7 @@
     =/  prev-post
       ?>  ?=(%add-nodes -.q.prev-comment-update)
       =/  comment-node  (~(got by nodes.q.prev-comment-update) comment-index)
+      ~!  "cannot remove already deleted comment"
       ?>  ?=(%.y -.post.comment-node)
       p.post.comment-node
     =/  prev-author  author.prev-post
