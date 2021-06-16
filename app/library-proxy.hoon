@@ -169,14 +169,14 @@
     =/  policy     policy.command
     =/  update     (create-library-update:libr rid time-sent)
     =.  policies   (~(put by policies) rid policy)  :: set the policy for the given rid into the actual state
-    [(poke-local-store update) state]
+    [(poke-local-store update)^~ state]
   ::
       %remove-library
     =/  rid        rid.command
     =/  time-sent  now.bowl
     =/  update     (remove-library-update:libr rid time-sent)
     =.  policies   (~(del by policies) rid)       ::  remove the policy for the given rid from
-    [(poke-local-store update) state]
+    [(poke-local-store update)^~ state]
   ::
       %add-book
     =/  rid           rid.command
@@ -184,7 +184,7 @@
     =/  time-sent     now.bowl
     =/  book          book.command
     =/  update        (add-book-update:libr rid author time-sent book)
-    [(poke-local-store update) state]
+    [(poke-local-store update)^~ state]
   ::
       %remove-book
     =/  rid        rid.command
@@ -193,7 +193,7 @@
     =/  update     (remove-book-update:libr rid top time-sent)
     ::  removing the book from `readers` is handled during the handling of %remove-graph
     ::  because it needs the metadata to know who to send the update to
-    [(poke-local-store update) state]
+    [(poke-local-store update)^~ state]
   ::
       %request-library
     ?<  (is-owner src.bowl)  :: invalid. we should never request our own library, this may cause a loop
@@ -229,7 +229,7 @@
               (~(has ju (need prm)) rid top)      ::  someone with permissions
           ==
       =/  update     (add-comment-update:libr rid top author time-sent comment)
-      [(poke-local-store update) state]
+      [(poke-local-store update)^~ state]
     ::
         %remove-comment
       ::  TODO convert scry to tall form
@@ -241,7 +241,7 @@
       ?.  (can-remove-comment src.bowl comment-index prev-comment-update)
         `state  :: if src cannot remove comment, silently ignore
       =/  remove-update  (remove-comment-update:libr rid comment-index now.bowl)
-      [(poke-local-store remove-update) state]
+      [(poke-local-store remove-update)^~ state]
     ::
         %get-book
       =/  rid  rid.action
@@ -427,13 +427,13 @@
     ?~  rids  `state
     =/  rid   i.rids
     ?>  =(src.bowl entity.rid)  :: only owners may send graph updates for resources they own
-    [(poke-local-store update) state]
+    [(poke-local-store update)^~ state]
   [cards state]
 ::
 ++  poke-local-store
   |=  [=update:store]
-  ^-  (list card)
-  [%pass ~ %agent [our.bowl %graph-store] %poke [%graph-update-2 !>(update)]]~
+  ^-  card
+  [%pass ~ %agent [our.bowl %graph-store] %poke [%graph-update-2 !>(update)]]
 ++  is-owner
   |=  [=ship]
   =(our.bowl ship)
