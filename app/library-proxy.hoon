@@ -196,14 +196,14 @@
     [(poke-local-store update) state]
   ::
       %request-library
-    ::?<  (is-owner src.bowl)  :: we should never request our own library, this may cause a loop
+    ?<  (is-owner src.bowl)  :: invalid. we should never request our own library, this may cause a loop
     =/  rid  rid.command
     =/  pax  /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid] 
     =/  wir /request-library/(scot %p entity.rid)/name.rid
     [[%pass wir %agent [entity.rid %library-proxy] [%watch pax]]~ state]
   ::
       %request-book
-    ::?<  (is-owner src.bowl)  :: we should never request our own library
+    ?<  (is-owner src.bowl)  :: invalid. we should never request our own library
     =/  rid  rid.command
     =/  top  top.command
     =/  =action:library  [%get-book rid top]
