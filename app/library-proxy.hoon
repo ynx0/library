@@ -197,10 +197,7 @@
   ::
       %request-library
     ?<  (is-owner src.bowl)  :: invalid. we should never request our own library, this may cause a loop
-    =/  rid  rid.command
-    =/  pax  /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid] 
-    =/  wir /request-library/(scot %p entity.rid)/name.rid
-    [[%pass wir %agent [entity.rid %library-proxy] [%watch pax]]~ state]
+    [(sub-to-library rid.command)^~ state]
   ::
       %request-book
     ?<  (is-owner src.bowl)  :: invalid. we should never request our own library
@@ -434,6 +431,12 @@
   |=  [=update:store]
   ^-  card
   [%pass ~ %agent [our.bowl %graph-store] %poke [%graph-update-2 !>(update)]]
+++  sub-to-library
+  |=  [rid=resource]
+  ^-  card
+  =/  pax  /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid]
+  =/  wir  /request-library/(scot %p entity.rid)/name.rid
+  [%pass wir %agent [entity.rid %library-proxy] [%watch pax]]
 ++  is-owner
   |=  [=ship]
   =(our.bowl ship)
