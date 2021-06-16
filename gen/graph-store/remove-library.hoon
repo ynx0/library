@@ -1,3 +1,4 @@
+:: TODO deprecated
 /+  *pinboard
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]

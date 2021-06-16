@@ -1,3 +1,4 @@
+::  TODO deprecated
 /-  spider
 /+  strandio, store=graph-store, pinboard
 =,  strand=strand:spider

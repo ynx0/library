@@ -1,3 +1,4 @@
+::  TODO deprecated. figure out if we even need to show generators, and if we do what we want out of it
 /+  *pinboard
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
