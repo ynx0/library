@@ -49,7 +49,7 @@
   ?+    mark  (on-poke:def mark vase)
       %library-command
     ::?>  (team:title our.bowl src.bowl)  :: allow ourselves and moons to use this poke
-    ?>  =(our.bowl src.bowl)  :: only allow ourselves to use this poke
+    ?>  (is-owner src.bowl)  :: only allow ourselves to use this poke
     =+  !<(=command:library vase)
     (handle-command:hc command)
   ::
@@ -79,7 +79,7 @@
           %graph-update-2
         =+  !<(=update:store q.cage.sign)
         ~&  wire
-        ?:  =(src.bowl our.bowl)
+        ?:  (is-owner src.bowl)
           (handle-graph-update-outgoing:hc update)
         (handle-graph-update-incoming:hc update)
       ==
@@ -102,6 +102,7 @@
     =/  subscriber  (slav %p i.t.path)
     =/  us          (slav %p i.t.t.path)  :: redundant
     =/  name        `@tas`i.t.t.t.path
+    ?<  (is-owner src.bowl)    :: do not allow ourselves to subscribe, invalid
     ?>  =(subscriber src.bowl)  :: check for imposter (sus)
     =/  policy  (~(got by policies) [our.bowl name])
     ?>  (is-allowed:libr subscriber policy)
@@ -110,7 +111,7 @@
     ::  todo refactor for readability
     =/  original-time-sent      p:(scry-for:libgraph update:store /graph/(scot %p our.bowl)/[name])
     =/  initial-library-update  (create-library-update:libr [our.bowl name] original-time-sent)
-    :: readers are who's? actually interested, and wants to hear updates
+    :: readers are who's actually interested, and wants to hear updates
     :: implicitly, having a successful subscription means you have permission, not necessarily are interested in hearing about anything yet.
     ::
     =.  readers  (~(put by readers) subscriber (~(gas by *prim:library) [[[our.bowl name] *(set atom)] ~]))
@@ -195,14 +196,14 @@
     [(poke-local-store update) state]
   ::
       %request-library
-    ::?<  =(our.bowl src.bowl)  :: we should never request our own library, this may cause a loop
+    ::?<  (is-owner src.bowl)  :: we should never request our own library, this may cause a loop
     =/  rid  rid.command
     =/  pax  /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid] 
     =/  wir /request-library/(scot %p entity.rid)/name.rid
     [[%pass wir %agent [entity.rid %library-proxy] [%watch pax]]~ state]
   ::
       %request-book
-    ::?<  =(our.bowl src.bowl)  :: we should never request our own library
+    ::?<  (is-owner src.bowl)  :: we should never request our own library
     =/  rid  rid.command
     =/  top  top.command
     =/  =action:library  [%get-book rid top]
@@ -222,10 +223,10 @@
     =/  time-sent  now.bowl
     =/  comment    comment.action
     =/  prm        (~(get by readers) author)
-    ::                                      ::  commenter must be either:
-    ?>  ?|  =(our.bowl author)              ::  us
+    ::                                          ::  commenter must be either:
+    ?>  ?|  (is-owner author)                   ::  us
             ::  (team:title our.bowl author)    ::  us or our moon
-            (~(has ju (need prm)) rid top)  ::  someone with permissions
+            (~(has ju (need prm)) rid top)      ::  someone with permissions
         ==
     =/  update     (add-comment-update:libr rid top author time-sent comment)
     [(poke-local-store update) state]
@@ -256,8 +257,7 @@
       %get-book
     =/  rid  rid.action
     =/  top  book-index.action
-    :: should only be able to do this if we are NOT the host. otherwise, we already have the book
-    ?<  =(our.bowl src.bowl)
+    ?<  (is-owner src.bowl)  :: invalid, disallow ourselves from requesting from our own library
     :: 1. add the person to readers
     =/  prm  (fall (~(get by readers) src.bowl) *prim:library)
     =.  prm  (~(put ju prm) rid top)  :: this line doesn't appear to be happening
@@ -270,10 +270,10 @@
   ::
       %get-libraries
     =/  libraries  .^((set resource) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/libraries/noun)
-    =.  libraries
+    =?  libraries  !(is-owner src.bowl)  :: filter out allowed libraries if requester isn't the owner
       %+  skim  ~(tap in libraries)
       |=  [rid=resource]
-      =/  policy (~(get by policies) rid)
+      =/  policy  (~(get by policies) rid)
       (is-allowed:libr ship policy)
     [[%pass ~ %agent [src.bowl %library-proxy] %poke [%library-response !>([%available-libraries libraries])]]~ state]
   ::
@@ -430,4 +430,7 @@
   |=  [=update:store]
   ^-  (list card)
   [%pass ~ %agent [our.bowl %graph-store] %poke [%graph-update-2 !>(update)]]~
+++  is-owner
+  |=  [=ship]
+  =(our.bowl ship)
 --
