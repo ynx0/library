@@ -67,10 +67,24 @@
   ^-  (quip card _this)
   :: (in this model. each ship is responsible solely for sending out updates of resources it owns, and no one else.
   :: as a result, we simply trust updates (after imposter check) from a given ship; that is, it is the sole source of truth).
+  :: type reference https://github.com/urbit/urbit/blob/85fdd6b190479030d2e763b326060ce8020fa9ae/pkg/arvo/sys/lull.hoon#L1689
   ?+    -.sign  (on-agent:def wire sign)
       %kick
-    :: TODO proper resubscribe semantics
-    ~&  >>>  "kicked from a subscription"
+    :: a %kick doesn't always mean the publisher has voluntarily terminated the subscription.
+    :: it can also mean that there is network traffic cloggage
+    :: thus, we must try to resubscribe here, and then once that goes through if we then get a failing watch ack only then do we give up
+    ~&  >  "kicked from subscription {<wire>}"
+    ~&  >  "attempting to resubscribe"
+    =/  host=ship  i.t.t.wire
+    =/  name=@tas  i.t.t.t.wire
+    (sub-to-library [host name])
+    `this
+  ::
+      %watch-ack
+    ?~  p.sign
+      `this     :: no error, subscription was successful
+    =/  =tank  leaf+"subscribe to provider {dap.bowl} failed"
+    %-  (slog tank u.p.sign)
     `this
   ::
       %fact
