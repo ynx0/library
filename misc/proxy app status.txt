@@ -83,4 +83,13 @@ nice to haves (will only do if time budget allows)
 
 
 
+------------
+june 15
+
+did
+- refactored out is-allowed
+- filtered the %get-libraries scry based on policy
+
+
+remaining
 

@@ -104,14 +104,7 @@
     =/  name        `@tas`i.t.t.t.path
     ?>  =(subscriber src.bowl)  :: check for imposter (sus)
     =/  policy  (~(got by policies) [our.bowl name])
-    ::  todo refactor this to make the assertion per branch rather to have a better stack trace
-    =/  is-allowed=?
-      ?-  -.policy
-          %open       %.y
-          %children   (team:title our.bowl src.bowl)
-          %whitelist  (~(has in ships.policy) src.bowl)
-      ==
-    ?>  is-allowed
+    ?>  (is-allowed:libr subscriber policy)
     ::  we scry the original graph just to get its original creation time
     ::  otherwise, it is discarded. what is actually sent is an empty graph
     ::  todo refactor for readability
@@ -277,24 +270,20 @@
   ::
       %get-libraries
     =/  libraries  .^((set resource) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/libraries/noun)
-    :: todo filter based on visibility / policy
+    =.  libraries
+      %+  skim  ~(tap in libraries)
+      |=  [rid=resource]
+      =/  policy (~(get by policies) rid)
+      (is-allowed:libr ship policy)
     [[%pass ~ %agent [src.bowl %library-proxy] %poke [%library-response !>([%available-libraries libraries])]]~ state]
   ::
       %get-books
+    ::  todo if/when full-text/extra info is enabled, the resulting data could be a set of book-indexes along with just title and isbn without(!)
+    ::  fulltext, so that you only download the fulltext of books that you care about, and you have more metadata to judge by
     =/  rid  rid.action
     =/  policy  (~(get by policies) rid)
-    ?~  policy  `state  :: if there is no policy set for the given rid, it is an invalid request. ignore
-    ::  TODO refactor, copied from +on-watch
-    =/  is-allowed=?
-      ?-  -.u.policy
-          %open       %.y
-          %children   (team:title our.bowl src.bowl)
-          %whitelist  (~(has in ships.u.policy) src.bowl)
-      ==
-    ?.  is-allowed  `state  :: only give them list of books if they are allowed
-    ::  todo refactor this to make the assertion per branch rather to have a better stack trace
-    ::  todo if/when full-text/extra info is enabled, this can be a set of book-indexes along with just title and isbn without(!)
-    ::  fulltext, so that you only download the fulltext of books that you care about, and you have more metadata to judge by
+    ?~  policy  `state                             :: if there is no policy set for the given rid, it is an invalid request. ignore
+    ?.  (is-allowed:libr src.bowl u.policy)  `state  :: only give them list of books if they are allowed
     =/  book-indexes  .^((set atom) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/books/[name.rid]/noun)
     [[%pass ~ %agent [src.bowl %library-proxy] %poke [%library-response !>([%available-books rid book-indexes])]]~ state]
   ==
