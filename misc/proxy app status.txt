@@ -1,6 +1,8 @@
-proxy app status
+# proxy app status
 
-- scries (only work locally!)
+works = implemented + tested
+
+- scries
 	- [%x %libraries ~] works
 	- [%x %books @ ~] works
 
@@ -10,6 +12,7 @@ proxy app status
 	- %add-book works
 	- %remove-book works
 	- %request-book works
+	- %revise-book poke to revise book metadata does not yet exist
 
 - actions
 	- %add-comment works
@@ -21,12 +24,24 @@ proxy app status
 - on-agent
 	- handle-graph-update-incoming works
 	- handle-graph-update-outgoing works*
-		- %add-nodes tested
-		- others implemented, need testing
+		- %add-nodes works
+		- %remove-graph works
+		- the following need testing, but are deprioritized
+	    	+ %add-signatures
+			+ %remove-signatures
+			+ %add-tag
+			+ %remove-tag
+      
 
 - on-watch
 	- basic subscription works
 	- policy enforcement logic works
+
+
+nice to haves (only after mvp + documentation released)
+- allow revising the metadata of a book
+- give back the title and/or isbn of the book as well, rather than simply the book's indicies.
+- the printf response for %get-books and %get-libraries is fine as a user interface for a proof of concept displaying the backend. however, if the goal is for this to be easily frontend-able, then there is still a non-trivial gap for the data to get across to the web in a structured manner i think. i need to revisit airlock to see if we can easily get access to poke data, or rather what's the best way to do this.
 
 
 --------
@@ -91,5 +106,46 @@ did
 - filtered the %get-libraries scry based on policy
 
 
-remaining
+todo
+
+- code
+	* add assertion against requesting your own library and book
+		+ potentially test out what happens without the assertion for fun, but honestly it doesn't seem valid to ever request your own library or book
+	* test out state removal properly working across multiple resources (works for a single one)
+
+
+
+
+
+- documentation
+	* hands on usage doc
+		+ flesh out remaining example statements
+		+ add in expected outputs
+		+ add links to relevant bits of code
+		+ (optional, get input) show curl commands to access app in an airlock fashion
+	* code architecture explainer
+		+ outline (potentially revisit the old documentation and replicate structure if appropriate)
+			- intro: what is the desired use cases of the library app
+			- project structure: briefly show and explain project file structure (don't forget, ted/ and gen/ are deprecated)
+			- data:
+				* schema explanation
+				* validator logic explanation, briefly
+			- access: 
+				* explain implicit permissioning system (i.e. when you have access to a book, you automatically have access to commenting. deliberate choice, not required to be this way)
+				* explain policies
+			- state: explain the state that the app holds and what its used for
+			- networking architecture:
+				* explain core design decisions: every host of library is themselves responsible for sending out data to relevant people, receivers only trust host's update.
+				* show the flow of incoming/outgoing traffic. diagram would be nice here
+					+ ~zod, host of ~zod/library1 issues %add-comment to proxy, proxy sends graph store update to local graph store, proxy receives the same update, sends it out to all others. same flow as if any other person did an %add-comment, it is broadcast.
+				* (maybe) show full data flow in short bulleted form. %get-libraries -> %get-library resource -> %get-book resource book -> %add-comment
+				* (maybe) explain how poke-back pattern is used to surface data to the end user.
+
+	* code reference
+		+ list of all types, and their meaning/usage. (i.e. readers, prim, policies)
+		+ list of all pokes (actions, commands, poke-backs)
+		+ list of all lib functions and what they do
+
+
+
 
