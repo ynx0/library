@@ -18,6 +18,14 @@
   |=  [comment-text=comment:library]
   ^-  (list content)
   ~[[%text (crip comment-text)]]
+++  is-allowed
+  |=  [=ship =policy:library]
+  ^-  ?
+  ?-  -.policy
+      %open       %.y
+      %children   (team:title our.bowl src.bowl)
+      %whitelist  (~(has in ships.policy) src.bowl)
+  ==
 ::
 ::
 ++  create-library-update
