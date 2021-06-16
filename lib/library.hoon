@@ -26,6 +26,10 @@
       %children   (team:title our.bowl src.bowl)
       %whitelist  (~(has in ships.policy) src.bowl)
   ==
+++ index-to-path
+  |=  [idx=index:store]
+  ^-  path
+  (turn idx (cury scot %ud))
 ::
 ::
 ++  create-library-update

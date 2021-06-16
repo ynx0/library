@@ -213,7 +213,7 @@
   [cards state]
 ++  handle-action
   |=  [=action:library]
-  ^-  (quip card _state)
+  |^  ^-  (quip card _state)
   =^  cards  state
   ?-    -.action
       %add-comment
@@ -232,25 +232,14 @@
     [(poke-local-store update) state]
   ::
       %remove-comment
+    ::  TODO convert scry to tall form
     =/  rid            rid.action
     =/  comment-index  index.action
     ?>  ?=([@ %comments @ ~] comment-index)  ::  ensure index is of proper form
-    ::  TODO convert to tall form
-    ::  TODO refactor out
-    ::  scry for node at that index
     =/  prev-comment-update  
-      .^(update:store %gx (weld /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid] (snoc `path`(turn comment-index (cury scot %ud)) %noun)))
-    =/  prev-post
-      ?>  ?=(%add-nodes -.q.prev-comment-update)
-      =/  comment-node  (~(got by nodes.q.prev-comment-update) comment-index)
-      ~!  "cannot remove already deleted comment"
-      ?>  ?=(%.y -.post.comment-node)
-      p.post.comment-node
-    =/  prev-author  author.prev-post
-    ::  assert the person trying to delete is:
-    ?>  ?|  =(our.bowl src.bowl)     :: the owner of the proxy (us)
-            =(prev-author src.bowl)  :: the author of node.
-        ==
+      .^(update:store %gx (weld /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid] (snoc (index-to-path:libr comment-index) %noun)))
+    ?.  (can-remove-comment src.bowl comment-index prev-comment-update)
+      `state  :: if src cannot remove comment, silently ignore
     =/  remove-update  (remove-comment-update:libr rid comment-index now.bowl)
     [(poke-local-store remove-update) state]
   ::
@@ -282,12 +271,27 @@
     ::  fulltext, so that you only download the fulltext of books that you care about, and you have more metadata to judge by
     =/  rid  rid.action
     =/  policy  (~(get by policies) rid)
-    ?~  policy  `state                             :: if there is no policy set for the given rid, it is an invalid request. ignore
+    ?~  policy  `state                               :: if there is no policy set for the given rid, it is an invalid request. ignore
     ?.  (is-allowed:libr src.bowl u.policy)  `state  :: only give them list of books if they are allowed
     =/  book-indexes  .^((set atom) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/books/[name.rid]/noun)
     [[%pass ~ %agent [src.bowl %library-proxy] %poke [%library-response !>([%available-books rid book-indexes])]]~ state]
   ==
   [cards state]
+  ::
+  ++  can-remove-comment
+    |=  [=ship comment-index=index:store comment-update=update:store]
+    ^-  ?
+    ?>  ?=(%add-nodes -.q.prev-comment-update)
+    =/  comment-node  (~(got by nodes.q.prev-comment-update) comment-index)
+    ?.  ?=(%.y -.post.comment-node)  
+      %.n  :: cannot remove already deleted comment
+    =/  prev-post    p.post.comment-node
+    =/  prev-author  author.prev-post
+    ::  you may remove a comment if you are:
+    ?|   (is-owner src.bowl)     :: the owner of the proxy
+        =(prev-author src.bowl)  :: the author of comment
+    ==
+  --
 ++  handle-response
   |=  [=response:library]
   ^-  (quip card _state)
