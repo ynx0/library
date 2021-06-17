@@ -75,15 +75,17 @@
     :: thus, we must try to resubscribe here, and then once that goes through if we then get a failing watch ack only then do we give up
     ~&  >  "kicked from subscription {<wire>}"
     ~&  >  "attempting to resubscribe"
-    =/  host=ship  i.t.t.wire
-    =/  name=@tas  i.t.t.t.wire
-    (sub-to-library [host name])
-    `this
+    ?~  wire  ~|("empty wire, can't resubscribe" `this)  :: todo do we need this or can we do with just the assertion
+    ::
+    ?>  ?=([%request-library @ @ ~] wire)
+    =/  host  (slav %p i.t.wire)
+    =/  name  `@tas`i.t.t.wire
+    [(sub-to-library [host name])^~ this]
   ::
       %watch-ack
     ?~  p.sign
       `this     :: no error, subscription was successful
-    =/  =tank  leaf+"subscribe to provider {dap.bowl} failed"
+    =/  =tank  leaf+"subscribe to {<dap.bowl>} failed"
     %-  (slog tank u.p.sign)
     `this
   ::
@@ -119,7 +121,7 @@
     ?<  (is-owner src.bowl)    :: do not allow ourselves to subscribe, invalid
     ?>  =(subscriber src.bowl)  :: check for imposter (sus)
     =/  policy  (~(got by policies) [our.bowl name])
-    ?>  (is-allowed:libr subscriber policy)
+    ?>  (is-allowed:libr subscriber our.bowl policy)
     ::  we scry the original graph just to get its original creation time
     ::  otherwise, it is discarded. what is actually sent is an empty graph
     ::  todo refactor for readability
@@ -271,10 +273,11 @@
         %get-libraries
       =/  libraries  .^((set resource) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/libraries/noun)
       =?  libraries  !(is-owner src.bowl)  :: filter out allowed libraries if requester isn't the owner
+        %-  silt
         %+  skim  ~(tap in libraries)
         |=  [rid=resource]
-        =/  policy  (~(get by policies) rid)
-        (is-allowed:libr ship policy)
+        =/  policy  (~(got by policies) rid)
+        (is-allowed:libr src.bowl our.bowl policy)
       [[%pass ~ %agent [src.bowl %library-proxy] %poke [%library-response !>([%available-libraries libraries])]]~ state]
     ::
         %get-books
@@ -283,7 +286,7 @@
       =/  rid  rid.action
       =/  policy  (~(get by policies) rid)
       ?~  policy  `state                               :: if there is no policy set for the given rid, it is an invalid request. ignore
-      ?.  (is-allowed:libr src.bowl u.policy)  `state  :: only give them list of books if they are allowed
+      ?.  (is-allowed:libr src.bowl our.bowl u.policy)  `state  :: only give them list of books if they are allowed
       =/  book-indexes  .^((set atom) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/books/[name.rid]/noun)
       [[%pass ~ %agent [src.bowl %library-proxy] %poke [%library-response !>([%available-books rid book-indexes])]]~ state]
     ==
@@ -292,8 +295,8 @@
   ++  can-remove-comment
     |=  [=ship comment-index=index:store comment-update=update:store]
     ^-  ?
-    ?>  ?=(%add-nodes -.q.prev-comment-update)
-    =/  comment-node  (~(got by nodes.q.prev-comment-update) comment-index)
+    ?>  ?=(%add-nodes -.q.comment-update)
+    =/  comment-node  (~(got by nodes.q.comment-update) comment-index)
     ?.  ?=(%.y -.post.comment-node)  
       %.n  :: cannot remove already deleted comment
     =/  prev-post    p.post.comment-node
@@ -449,7 +452,7 @@
   |=  [rid=resource]
   ^-  card
   =/  pax  /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid]
-  =/  wir  /request-library/(scot %p entity.rid)/name.rid
+  =/  wir  /request-library/(scot %p entity.rid)/[name.rid]
   [%pass wir %agent [entity.rid %library-proxy] [%watch pax]]
 ++  is-owner
   |=  [=ship]

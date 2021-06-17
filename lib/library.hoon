@@ -4,8 +4,8 @@
 ::  TODO maybe refactor in an arm for is-owner to replace =(our.bowl src.bowl)
 ++  incr-index
   :: increments the last value in the index by 1
-  |=  [=index:store]
-  ^-  index:store
+  |=  [=index:post]
+  ^-  index:post
   =/  last=@  (sub (lent index) 1)  :: calculate the array index of the last item
   =/  old-revision-count=atom  (snag last index)  :: get the last item
   (snap index last (add 1 old-revision-count))    :: replace the value of last item with 1 added to it
@@ -20,15 +20,17 @@
   ^-  (list content)
   ~[[%text (crip comment-text)]]
 ++  is-allowed
-  |=  [=ship =policy:library]
+  |=  [requester=ship host=ship =policy:library]
   ^-  ?
+  ?:  =(requester host)  :: host is always allowed
+    %.y
   ?-  -.policy
       %open       %.y
-      %children   (team:title our.bowl src.bowl)
-      %whitelist  (~(has in ships.policy) src.bowl)
+      %children   (team:title host requester)
+      %whitelist  (~(has in ships.policy) requester)
   ==
-++ index-to-path
-  |=  [idx=index:store]
+++  index-to-path
+  |=  [idx=index:post]
   ^-  path
   (turn idx (cury scot %ud))
 ::
