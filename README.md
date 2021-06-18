@@ -88,6 +88,8 @@ Now, let's create a library on ~zod.
 We'll create it with the `%open` policy, which means that anyone can request for access to the library.
 
 **TODO** rename library to %sci-fi-collection
+**TODO** elide the similar parts of the output
+**TODO** collapsable summary/details
 
 ```
 ~zod:dojo> :library-proxy &library-command [%create-library [our %library1] [%open ~]]
@@ -119,7 +121,6 @@ Now, let's add a book to our library. Note that the isbn must be either length 1
 ```
 
 Verify that the book was created successfully.
-TODO collapsable summary/details
 ```
 ~zod:dojo> :graph-store +dbug [%state 'graphs']
 
@@ -268,19 +269,104 @@ Now let's request this book.
 And verify that we got the update.
 ```
 ~nus:dojo> :graph-store +dbug [%state 'graphs']
-TODO output
+{ [ p=[entity=~zod name=%library1]
+      q
+    [   p
+      { [ key=170.141.184.505.110.303.839.596.375.394.968.666.112
+            val
+          [   post
+            [ %.y
+                p
+              [ author=~zod
+                index=~[170.141.184.505.110.303.839.596.375.394.968.666.112]
+                time-sent=~2021.6.18..16.30.00..595d
+                contents=~
+                hash=~
+                signatures={}
+              ]
+            ]
+              children
+            [ %graph
+                p
+              { [ key=8.319.395.793.566.789.475
+                    val
+                  [   post
+                    [ %.y
+                        p
+                      [ author=~zod
+                        index=~[170.141.184.505.110.303.839.596.375.394.968.666.112 8.319.395.793.566.789.475]
+                        time-sent=~2021.6.18..16.30.00..595d
+                        contents=~
+                        hash=~
+                        signatures={}
+                      ]
+                    ]
+                    children=[%empty ~]
+                  ]
+                ]
+                [ key=1.635.018.093
+                    val
+                  [   post
+                    [ %.y
+                        p
+                      [ author=~zod
+                        index=~[170.141.184.505.110.303.839.596.375.394.968.666.112 1.635.018.093]
+                        time-sent=~2021.6.18..16.30.00..595d
+                        contents=~
+                        hash=~
+                        signatures={}
+                      ]
+                    ]
+                      children
+                    [ %graph
+                        p
+                      { [ key=1
+                            val
+                          [   post
+                            [ %.y
+                                p
+                              [ author=~zod
+                                index=~[170.141.184.505.110.303.839.596.375.394.968.666.112 1.635.018.093 1]
+                                time-sent=~2021.6.18..16.30.00..595d
+                                contents=~[[%text text='Dune123'] [%text text='0441172717']]
+                                hash=~
+                                signatures={}
+                              ]
+                            ]
+                            children=[%empty ~]
+                          ]
+                        ]
+                      }
+                    ]
+                  ]
+                ]
+              }
+            ]
+          ]
+        ]
+      }
+      q=[~ %graph-validator-library]
+    ]
+  ]
+}
+
 ```
 
 
 Take a look at ~zod's `%library-proxy` and notice how its state has updated information regarding who's tracking what resource:
 ```
 ~zod:dojo> :library-proxy +dbug
-TODO output
+[ %0
+  readers={[p=~nus q={[p=[entity=~zod name=%library1] q={170.141.184.505.110.303.839.596.375.394.968.666.112}]}]}
+  policies={[p=[entity=~zod name=%library1] q=[%open ~]]}
+]
+
 ```
 
-As a result of the last two actions on ~nus's part, ~zod's `%library-proxy` now knows that 
+As a result of the last two actions on ~nus's part, ~zod's `%library-proxy` now knows that:
 (a) ~nus has requested and succesfully been granted access to %library1, and
 (b) ~nus is interested in tracking updates to the book with index *`170.141.184.505.110.<...>`*, (which corresponds to Dune)
+
 
 
 After having read the book, ~nus would like to comment about it.
@@ -290,25 +376,151 @@ After having read the book, ~nus would like to comment about it.
 
 After thinking for a second, ~nus realizes she didn't complete his thought, so she writes another comment.
 ```
-~nus:dojo> :~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune "dune is ok"]
+~nus:dojo> :~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune "in my opinion"]
 ```
 
 Let's make sure ~nus's comment was properly sent to ~zod.
 ```
 ~zod:dojo> :graph-store +dbug [%state 'graphs']
-TODO output
+{ [ p=[entity=~zod name=%library1]
+      q
+    [   p
+      { [ key=170.141.184.505.110.303.839.596.375.394.968.666.112
+            val
+          [   post
+            [ %.y
+                p
+              [ author=~zod
+                index=~[170.141.184.505.110.303.839.596.375.394.968.666.112]
+                time-sent=~2021.6.18..16.30.00..595d
+                contents=~
+                hash=~
+                signatures={}
+              ]
+            ]
+              children
+            [ %graph
+                p
+              { [ key=8.319.395.793.566.789.475
+                    val
+                  [   post
+                    [ %.y
+                        p
+                      [ author=~zod
+                        index=~[170.141.184.505.110.303.839.596.375.394.968.666.112 8.319.395.793.566.789.475]
+                        time-sent=~2021.6.18..16.30.00..595d
+                        contents=~
+                        hash=~
+                        signatures={}
+                      ]
+                    ]
+                      children
+                    [ %graph
+                        p
+                      { [ key=170.141.184.505.110.617.158.107.698.780.100.886.528
+                            val
+                          [   post
+                            [ %.y
+                                p
+                              [ author=~nus
+                                  index
+                                ~[
+                                  170.141.184.505.110.303.839.596.375.394.968.666.112
+                                  8.319.395.793.566.789.475
+                                  170.141.184.505.110.617.158.107.698.780.100.886.528
+                                ]
+                                time-sent=~2021.6.18..21.13.05..612e
+                                contents=~[[%text text='in my opinion']]
+                                hash=~
+                                signatures={}
+                              ]
+                            ]
+                            children=[%empty ~]
+                          ]
+                        ]
+                        [ key=170.141.184.505.110.615.575.362.645.737.013.772.288
+                            val
+                          [   post
+                            [ %.y
+                                p
+                              [ author=~nus
+                                  index
+                                ~[
+                                  170.141.184.505.110.303.839.596.375.394.968.666.112
+                                  8.319.395.793.566.789.475
+                                  170.141.184.505.110.615.575.362.645.737.013.772.288
+                                ]
+                                time-sent=~2021.6.18..21.11.39..942e
+                                contents=~[[%text text='dune is ok']]
+                                hash=~
+                                signatures={}
+                              ]
+                            ]
+                            children=[%empty ~]
+                          ]
+                        ]
+                      }
+                    ]
+                  ]
+                ]
+                [ key=1.635.018.093
+                    val
+                  [   post
+                    [ %.y
+                        p
+                      [ author=~zod
+                        index=~[170.141.184.505.110.303.839.596.375.394.968.666.112 1.635.018.093]
+                        time-sent=~2021.6.18..16.30.00..595d
+                        contents=~
+                        hash=~
+                        signatures={}
+                      ]
+                    ]
+                      children
+                    [ %graph
+                        p
+                      { [ key=1
+                            val
+                          [   post
+                            [ %.y
+                                p
+                              [ author=~zod
+                                index=~[170.141.184.505.110.303.839.596.375.394.968.666.112 1.635.018.093 1]
+                                time-sent=~2021.6.18..16.30.00..595d
+                                contents=~[[%text text='Dune123'] [%text text='0441172717']]
+                                hash=~
+                                signatures={}
+                              ]
+                            ]
+                            children=[%empty ~]
+                          ]
+                        ]
+                      }
+                    ]
+                  ]
+                ]
+              }
+            ]
+          ]
+        ]
+      }
+      q=[~ %graph-validator-library]
+    ]
+  ]
+}
+
 ```
 
 Now, ~nus feels like deleting her first comment, and does so:
 ```
-~nus:dojo> :~zod/library-proxy &library-action [%remove-comment [~zod %library1] ~[top-of-dune %comments <index-frag of comment by ~nus>]]
+~nus:dojo> :~zod/library-proxy &library-action [%remove-comment [~zod %library1] ~[top-of-dune %comments 170.141.184.505.110.615.575.362.645.737.013.772.288]]
 ```
 
 ~zod wants to clean up ~nus's second comment, because it doesn't really make sense without the first one.
 So he ends up deleting it, since he's the owner of the library.
 
 ```
-~zod:dojo> :library-proxy &library-action [%remove-comment [our %library1] ~[top-of-dune %comments <index-frag of other comment by ~nus>]]
+~zod:dojo> :library-proxy &library-action [%remove-comment [our %library1] ~[top-of-dune %comments 170.141.184.505.110.617.158.107.698.780.100.886.528]]
 ```
 
 Now, if we look at the graph store states for both ~zod and ~nus, we'll see the above changes reflected on both graphs.
@@ -316,7 +528,96 @@ The book nodes on both graphs are identical.
 ```
 ~zod:dojo> :graph-store +dbug
 ~nus:dojo> :graph-store +dbug
-TODO output
+{ [ p=[entity=~zod name=%library1]
+      q
+    [   p
+      { [ key=170.141.184.505.110.303.839.596.375.394.968.666.112
+            val
+          [   post
+            [ %.y
+                p
+              [ author=~zod
+                index=~[170.141.184.505.110.303.839.596.375.394.968.666.112]
+                time-sent=~2021.6.18..16.30.00..595d
+                contents=~
+                hash=~
+                signatures={}
+              ]
+            ]
+              children
+            [ %graph
+                p
+              { [ key=8.319.395.793.566.789.475
+                    val
+                  [   post
+                    [ %.y
+                        p
+                      [ author=~zod
+                        index=~[170.141.184.505.110.303.839.596.375.394.968.666.112 8.319.395.793.566.789.475]
+                        time-sent=~2021.6.18..16.30.00..595d
+                        contents=~
+                        hash=~
+                        signatures={}
+                      ]
+                    ]
+                      children
+                    [ %graph
+                        p
+                      { [ key=170.141.184.505.110.617.158.107.698.780.100.886.528
+                          val=[post=[%.n p=0x101c.1386.2893.6180.f690.0761.5141.544c] children=[%empty ~]]
+                        ]
+                        [ key=170.141.184.505.110.615.575.362.645.737.013.772.288
+                          val=[post=[%.n p=0x253e.9b5d.cde6.fa0b.e8d8.5fce.ce41.458b] children=[%empty ~]]
+                        ]
+                      }
+                    ]
+                  ]
+                ]
+                [ key=1.635.018.093
+                    val
+                  [   post
+                    [ %.y
+                        p
+                      [ author=~zod
+                        index=~[170.141.184.505.110.303.839.596.375.394.968.666.112 1.635.018.093]
+                        time-sent=~2021.6.18..16.30.00..595d
+                        contents=~
+                        hash=~
+                        signatures={}
+                      ]
+                    ]
+                      children
+                    [ %graph
+                        p
+                      { [ key=1
+                            val
+                          [   post
+                            [ %.y
+                                p
+                              [ author=~zod
+                                index=~[170.141.184.505.110.303.839.596.375.394.968.666.112 1.635.018.093 1]
+                                time-sent=~2021.6.18..16.30.00..595d
+                                contents=~[[%text text='Dune123'] [%text text='0441172717']]
+                                hash=~
+                                signatures={}
+                              ]
+                            ]
+                            children=[%empty ~]
+                          ]
+                        ]
+                      }
+                    ]
+                  ]
+                ]
+              }
+            ]
+          ]
+        ]
+      }
+      q=[~ %graph-validator-library]
+    ]
+  ]
+}
 ```
 
 Now, ~zod decides to delete the book *Dune*
@@ -329,7 +630,88 @@ Looking at the state,
 ```
 ~zod:dojo> :graph-store +dbug [%state 'graphs']
 ~nus:dojo> :graph-store +dbug [%state 'graphs']
-TODO output
+{ [ p=[entity=~zod name=%library1]
+      q
+    [   p
+      { [ key=170.141.184.505.110.303.839.596.375.394.968.666.112
+            val
+          [ post=[%.n p=0xb8e5.ae1a.f49d.a8fa.30cd.d37d.8776.e9ba]
+              children
+            [ %graph
+                p
+              { [ key=8.319.395.793.566.789.475
+                    val
+                  [   post
+                    [ %.y
+                        p
+                      [ author=~zod
+                        index=~[170.141.184.505.110.303.839.596.375.394.968.666.112 8.319.395.793.566.789.475]
+                        time-sent=~2021.6.18..16.30.00..595d
+                        contents=~
+                        hash=~
+                        signatures={}
+                      ]
+                    ]
+                      children
+                    [ %graph
+                        p
+                      { [ key=170.141.184.505.110.617.158.107.698.780.100.886.528
+                          val=[post=[%.n p=0x101c.1386.2893.6180.f690.0761.5141.544c] children=[%empty ~]]
+                        ]
+                        [ key=170.141.184.505.110.615.575.362.645.737.013.772.288
+                          val=[post=[%.n p=0x253e.9b5d.cde6.fa0b.e8d8.5fce.ce41.458b] children=[%empty ~]]
+                        ]
+                      }
+                    ]
+                  ]
+                ]
+                [ key=1.635.018.093
+                    val
+                  [   post
+                    [ %.y
+                        p
+                      [ author=~zod
+                        index=~[170.141.184.505.110.303.839.596.375.394.968.666.112 1.635.018.093]
+                        time-sent=~2021.6.18..16.30.00..595d
+                        contents=~
+                        hash=~
+                        signatures={}
+                      ]
+                    ]
+                      children
+                    [ %graph
+                        p
+                      { [ key=1
+                            val
+                          [   post
+                            [ %.y
+                                p
+                              [ author=~zod
+                                index=~[170.141.184.505.110.303.839.596.375.394.968.666.112 1.635.018.093 1]
+                                time-sent=~2021.6.18..16.30.00..595d
+                                contents=~[[%text text='Dune123'] [%text text='0441172717']]
+                                hash=~
+                                signatures={}
+                              ]
+                            ]
+                            children=[%empty ~]
+                          ]
+                        ]
+                      }
+                    ]
+                  ]
+                ]
+              }
+            ]
+          ]
+        ]
+      }
+      q=[~ %graph-validator-library]
+    ]
+  ]
+  [p=[entity=~zod name=%dm-inbox] q=[p={} q=[~ %graph-validator-dm]]]
+}
+
 ```
 
 We can see that the book has been removed from both users' graph store.
@@ -337,10 +719,19 @@ We can see that the book has been removed from both users' graph store.
 We can also see that on ~zod's library proxy,
 ```
 ~zod:dojo> :library-proxy +dbug
-TODO output
+[%0 readers={[p=~nus q={}]} policies={[p=[entity=~zod name=%library1] q=[%open ~]]}]
 ```
 
-the index for the book is now removed from ~nus's tracked books on %library1
+the index for the book is now removed from ~nus's tracked books on %library1.
+
+Compare to the earlier state:
+```
+[ %0
+  readers={[p=~nus q={[p=[entity=~zod name=%library1] q={170.141.184.505.110.303.839.596.375.394.968.666.112}]}]}
+  policies={[p=[entity=~zod name=%library1] q=[%open ~]]}
+]
+```
+
 
 
 To wrap up, ~zod deletes the library.
@@ -353,15 +744,17 @@ Looking at the state,
 ```
 ~zod:dojo> :graph-store +dbug [%state 'graphs']
 ~nus:dojo> :graph-store +dbug [%state 'graphs']
-TODO output
+>   {[p=[entity=~zod name=%dm-inbox] q=[p={} q=[~ %graph-validator-dm]]]}
 ```
 
-we can see that the library has been removed from all graph stores.
+We can see that the library has been removed from both graph stores,
+and that the only the default dm inbox graph remains.
 
-Also note that on ~zod's library proxy, %library1 is no longer tracked by ~nus.
+Also note that on ~zod's library proxy, %library1 is no longer tracked by ~nus,
+nor is there any policy associated with it.
 ```
 ~zod:dojo> :library-proxy +dbug
-TODO output
+[%0 readers={[p=~nus q={}]} policies={}]
 ```
 
 
