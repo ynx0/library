@@ -80,7 +80,7 @@
     ?>  ?=([%request-library @ @ ~] wire)
     =/  host  (slav %p i.t.wire)
     =/  name  `@tas`i.t.t.wire
-    [(sub-to-library [host name])^~ this]
+    [(sub-to-library:hc [host name])^~ this]
   ::
       %watch-ack
     ?~  p.sign
