@@ -56,7 +56,7 @@ You should see output similar to the following:
 
 *Note: The following section assumes you have multiple (fake) ships running. We'll user **~zod** and **~nus**, but feel free to use any ones you like.*
 
-First, follow the installation instructions for two ships, ~zod and ~nus.
+First, follow the installation instructions for two ships, **~zod** and **~nus**.
 
 Then, go ahead and start the `%library-proxy` app on both ships.
 
@@ -65,31 +65,30 @@ Then, go ahead and start the `%library-proxy` app on both ships.
 ```
 
 
-To get baseline, run the following two commands:
+To get baseline, run the following two command.
 
-This first one prints out the state of the graphs in graph store.
+This first one prints out the state of the graphs in `%graph-store`.
 ```
 ~zod:dojo> :graph-store +dbug [%state 'graphs']
 >   {[p=[entity=~zod name=%dm-inbox] q=[p={} q=[~ %graph-validator-dm]]]}
 ```
 
-This second one prints out the state of the library-proxy app.
+This second one prints out the state of the `%library-proxy` app.
 ```
 ~zod:dojo> :library-proxy +dbug
 >   [%0 readers={} policies={}]
 ```
 
-The output shows us that there is currently only one empty graph reserved for dms,
-and that library proxy is currently not tracking any readers or policies.
+The output shows us that there is currently only one empty graph reserved for DMs,
+and that `%library-proxy` is currently not tracking any readers or policies.
 
 
-Now, let's create a library on ~zod.
+Now, let's create a library on **~zod**.
 
 We'll create it with the `%open` policy, which means that anyone can request for access to the library.
 
-**TODO** rename library to %sci-fi-collection
-**TODO** elide the similar parts of the output
-**TODO** collapsable summary/details
+* **TODO** rename library to %sci-fi-collection
+* **TODO** elide the similar parts of the output
 
 ```
 ~zod:dojo> :library-proxy &library-command [%create-library [our %library1] [%open ~]]
@@ -121,6 +120,9 @@ Now, let's add a book to our library. Note that the isbn must be either length 1
 ```
 
 Verify that the book was created successfully.
+<details>
+	<summary>Large output. Click to expand</summary>
+
 ```
 ~zod:dojo> :graph-store +dbug [%state 'graphs']
 
@@ -206,6 +208,8 @@ Verify that the book was created successfully.
 }
 ```
 
+</details>
+
 Although all the data is present and valid, it is not in a human readable format.
 To understand the underlying structure, take a look at 
 [this section(**TODO**)](code_architecture.md#schema) of the documentation
@@ -226,33 +230,35 @@ Verify that a revision node was created successfully.
 -->
 
 
-Now, let's bring ~nus into the picture.
+Now, let's bring **~nus** into the picture.
 
-First, get the list of available libraries from ~zod
+First, get the list of available libraries from **~zod**
 ```
 ~nus:dojo> :~zod/library-proxy &library-action [%get-libraries ~]
 {[entity=~zod name=%library1]}
 ```
-We see one library, with the name library1.
+We see one library, with the name *library1*.
 
-Let's request this one from ~zod.
+Let's request this one from **~zod**.
 
 ```
 ~nus:dojo> :library-proxy &library-command [%request-library [~zod %library1]]
 ```
 
-If we inspect **~nus**'s graph store, we will now see that it has fresh graph from **~zod** meant for library1.
+If we inspect **~nus**'s `%graph-store`, we will now see that it now has a new graph from **~zod** corresponding to *library1*.
 ```
 ~nus:dojo> :graph-store +dbug [%state 'graphs']
 [p=[entity=~zod name=%library1] q=[p={} q=[~ %graph-validator-library]]]
 ```
 However, there are no books yet that have been populated. 
-In Library, we only keep store data and keep track of books that we are interested.
+In Library, we only store data about and keep track of books that we are interested.
 
-So, let's figure out what books are available on ~zod/library1.
+So, let's figure out what books are available on *library1*.
 ```
 ~nus:dojo> :~zod/library-proxy &library-action [%get-books [~zod %library1]]
-TODO output
+
+[entity=~zod name=%library1]
+{170.141.184.505.110.703.100.063.230.385.815.814.144}
 ```
 
 Right now, we see the index of one book. Let's give it a face for easy access.
@@ -267,6 +273,10 @@ Now let's request this book.
 ```
 
 And verify that we got the update.
+
+<details>
+	<summary>Large output. Click to expand.</summary>
+
 ```
 ~nus:dojo> :graph-store +dbug [%state 'graphs']
 { [ p=[entity=~zod name=%library1]
@@ -352,8 +362,10 @@ And verify that we got the update.
 
 ```
 
+</details>
 
-Take a look at ~zod's `%library-proxy` and notice how its state has updated information regarding who's tracking what resource:
+
+Take a look at **~zod**'s `%library-proxy` and notice how its state has updated information regarding who's tracking what resource:
 ```
 ~zod:dojo> :library-proxy +dbug
 [ %0
@@ -363,23 +375,27 @@ Take a look at ~zod's `%library-proxy` and notice how its state has updated info
 
 ```
 
-As a result of the last two actions on ~nus's part, ~zod's `%library-proxy` now knows that:
-(a) ~nus has requested and succesfully been granted access to %library1, and
-(b) ~nus is interested in tracking updates to the book with index *`170.141.184.505.110.<...>`*, (which corresponds to Dune)
+As a result of the last two actions on **~nus**'s part, **~zod**'s `%library-proxy` now knows that:
+- (a) **~nus** has requested and succesfully been granted access to %library1, and
+- (b) **~nus** is interested in tracking updates to the book with index `170.141.184.505.110.303.839.596.375.394.968.666.112`, (which corresponds to Dune)
 
 
 
-After having read the book, ~nus would like to comment about it.
+After having read the book, **~nus** would like to comment about it.
 ```
 ~nus:dojo> :~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune "dune is ok"]
 ```
 
-After thinking for a second, ~nus realizes she didn't complete his thought, so she writes another comment.
+After thinking for a second, **~nus** realizes she didn't complete her thought, so she writes another comment.
 ```
 ~nus:dojo> :~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune "in my opinion"]
 ```
 
-Let's make sure ~nus's comment was properly sent to ~zod.
+Let's make sure **~nus**'s comment was properly sent to **~zod**.
+
+<details>
+	<summary>Large output. Click to expand</summary>
+
 ```
 ~zod:dojo> :graph-store +dbug [%state 'graphs']
 { [ p=[entity=~zod name=%library1]
@@ -511,20 +527,27 @@ Let's make sure ~nus's comment was properly sent to ~zod.
 
 ```
 
-Now, ~nus feels like deleting her first comment, and does so:
+</details>
+
+
+Now, **~nus** feels like deleting her first comment, and does so:
 ```
 ~nus:dojo> :~zod/library-proxy &library-action [%remove-comment [~zod %library1] ~[top-of-dune %comments 170.141.184.505.110.615.575.362.645.737.013.772.288]]
 ```
 
-~zod wants to clean up ~nus's second comment, because it doesn't really make sense without the first one.
+**~zod** wants to clean up **~nus**'s second comment, because it doesn't really make sense without the first one.
 So he ends up deleting it, since he's the owner of the library.
 
 ```
 ~zod:dojo> :library-proxy &library-action [%remove-comment [our %library1] ~[top-of-dune %comments 170.141.184.505.110.617.158.107.698.780.100.886.528]]
 ```
 
-Now, if we look at the graph store states for both ~zod and ~nus, we'll see the above changes reflected on both graphs.
+Now, if we look at the `%graph-store` states for both **~zod** and **~nus**, we'll see the above changes reflected on both graphs.
 The book nodes on both graphs are identical.
+
+<details>
+	<summary>Large output. Click to expand</summary>
+
 ```
 ~zod:dojo> :graph-store +dbug
 ~nus:dojo> :graph-store +dbug
@@ -620,12 +643,17 @@ The book nodes on both graphs are identical.
 }
 ```
 
-Now, ~zod decides to delete the book *Dune*
+</details>
+
+Now, **~zod** decides to delete the book *Dune*
 ```
 :library-proxy &library-command [%remove-book [our %library1] top-of-dune]
 ```
 
 Looking at the state,
+
+<details>
+	<summary>(Large output. Click to expand)</summary>
 
 ```
 ~zod:dojo> :graph-store +dbug [%state 'graphs']
@@ -714,7 +742,10 @@ Looking at the state,
 
 ```
 
-We can see that the book has been removed from both users' graph store.
+</details>
+
+
+We can see that the book has been flagged as deleted from both users' `%graph-store`.
 
 We can also see that on ~zod's library proxy,
 ```
@@ -722,7 +753,7 @@ We can also see that on ~zod's library proxy,
 [%0 readers={[p=~nus q={}]} policies={[p=[entity=~zod name=%library1] q=[%open ~]]}]
 ```
 
-the index for the book is now removed from ~nus's tracked books on %library1.
+the index for the book is now removed from **~nus**'s tracked books on *library1*.
 
 Compare to the earlier state:
 ```
@@ -734,7 +765,7 @@ Compare to the earlier state:
 
 
 
-To wrap up, ~zod deletes the library.
+To wrap up, **~zod** deletes the library.
 ```
 ~zod:dojo> :library-proxy &library-command [%remove-library [our %library1]]
 ```
@@ -747,10 +778,10 @@ Looking at the state,
 >   {[p=[entity=~zod name=%dm-inbox] q=[p={} q=[~ %graph-validator-dm]]]}
 ```
 
-We can see that the library has been removed from both graph stores,
-and that the only the default dm inbox graph remains.
+We can see that the library has been removed from both `%graph-store`s,
+and that the only the default DM graph remains.
 
-Also note that on ~zod's library proxy, %library1 is no longer tracked by ~nus,
+Also note that on **~zod**'s library proxy, *library1* is no longer tracked by **~nus**,
 nor is there any policy associated with it.
 ```
 ~zod:dojo> :library-proxy +dbug
@@ -762,10 +793,11 @@ nor is there any policy associated with it.
 
 There are three different access policies supported by Library:
 
-- `%open` - anyone can request the library
-- `%children` - only children can request the library
-- `%whitelist` - only select ships specified at the time of creation can request the library
+- `%open` - anyone can request access to the library
+- `%children` - only children can request access to the library
+- `%whitelist` - only select ships specified can request the access to library
 
+They can be set *once* at the time of creation of the library.
 
 <!--
 ## Reference
