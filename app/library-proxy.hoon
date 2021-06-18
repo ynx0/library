@@ -85,7 +85,7 @@
       %watch-ack
     ?~  p.sign
       `this     :: no error, subscription was successful
-    =/  =tank  leaf+"subscribe to {<dap.bowl>} failed"
+    =/  =tank  leaf+"subscribe to {<dap.bowl>} failed" :: we have truly been kicked. a sad day
     %-  (slog tank u.p.sign)
     `this
   ::
@@ -217,6 +217,7 @@
     [(sub-to-library rid)^~ state]
   ::
       %request-book
+    ::~|  "tried to request access to library that we own"
     ?<  (is-owner src.bowl)  :: invalid. we should never request our own library
     =/  rid  rid.command
     =/  top  top.command
@@ -436,7 +437,7 @@
 ++  handle-graph-update-incoming
   |=  [=update:store]
   ^-  (quip card _state)
-  ~&  "got foreign graph update {<update>} from {<src.bowl>}"
+  ~&  "got foreign graph update {<-.q.update>} from {<src.bowl>}"
   =^  cards  state
     =/  rids  (resource-for-update:gra !>(update))
     ?~  rids  `state
