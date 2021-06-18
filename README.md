@@ -56,6 +56,8 @@ You should see output similar to the following:
 
 *Note: The following section assumes you have multiple (fake) ships running. We'll user **~zod** and **~nus**, but feel free to use any ones you like.*
 
+### Setup
+
 First, follow the installation instructions for two ships, **~zod** and **~nus**.
 
 Then, go ahead and start the `%library-proxy` app on both ships.
@@ -82,6 +84,8 @@ This second one prints out the state of the `%library-proxy` app.
 The output shows us that there is currently only one empty graph reserved for DMs,
 and that `%library-proxy` is currently not tracking any readers or policies.
 
+
+### Creating a library
 
 Now, let's create a library on **~zod**.
 
@@ -113,6 +117,8 @@ Let's also verify that we've successfully recorded the policy for our library.
 From this point on, the output will only contain important bits of information, 
 skipping over what's not necessary.
 
+
+### Adding a book
 
 Now, let's add a book to our library. Note that the isbn must be either length 10 or 13.
 ```
@@ -232,7 +238,9 @@ Verify that a revision node was created successfully.
 -->
 
 
-Now, let's bring **~nus** into the picture.
+### Requesting access to someone else's library 
+
+Let's bring another ship, **~nus**, into the picture.
 
 First, get the list of available libraries from **~zod**
 ```
@@ -254,6 +262,8 @@ If we inspect **~nus**'s `%graph-store`, we will now see that it now has a new g
 ```
 However, there are no books yet that have been populated. 
 In Library, we only store data about and keep track of books that we are interested.
+
+### Requesting a book from a library
 
 So, let's figure out what books are available on *library1*.
 ```
@@ -277,7 +287,7 @@ Now let's request this book.
 And verify that we got the update.
 
 <details>
-		<summary>
+	<summary>
 		<code>~nus:dojo> :graph-store +dbug [%state 'graphs'] <i>(Large output. Click to expand)</i></code>
 	</summary>
 
@@ -384,6 +394,7 @@ As a result of the last two actions on **~nus**'s part, **~zod**'s `%library-pro
 - (b) **~nus** is interested in tracking updates to the book with index `170.141.184.505.110.303.839.596.375.394.968.666.112`, (which corresponds to Dune)
 
 
+### Commenting on a book
 
 After having read the book, **~nus** would like to comment about it.
 ```
@@ -535,6 +546,7 @@ Let's make sure **~nus**'s comment was properly sent to **~zod**.
 
 </details>
 
+### Deleting a comment
 
 Now, **~nus** feels like deleting her first comment, and does so:
 ```
@@ -652,6 +664,10 @@ The book nodes on both graphs are identical.
 ```
 
 </details>
+
+
+### Deleting a book
+
 
 Now, **~zod** decides to delete the book *Dune*
 ```
@@ -773,6 +789,7 @@ Compare to the earlier state:
 ]
 ```
 
+### Deleting a library
 
 
 To wrap up, **~zod** deletes the library.
@@ -799,7 +816,7 @@ nor is there any policy associated with it.
 ```
 
 
-## Advanced Usage
+### Policies
 
 There are three different access policies supported by Library:
 
