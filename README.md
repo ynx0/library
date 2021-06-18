@@ -121,7 +121,9 @@ Now, let's add a book to our library. Note that the isbn must be either length 1
 
 Verify that the book was created successfully.
 <details>
-	<summary>Large output. Click to expand</summary>
+	<summary>
+		<code>~zod:dojo> :graph-store +dbug [%state 'graphs']` <i>(Large output. Click to expand)</i></code>
+	</summary>
 
 ```
 ~zod:dojo> :graph-store +dbug [%state 'graphs']
@@ -275,7 +277,9 @@ Now let's request this book.
 And verify that we got the update.
 
 <details>
-	<summary>Large output. Click to expand.</summary>
+		<summary>
+		<code>~nus:dojo> :graph-store +dbug [%state 'graphs'] <i>(Large output. Click to expand)</i></code>
+	</summary>
 
 ```
 ~nus:dojo> :graph-store +dbug [%state 'graphs']
@@ -394,7 +398,9 @@ After thinking for a second, **~nus** realizes she didn't complete her thought, 
 Let's make sure **~nus**'s comment was properly sent to **~zod**.
 
 <details>
-	<summary>Large output. Click to expand</summary>
+	<summary>
+		<code>~zod:dojo> :graph-store +dbug [%state 'graphs'] <i>(Large output. Click to expand)</i></code>
+	</summary>
 
 ```
 ~zod:dojo> :graph-store +dbug [%state 'graphs']
@@ -546,7 +552,9 @@ Now, if we look at the `%graph-store` states for both **~zod** and **~nus**, we'
 The book nodes on both graphs are identical.
 
 <details>
-	<summary>Large output. Click to expand</summary>
+	<summary>
+		<code>:dojo> :graph-store +dbug <i>(Large output. Click to expand)</i></code>
+	</summary>
 
 ```
 ~zod:dojo> :graph-store +dbug
@@ -653,7 +661,9 @@ Now, **~zod** decides to delete the book *Dune*
 Looking at the state,
 
 <details>
-	<summary>(Large output. Click to expand)</summary>
+	<summary>
+		<code>:dojo> :graph-store +dbug <i>(Large output. Click to expand)</i></code>
+	</summary>
 
 ```
 ~zod:dojo> :graph-store +dbug [%state 'graphs']
