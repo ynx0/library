@@ -4,6 +4,12 @@ Simple library application.
 
 ![Made with %graph-store](https://img.shields.io/badge/Made%20with-%25graph--store-darkblue)
 
+
+<!--
+* **TODO** rename library to %sci-fi-collection
+* **TODO** elide the similar parts of the output
+-->
+
 ## Features
 
 Using this application, you will be able to:
@@ -90,10 +96,6 @@ and that `%library-proxy` is currently not tracking any readers or policies.
 Now, let's create a library on **~zod**.
 
 We'll create it with the `%open` policy, which means that anyone can request for access to the library.
-
-* **TODO** rename library to %sci-fi-collection
-* **TODO** elide the similar parts of the output
-
 ```
 ~zod:dojo> :library-proxy &library-command [%create-library [our %library1] [%open ~]]
 ```
