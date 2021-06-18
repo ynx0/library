@@ -130,17 +130,32 @@ skipped
 ---------
 june 18
 
+done
+- ran thru test cases
+- proper resubscribe logic works
 
-todo
-
-- run thru test cases, also specifically test for subscription logic working
 
 - documentation
 	* hands on usage doc
 		+ flesh out remaining example statements
 		+ add in expected outputs
-		+ add links to relevant bits of code
+
+skipped
+- documentation
+	* code reference. (not strictly necessary, might do eventually)
+		+ list of all types, and their meaning/usage. (i.e. readers, prim, policies)
+		+ list of all pokes (actions, commands, poke-backs)
+		+ list of all lib functions and what they do
+
+
+
+todo
+
+- documentation
+	* hands on usage doc
+		+ add links to relevant bits of code (?)
 		+ (optional, get input) show curl commands to access app in an airlock fashion
+
 	* code architecture explainer
 		+ outline (potentially revisit the old documentation and replicate structure if appropriate)
 			- intro: what is the desired use cases of the library app
@@ -158,11 +173,6 @@ todo
 					+ ~zod, host of ~zod/library1 issues %add-comment to proxy, proxy sends graph store update to local graph store, proxy receives the same update, sends it out to all others. same flow as if any other person did an %add-comment, it is broadcast.
 				* (maybe) show full data flow in short bulleted form. %get-libraries -> %get-library resource -> %get-book resource book -> %add-comment
 				* (maybe) explain how poke-back pattern is used to surface data to the end user.
-
-	* code reference
-		+ list of all types, and their meaning/usage. (i.e. readers, prim, policies)
-		+ list of all pokes (actions, commands, poke-backs)
-		+ list of all lib functions and what they do
 
 
 
