@@ -218,7 +218,8 @@
   ::
       %request-book
     ::~|  "tried to request access to library that we own"
-    ?<  (is-owner src.bowl)  :: invalid. we should never request our own library
+    ::
+    ?<  (is-owner entity.rid)  :: invalid. we should never request our own library
     =/  rid  rid.command
     =/  top  top.command
     =/  =action:library  [%get-book rid top]
