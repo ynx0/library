@@ -49,7 +49,7 @@
   ?+    mark  (on-poke:def mark vase)
       %library-command
     ::?>  (team:title our.bowl src.bowl)  :: allow ourselves and moons to use this poke
-    ?>  (is-owner src.bowl)  :: only allow ourselves to use this poke
+    ?>  (is-owner:hc src.bowl)  :: only allow ourselves to use this poke
     =+  !<(=command:library vase)
     (handle-command:hc command)
   ::
@@ -94,8 +94,7 @@
       ?+    p.cage.sign  `state
           %graph-update-2
         =+  !<(=update:store q.cage.sign)
-        ~&  wire
-        ?:  (is-owner src.bowl)
+        ?:  (is-owner:hc src.bowl)
           (handle-graph-update-outgoing:hc update)
         (handle-graph-update-incoming:hc update)
       ==
@@ -118,7 +117,7 @@
     =/  subscriber  (slav %p i.t.path)
     =/  us          (slav %p i.t.t.path)  :: redundant
     =/  name        `@tas`i.t.t.t.path
-    ?<  (is-owner src.bowl)    :: do not allow ourselves to subscribe, invalid
+    ?<  (is-owner:hc src.bowl)    :: do not allow ourselves to subscribe, invalid
     ?>  =(subscriber src.bowl)  :: check for imposter (sus)
     =/  policy  (~(got by policies) [our.bowl name])
     ?>  (is-allowed:libr subscriber our.bowl policy)
