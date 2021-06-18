@@ -211,8 +211,10 @@
     [(poke-local-store update)^~ state]
   ::
       %request-library
-    ?<  (is-owner src.bowl)  :: invalid. we should never request our own library, this may cause a loop
-    [(sub-to-library rid.command)^~ state]
+    ~|  "tried to request access to library that we own"
+    =/  rid  rid.command
+    ?<  (is-owner entity.rid)  :: invalid. we should never request our own library, this may cause a loop
+    [(sub-to-library rid)^~ state]
   ::
       %request-book
     ?<  (is-owner src.bowl)  :: invalid. we should never request our own library
