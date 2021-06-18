@@ -84,10 +84,13 @@
   ::
       %watch-ack
     ?~  p.sign
-      ~&  >  "resubscribed on wire {<wire>} successfully"
+      ~&  >   "resubscribed on wire {<wire>} successfully"
       `this     :: no error, subscription was successful
-    =/  =tank  leaf+"subscribe on wire {<wire>} failed" :: we have truly been kicked. a sad day
-    %-  (slog tank u.p.sign)
+    :: we have truly been kicked. a sad day
+    ~&  >>> "subscribe on wire {<wire>} failed"
+    :: todo do we need this wacky code? idk what it is / why we'd need it
+    ::=/  =tank  leaf+"subscribe on wire {<wire>} failed" 
+    ::%-  (slog tank u.p.sign)
     `this
   ::
       %fact
