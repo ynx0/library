@@ -73,9 +73,9 @@
     :: a %kick doesn't always mean the publisher has voluntarily terminated the subscription.
     :: it can also mean that there is network traffic cloggage
     :: thus, we must try to resubscribe here, and then once that goes through if we then get a failing watch ack only then do we give up
-    ~&  >  "kicked from subscription {<wire>}"
-    ~&  >  "attempting to resubscribe"
-    ?~  wire  ~|("empty wire, can't resubscribe" `this)  :: todo do we need this or can we do with just the assertion
+    ~&  >>  "kicked from subscription {<wire>}"
+    ~&  >>  "attempting to resubscribe"
+    ?~  wire  ~|("empty wire, can't resubscribe. this shouldn't happen" `this)  :: todo do we need this or can we do with just the assertion
     ::
     ?>  ?=([%request-library @ @ ~] wire)
     =/  host  (slav %p i.t.wire)
@@ -84,8 +84,9 @@
   ::
       %watch-ack
     ?~  p.sign
+      ~&  >  "resubscribed on wire {<wire>} successfully"
       `this     :: no error, subscription was successful
-    =/  =tank  leaf+"subscribe to {<dap.bowl>} failed" :: we have truly been kicked. a sad day
+    =/  =tank  leaf+"subscribe on wire {<wire>} failed" :: we have truly been kicked. a sad day
     %-  (slog tank u.p.sign)
     `this
   ::
@@ -114,8 +115,8 @@
       [%updates @ @ @ ~]
     ::  path format: /updates/[subscriber-ship]/[entity.rid]/[name.rid]
     ::  entity.rid must always be us, its redundant
-    =/  subscriber  (slav %p i.t.path)
-    =/  us          (slav %p i.t.t.path)  :: redundant
+    =/  subscriber  `@p`(slav %p i.t.path)
+    =/  us          `@p`(slav %p i.t.t.path)  :: redundant
     =/  name        `@tas`i.t.t.t.path
     ?<  (is-owner:hc src.bowl)    :: do not allow ourselves to subscribe, invalid
     ?>  =(subscriber src.bowl)  :: check for imposter (sus)
@@ -439,6 +440,7 @@
   |=  [=update:store]
   ^-  (quip card _state)
   ~&  "got foreign graph update {<-.q.update>} from {<src.bowl>}"
+  ~&  update
   =^  cards  state
     =/  rids  (resource-for-update:gra !>(update))
     ?~  rids  `state
