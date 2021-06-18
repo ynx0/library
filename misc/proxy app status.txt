@@ -38,11 +38,18 @@ works = implemented + tested
 	- policy enforcement logic works
 
 
-nice to haves (only after mvp + documentation released)
-- allow revising the metadata of a book
-- give back the title and/or isbn of the book as well, rather than simply the book's indicies.
-- the printf response for %get-books and %get-libraries is fine as a user interface for a proof of concept displaying the backend. however, if the goal is for this to be easily frontend-able, then there is still a non-trivial gap for the data to get across to the web in a structured manner i think. i need to revisit airlock to see if we can easily get access to poke data, or rather what's the best way to do this.
-- do cleanup refactor pass (redundant code, using agentio, getting a code review)
+nice to haves
+
+* code (only after mvp + documentation released)
+	- allow revising the metadata of a book
+	- give back the title and/or isbn of the book as well, rather than simply the book's indicies.
+	- the printf response for %get-books and %get-libraries is fine as a user interface for a proof of concept displaying the backend. however, if the goal is for this to be easily frontend-able, then there is still a non-trivial gap for the data to get across to the web in a structured manner i think. i need to revisit airlock to see if we can easily get access to poke data, or rather what's the best way to do this.
+	- do cleanup refactor pass (redundant code, using agentio, getting a code review)
+
+* docs
+	- a short reference document
+	- CURLified versions of each command for use with airlocks (if it would even work)
+
 
 --------
 
@@ -109,21 +116,24 @@ did
 june 16
 
 did
-- code
+- code (all untested as of now)
 	* added assertion against %get-ing your own library and book
 	* refactor owner check logic to is-owner arm
 	* refactor out comment removal checking logic to arm in barket
 	* allow owner to see all books
 	* create arm index-to-path
+	* fixed subscription logic
+
+skipped
+	* test out state removal properly working across multiple resources (works for a single one). yeah it doesn't really matter cause i guarded against it anyways
+
+---------
+june 18
 
 
 todo
 
-- code
-	* test out state removal properly working across multiple resources (works for a single one)
-	* fix subscription logic
-
-
+- run thru test cases, also specifically test for subscription logic working
 
 - documentation
 	* hands on usage doc

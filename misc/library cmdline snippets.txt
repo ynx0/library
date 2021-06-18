@@ -126,3 +126,13 @@
 :library-proxy &library-command [%request-library [~zod %frens-only]]
 
 
+:: misc failure cases
+
+
+:: ~zod tries to request his own book, fails
+:library-proxy &library-command [%request-book [~zod %library1] top-of-dune]
+
+:: ~zod tries to request his own library, fails
+:library-proxy &library-command [%request-library [~zod %library1]]
+
+
