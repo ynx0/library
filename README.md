@@ -62,6 +62,8 @@ You should see output similar to the following:
 
 *Note: The following section assumes you have multiple (fake) ships running. We'll user **~zod** and **~nus**, but feel free to use any ones you like.*
 
+
+
 ### Setup
 
 First, follow the installation instructions for two ships, **~zod** and **~nus**.
@@ -71,6 +73,10 @@ Then, go ahead and start the `%library-proxy` app on both ships.
 ```
 :dojo> |start %library-proxy
 ```
+
+**Code references**
+- [`app/library-proxy.hoon`](#L999) - the `+on-init` arm
+
 
 
 To get baseline, run the following two command.
@@ -89,6 +95,7 @@ This second one prints out the state of the `%library-proxy` app.
 
 The output shows us that there is currently only one empty graph reserved for DMs,
 and that `%library-proxy` is currently not tracking any readers or policies.
+
 
 
 ### Creating a library
@@ -118,6 +125,14 @@ Let's also verify that we've successfully recorded the policy for our library.
 
 From this point on, the output will only contain important bits of information, 
 skipping over what's not necessary.
+
+
+**Code references**
+- [`app/library-proxy.hoon`](#L999) - the relevant section in the `+on-poke` arm
+- [`app/library-proxy.hoon`](#L999) - the wing that handles a `%library-command`
+- [`app/library-proxy.hoon`](#L999) - the wing that handles `%create-library`
+- [`sur/library.hoon`](#L999) - the definition of a `library-command`
+- [`mar/library/command.hoon`](#L999) - mark file defining a `library-command`
 
 
 ### Adding a book
@@ -239,6 +254,13 @@ Verify that a revision node was created successfully.
 ```
 -->
 
+**Code references**
+- [`app/library-proxy.hoon`](#L999) - the relevant section in the `+on-poke` arm
+- [`app/library-proxy.hoon`](#L999) - the wing that handles a `%library-command`
+- [`app/library-proxy.hoon`](#L999) - the wing that handles `%add-book`
+- [`sur/library.hoon`](#L999) - the definition of a `library-command`
+- [`mar/graph/validator/library.hoon`](#L13, #L43-47) - arm that enforces length check
+
 
 ### Requesting access to someone else's library 
 
@@ -264,6 +286,19 @@ If we inspect **~nus**'s `%graph-store`, we will now see that it now has a new g
 ```
 However, there are no books yet that have been populated. 
 In Library, we only store data about and keep track of books that we are interested.
+
+
+
+**Code references**
+
+1. [`app/library-proxy.hoon`](#L999) - the relevant section in the `+on-poke` arm
+2. [`app/library-proxy.hoon`](#L999) - the wing that handles a `%library-action`
+2. [`app/library-proxy.hoon`](#L999) - the wing that handles action `%get-libraries`
+2. [`app/library-proxy.hoon`](#L999) - the wing that handles command `%request-library`
+2. [...] - the part that handles the %get-library (call is under the hood)
+2. [`sur/library.hoon`](#L999) - the definition of a `library-command`
+2. [`sur/library.hoon`](#L999) - the definition of a `library-action`
+
 
 ### Requesting a book from a library
 
@@ -394,6 +429,20 @@ Take a look at **~zod**'s `%library-proxy` and notice how its state has updated 
 As a result of the last two actions on **~nus**'s part, **~zod**'s `%library-proxy` now knows that:
 - (a) **~nus** has requested and succesfully been granted access to %library1, and
 - (b) **~nus** is interested in tracking updates to the book with index `170.141.184.505.110.303.839.596.375.394.968.666.112`, (which corresponds to Dune)
+
+
+
+**Code references**
+
+1. [`app/library-proxy.hoon`](#L999) - the relevant section in the `+on-poke` arm
+2. [`app/library-proxy.hoon`](#L999) - the wing that handles a `%library-action`
+2. [`app/library-proxy.hoon`](#L999) - the wing that handles action `%get-books`
+2. [...] - the part that handles the %get-book (call is under the hood)
+2. [`sur/library.hoon`](#L999) - the definition of a `library-command`
+2. [`sur/library.hoon`](#L999) - the definition of a `library-action`
+2. [`mar/library/action.hoon`](#L999) - mark file defining a `library-action`
+
+
 
 
 ### Commenting on a book
@@ -548,6 +597,14 @@ Let's make sure **~nus**'s comment was properly sent to **~zod**.
 
 </details>
 
+
+**Code references**
+
+1. [`app/library-proxy.hoon`](#L999) - the wing that handles a `%library-action`
+2. [`app/library-proxy.hoon`](#L999) - the wing that handles action `%add-comment`
+2. [`sur/library.hoon`](#L999) - the definition of a `library-action`
+
+
 ### Deleting a comment
 
 Now, **~nus** feels like deleting her first comment, and does so:
@@ -666,6 +723,12 @@ The book nodes on both graphs are identical.
 ```
 
 </details>
+
+
+**Code references**
+
+1. [`app/library-proxy.hoon`](#L999) - the wing that handles action `%remove-comment`
+2. [`sur/library.hoon`](#L999) - the definition of a `library-action`
 
 
 ### Deleting a book
@@ -791,6 +854,12 @@ Compare to the earlier state:
 ]
 ```
 
+**Code references**
+
+1. [`app/library-proxy.hoon`](#L999) - the wing that handles action `%remove-comment`
+2. [`sur/library.hoon`](#L999) - the definition of a `library-action`
+
+
 ### Deleting a library
 
 
@@ -817,6 +886,12 @@ nor is there any policy associated with it.
 [%0 readers={[p=~nus q={}]} policies={}]
 ```
 
+**Code references**
+
+1. [`app/library-proxy.hoon`](#L999) - the wing that handles command `%remove-library`
+2. [`sur/library.hoon`](#L999) - the definition of a `library-command`
+
+
 
 ### Policies
 
@@ -827,6 +902,11 @@ There are three different access policies supported by Library:
 - `%whitelist` - only select ships specified can request the access to library
 
 They can be set *once* at the time of creation of the library.
+
+**Code references**
+
+1. [`sur/library.hoon`](#L999) - the definition of `policy`
+1. [`lib/library.hoon`](#L999) - the arm that implements policy checking
 
 <!--
 ## Reference
