@@ -1,7 +1,6 @@
 /-  *post, resource, library, spider
 /+  *graph-store, strandio
 |%
-::  TODO maybe refactor in an arm for is-owner to replace =(our.bowl src.bowl)
 ++  incr-index
   :: increments the last value in the index by 1
   |=  [=index:post]
@@ -14,11 +13,11 @@
   |=  [=book:library]
   ^-  (list content)
   ~[[%text (crip title.book)] [%text (crip isbn.book)]]
-::
 ++  make-comment-contents
   |=  [comment-text=comment:library]
   ^-  (list content)
   ~[[%text (crip comment-text)]]
+::
 ++  is-allowed
   |=  [requester=ship host=ship =policy:library]
   ^-  ?

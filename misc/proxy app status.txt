@@ -173,7 +173,32 @@ todo
 					+ ~zod, host of ~zod/library1 issues %add-comment to proxy, proxy sends graph store update to local graph store, proxy receives the same update, sends it out to all others. same flow as if any other person did an %add-comment, it is broadcast.
 				* (maybe) show full data flow in short bulleted form. %get-libraries -> %get-library resource -> %get-book resource book -> %add-comment
 				* (maybe) explain how poke-back pattern is used to surface data to the end user.
+			- emphasize: this is just one architecture that you could follow, you can really do anything you want.
 
+
+
+---------------
+june 19
+
+done
+
+skipped
+
+todo
+- links in usage doc to src code!
+- do all minor refactoring as much as possible before review
+- [low-priority] potentially move towards treating moons as the same as planets
+
+
+notes
+- separation of code and docs: on urbit official docs, realize that code will not be hosted there, it'll have to be linked externally
+
+tim tip:
+if you want to only have certain ~| to print only on certain subexpressions,
+limit the scope of the sigbar by an if statement rather than having it wrap the whole rest of the code ~|  ?> is not the best
+?:  a
+   ~|("oops" b)
+c
 
 
 

@@ -221,13 +221,12 @@
     [(sub-to-library rid)^~ state]
   ::
       %request-book
-    ::~|  "tried to request access to library that we own"
-    ::
     =/  rid  rid.command
     =/  top  top.command
-    ?<  (is-owner entity.rid)  :: invalid. we should never request our own library
+    ?:  (is-owner entity.rid)
+      ~|("tried to request access to library that we own" !!)
     =/  =action:library  [%get-book rid top]
-    :: crashes if we haven't %request-library'd first. this is probably ok
+    :: i'm pretty sure this crashes if we haven't %request-library'd first. this is probably ok
     [[%pass /book-request %agent [entity.rid %library-proxy] %poke [%library-action !>(action)]]~ state]
   ==
   [cards state]
