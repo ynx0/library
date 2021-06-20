@@ -42,7 +42,7 @@
   :*  [owner name]
       *graph  :: the official thread uses (gas:orm ~ ~), which is equivalent
       [~ %graph-validator-library]
-      %.y
+      %.n     :: don't overwrite an existing library
   ==
 ++  remove-library-update
   |=  [[owner=ship name=@tas] time-sent=time]
