@@ -31,7 +31,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%library-proxy initialized successfully'
-  [[%pass /local-store %agent [our.bowl %graph-store] [%watch /updates]]~ this]
+  [(~(watch-our pass:io /local-store) %graph-store /updates)^~ this]
 ++  on-save
   ^-  vase
   !>(state)
@@ -128,7 +128,7 @@
     :: implicitly, having a successful subscription means you have permission, not necessarily are interested in hearing about anything yet.
     ::
     =.  readers  (~(put by readers) subscriber (~(gas by *prim:library) [[[our.bowl name] *(set atom)] ~]))
-    [[%give %fact ~[/updates/(scot %p src.bowl)/(scot %p our.bowl)/[name]] [%graph-update-2 !>(initial-library-update)]]~ state]
+    [(fact:io graph-update-2+!>(initial-library-update) ~[/updates/(scot %p src.bowl)/(scot %p our.bowl)/[name]])^~ state]
   ==
   [cards this]
 ++  on-peek
@@ -216,7 +216,8 @@
       ~|("tried to request access to library that we own" !!)
     =/  =action:library  [%get-book rid top]
     :: i'm pretty sure this crashes if we haven't %request-library'd first. this is probably ok
-    [[%pass /book-request %agent [entity.rid %library-proxy] %poke [%library-action !>(action)]]~ state]
+    :_  state
+    (~(poke pass:io /book-request) [entity.rid %library-proxy] library-action+!>(action))
   ==
   [cards state]
   ::
@@ -265,8 +266,8 @@
       =.  prm  (~(put ju prm) rid top)
       =.  readers  (~(put by readers) src.bowl prm)
       :: 2. send them the graph update
-      [[%give %fact ~[/updates/(scot %p src.bowl)/(scot %p entity.rid)/[name.rid]] [%graph-update-2 !>(update)]]~ state]
       =/  update  (scry-for:gra update:store /node/(scot %p our.bowl)/[name.rid]/(scot %ud top))
+      [(fact:io graph-update-2+!>(update) ~[/updates/(scot %p src.bowl)/(scot %p entity.rid)/[name.rid]])^~ state]
     ::
         %get-libraries
       =/  libraries  (scry-for:libr (set resource) /libraries)
@@ -276,7 +277,8 @@
         |=  [rid=resource]
         =/  policy  (~(got by policies) rid)
         (is-allowed:libr src.bowl our.bowl policy)
-      [[%pass ~ %agent [src.bowl %library-proxy] %poke [%library-response !>([%available-libraries libraries])]]~ state]
+      [(~(poke pass:io /) [src.bowl %library-proxy] library-response+!>(available-libraries+libraries))^~ state]
+
     ::
         %get-books
       ::  todo if/when full-text/extra info is enabled, the resulting data could be a set of book-indexes along with just title and isbn without(!)
@@ -285,8 +287,9 @@
       =/  policy  (~(get by policies) rid)
       ?~  policy  `state                               :: if there is no policy set for the given rid, it is an invalid request. ignore
       ?.  (is-allowed:libr src.bowl our.bowl u.policy)  `state  :: only give them list of books if they are allowed
-      [[%pass ~ %agent [src.bowl %library-proxy] %poke [%library-response !>([%available-books rid book-indexes])]]~ state]
       =/  book-indexes  (scry-for:libr (set atom) /books/[name.rid])
+      :_  state
+      (~(poke pass:io /) [src.bowl %library-proxy] library-response+!>(available-books+[rid book-indexes]))^~
     ==
   [cards state]
   ::
@@ -351,9 +354,8 @@
       =/  tracked-libraries  ~(key by prm)  :: if her is not tracking this resource, don't send the update
       ?.  (~(has in tracked-libraries) update-rid)  ~
       %-  some
-      =/  paths  ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]]
-      :~  [%give %fact paths [%graph-update-2 !>(update)]]
-          [%give %kick paths `her]
+      :~  (fact:io graph-update-2+!>(update) ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]])
+          (kick-only:io her paths)
       ==
     ::
         %add-nodes
@@ -367,7 +369,7 @@
       %+  murn  ~(tap by nodes.q.update)
       |=  [idx=index:store *]
       ?.  (~(has in u.tracked-books) (head idx))  ~  :: only forward this update if they are tracking this book
-      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
+      `(fact:io graph-update-2+!>(update) ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]])      
     ::
         %remove-posts
       ::  need to clear reader state *after* creating cards, cause we can't create card without state
@@ -383,7 +385,7 @@
       :: ensure that users who receive a remove-posts
       :: only receive it for indices that they would have
       =.  indices.q.update  (filter-indices indices.q.update u.tracked-books)
-      `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]        
+      `(fact:io graph-update-2+!>(update) ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]])
     ==
   [cards state]
   ::
@@ -405,7 +407,7 @@
     :: if no tracked books for this resource, don't bother making any cards
     ?~  tracked-books  ~
     ?.  (~(has in u.tracked-books) (head idx))  ~  :: only forward this update if they are tracking this book
-    `[%give %fact ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]] [%graph-update-2 !>(update)]]
+    `(fact:io graph-update-2+!>(update) ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]])
   ++  remove-library
     |=  [old=_state rid=resource]
     ^-  _state
@@ -447,15 +449,15 @@
 ++  poke-local-store
   |=  [=update:store]
   ^-  card
-  [%pass ~ %agent [our.bowl %graph-store] %poke [%graph-update-2 !>(update)]]
   :: this is using a ~ wire. again, is this ok?
+  (~(poke-our pass:io /) %graph-store graph-update-2+!>(update))
 ++  sub-to-library
   |=  [rid=resource]
   ^-  card
   =/  pax  /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid]
   =/  wir  /request-library/(scot %p entity.rid)/[name.rid]
-  [%pass wir %agent [entity.rid %library-proxy] [%watch pax]]
   ::  note: agentio prepends "agentio-watch" to the provided wire
+  (~(watch pass:io wir) [entity.rid %library-proxy] pax)
 ++  is-owner
   :: is the ship the owner of this proxys
   |=  [=ship]
