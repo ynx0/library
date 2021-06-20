@@ -179,40 +179,36 @@
 ::
 ++  handle-command
   |=  [=command:library]
-  ^-  (quip card _state)
+  |^  ^-  (quip card _state)
   =^  cards  state
   ?-    -.command
       %create-library
     =/  rid        rid.command
     =/  time-sent  now.bowl
     =/  policy     policy.command
-    =/  update     (create-library-update:libr rid time-sent)
     =.  policies   (~(put by policies) rid policy)  :: set the policy for the given rid into the actual state
-    [(poke-local-store update)^~ state]
+    (poke-local (create-library-update:libr rid time-sent))
   ::
       %remove-library
     =/  rid        rid.command
     =/  time-sent  now.bowl
-    =/  update     (remove-library-update:libr rid time-sent)
     =.  policies   (~(del by policies) rid)       ::  remove the policy for the given rid from
-    [(poke-local-store update)^~ state]
+    (poke-local (remove-library-update:libr rid time-sent))
   ::
       %add-book
     =/  rid           rid.command
     =/  author        src.bowl
     =/  time-sent     now.bowl
     =/  book          book.command
-    =/  update        (add-book-update:libr rid author time-sent book)
-    [(poke-local-store update)^~ state]
+    (poke-local (add-book-update:libr rid author time-sent book))
   ::
       %remove-book
     =/  rid        rid.command
     =/  top        top.command
     =/  time-sent  now.bowl
-    =/  update     (remove-book-update:libr rid top time-sent)
     ::  removing the book from `readers` is handled during the handling of %remove-graph
     ::  because it needs the metadata to know who to send the update to
-    [(poke-local-store update)^~ state]
+    (poke-local (remove-book-update:libr rid top time-sent))
   ::
       %request-library
     ~|  "tried to request access to library that we own"
@@ -230,6 +226,12 @@
     [[%pass /book-request %agent [entity.rid %library-proxy] %poke [%library-action !>(action)]]~ state]
   ==
   [cards state]
+  ::
+  ++  poke-local
+    |=  [=update:store]
+    ^-  (quip card _state)
+    [(poke-local-store update)^~ state]
+  --
 ++  handle-action
   |=  [=action:library]
   |^  ^-  (quip card _state)
