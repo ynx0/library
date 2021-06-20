@@ -87,7 +87,7 @@
       ~&  >   "resubscribed on wire {<wire>} successfully"
       `this     :: no error, subscription was successful
     :: we have truly been kicked. a sad day
-    ~&  >>> "subscribe on wire {<wire>} failed"
+    ~&  >>>  "subscribe on wire {<wire>} failed"
     :: todo do we need this wacky code? idk what it is / why we'd need it
     ::=/  =tank  leaf+"subscribe on wire {<wire>} failed" 
     ::%-  (slog tank u.p.sign)
