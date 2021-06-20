@@ -143,8 +143,8 @@
   ?+    pax  (on-peek:def pax)
       [%x %libraries ~]
     ::  1. scry for all graph keys in our local graph store
-    =/  keys  
-      =/  key-update  .^(update:store %gx /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/keys/noun)
+    =/  keys
+      =/  key-update  (scry-for:libgraph update:store /keys/noun)
       ?>  ?=(%keys -.q.key-update)
       resources.q.key-update
     ::  this also has the same redundancy
@@ -154,7 +154,7 @@
       %+  skim  ~(tap in keys)
       |=  [key=resource]
       ::  invariant: entity.key == our.bowl
-      =/  mark  .^((unit @tas) %gx /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/graph-mark/(scot %p entity.key)/[name.key]/noun)
+      =/  mark  (scry-for:libgraph (unit @tas) /graph-mark/(scot %p entity.key)/[name.key]/noun)
       =([~ %graph-validator-library] mark)
     ``noun+!>(library-keys)
     ::      
@@ -257,8 +257,8 @@
       =/  rid            rid.action
       =/  comment-index  index.action
       ?>  ?=([@ %comments @ ~] comment-index)  ::  ensure index is of proper form
-      =/  prev-comment-update  
-        .^(update:store %gx (weld /(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid] (snoc (index-to-path:libr comment-index) %noun)))
+      =/  prev-comment-update
+        (scry-for:libgraph update:store (weld /node/(scot %p our.bowl)/[name.rid] (snoc (index-to-path:libr comment-index) %noun)))
       ?.  (can-remove-comment src.bowl comment-index prev-comment-update)
         `state  :: if src cannot remove comment, silently ignore
       =/  remove-update  (remove-comment-update:libr rid comment-index now.bowl)
@@ -273,9 +273,7 @@
       =.  prm  (~(put ju prm) rid top)  :: this line doesn't appear to be happening
       =.  readers  (~(put by readers) src.bowl prm)
       :: 2. send them the graph update
-      =/  pax  `path`/(scot %p our.bowl)/graph-store/(scot %da now.bowl)/node/(scot %p our.bowl)/[name.rid]/(scot %ud top)/noun
-      ~&  pax
-      =/  update  .^(update:store %gx pax)
+      =/  update  (scry-for:libgraph update:store /node/(scot %p our.bowl)/[name.rid]/(scot %ud top)/noun)
       [[%give %fact ~[/updates/(scot %p src.bowl)/(scot %p entity.rid)/[name.rid]] [%graph-update-2 !>(update)]]~ state]
     ::
         %get-libraries
