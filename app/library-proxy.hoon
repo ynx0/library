@@ -1,9 +1,7 @@
 /-  *resource, library
 /+  store=graph-store, graph, default-agent,
     dbug, verb, agentio, libr=library
-::  TODO use agentio instead of raw cards
 ::  TODO i still don't know what wires to put for my `%watch`s
-::  TODO use scry-for:libgraph rather than direct scries
 |%
 +$  versioned-state
     $%  state-0
@@ -85,13 +83,9 @@
       %watch-ack
     ?~  p.sign
       ~&  >   "resubscribed on wire {<wire>} successfully"
-      `this     :: no error, subscription was successful
-    :: we have truly been kicked. a sad day
+      `this  :: no error, subscription was successful
     ~&  >>>  "subscribe on wire {<wire>} failed"
-    :: todo do we need this wacky code? idk what it is / why we'd need it
-    ::=/  =tank  leaf+"subscribe on wire {<wire>} failed" 
-    ::%-  (slog tank u.p.sign)
-    `this
+    `this    :: we have truly been kicked. a sad day
   ::
       %fact
     =^  cards  state
@@ -110,8 +104,8 @@
   ^-  (quip card _this)
   =^  cards  state
   ?+    path  (on-watch:def path)
-  ::  TODO do readable type alias for watch path (is there any perf hit to a bunch of aliases)
-  ::  or even a comment
+  ::  TODO potenially do readable type alias for watch path wing (is there any perf hit to a bunch of aliases)
+  ::  or maybe just a comment
   ::  +$  subscriber-ship  atom
   ::  +$  us               atom
   ::  +$  name             atom
@@ -122,7 +116,7 @@
     =/  us          `@p`(slav %p i.t.t.path)  :: redundant
     =/  name        `@tas`i.t.t.t.path
     ?<  (is-owner:hc src.bowl)    :: do not allow ourselves to subscribe, invalid
-    ?>  =(subscriber src.bowl)  :: check for imposter (sus)
+    ?>  =(subscriber src.bowl)    :: check for imposter (sus)
     =/  policy  (~(got by policies) [our.bowl name])
     ?>  (is-allowed:libr subscriber our.bowl policy)
     ::  we scry the original graph just to get its original creation time
@@ -157,7 +151,7 @@
       =/  mark  (scry-for:libgraph (unit @tas) /graph-mark/(scot %p entity.key)/[name.key]/noun)
       =([~ %graph-validator-library] mark)
     ``noun+!>(library-keys)
-    ::      
+  ::      
       [%x %books @ ~]
     =/  name=@tas  i.t.t.pax
     =/  update  (scry-for:libgraph update:store /graph/(scot %p our.bowl)/[name])
@@ -165,7 +159,6 @@
     =/  the-graph  graph.q.update
     =/  book-tops  (silt (turn (tap:orm:store the-graph) head))
     ``noun+!>(`(set atom)`book-tops)
-    ::
   ==
 ++  on-leave  on-leave:def
 ++  on-arvo   on-arvo:def
@@ -175,7 +168,7 @@
 ::  be sent on, but, we don't really care about it i don't think so we'll leave it null for now
 ::  i think it may be important when there is a poke-nack or smtn and you want to keep track of it
 |_  bowl=bowl:gall
-+*  gra   ~(. graph bowl)
++*  gra  ~(. graph bowl)
 ::
 ++  handle-command
   |=  [=command:library]
@@ -253,7 +246,6 @@
       [(poke-local-store update)^~ state]
     ::
         %remove-comment
-      ::  TODO convert scry to tall form
       =/  rid            rid.action
       =/  comment-index  index.action
       ?>  ?=([@ %comments @ ~] comment-index)  ::  ensure index is of proper form
@@ -270,7 +262,7 @@
       ?<  (is-owner src.bowl)  :: invalid, disallow ourselves from requesting from our own library
       :: 1. add the person to readers
       =/  prm  (fall (~(get by readers) src.bowl) *prim:library)
-      =.  prm  (~(put ju prm) rid top)  :: this line doesn't appear to be happening
+      =.  prm  (~(put ju prm) rid top)
       =.  readers  (~(put by readers) src.bowl prm)
       :: 2. send them the graph update
       =/  update  (scry-for:libgraph update:store /node/(scot %p our.bowl)/[name.rid]/(scot %ud top)/noun)
@@ -353,6 +345,7 @@
       :_  =.  state  (remove-library state update-rid)
       state
       %-  zing
+      ~&  readers
       %+  murn  ~(tap by readers)
       |=  [her=ship prm=prim:library]
       =/  tracked-libraries  ~(key by prm)  :: if her is not tracking this resource, don't send the update
@@ -455,13 +448,16 @@
   |=  [=update:store]
   ^-  card
   [%pass ~ %agent [our.bowl %graph-store] %poke [%graph-update-2 !>(update)]]
+  :: this is using a ~ wire. again, is this ok?
 ++  sub-to-library
   |=  [rid=resource]
   ^-  card
   =/  pax  /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid]
   =/  wir  /request-library/(scot %p entity.rid)/[name.rid]
   [%pass wir %agent [entity.rid %library-proxy] [%watch pax]]
+  ::  note: agentio prepends "agentio-watch" to the provided wire
 ++  is-owner
+  :: is the ship the owner of this proxys
   |=  [=ship]
   =(our.bowl ship)
 --

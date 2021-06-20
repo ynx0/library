@@ -8,8 +8,6 @@
 =liblibrary -build-file %/lib/library/hoon
 
 
-
--build-file %/app/library-proxy/hoon
 |start %library-proxy
 
 :: ~zod and moon ota setup
@@ -20,20 +18,6 @@
 :: handy state inspections
 :graph-store +dbug [%state 'graphs']
 :library-proxy +dbug
-
-
-:: appetizers of all commands
-::  TODO Create proper appetizer section/document that is easier to read that test cases
-
-:library-proxy &library-command [%create-library [our %library1] [%open ~]]
-:library-proxy &library-command [%remove-library [our %library1]]
-
-:library-proxy &library-command [%add-book [our %library1] ["Dune" "isbnisbnis"]]  :: isbn must be length 10 or 13
-:library-proxy &library-command [%remove-book [our %library1] 123.456]
-
-
-:library-proxy &library-action [%add-comment [our %library1] 123.456 "this is a comment."]
-:library-proxy &library-action [%add-comment [our %library1] ~[123.456 8.319.395.793.566.789.475 789.654]]
 
 =libraries .^((set resource:store) %gx /(scot %p our)/library-proxy/(scot %da now)/libraries/noun)
 =available-books .^((set atom) %gx /(scot %p our)/library-proxy/(scot %da now)/books/library1/noun)

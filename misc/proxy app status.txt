@@ -148,8 +148,16 @@ skipped
 		+ list of all lib functions and what they do
 
 
+---
+june 20
+
 
 todo
+
+
+- code
+	* bug! %remove-graph isn't sent on deletion of library. likely a problem with sending out cards
+
 
 - documentation
 	* hands on usage doc
