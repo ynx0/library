@@ -8,6 +8,15 @@
   =/  last=@  (sub (lent index) 1)  :: calculate the array index of the last item
   =/  old-revision-count=atom  (snag last index)  :: get the last item
   (snap index last (add 1 old-revision-count))    :: replace the value of last item with 1 added to it
+++  scry-for
+  |*  [=mold =path]
+  .^  mold
+    %gx
+    (scot %p our.bowl)
+    %library-proxy
+    (scot %da now.bowl)
+    (snoc `^path`path %noun)
+  ==
 ::
 ++  make-meta-contents
   |=  [=book:library]
