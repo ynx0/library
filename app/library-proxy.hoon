@@ -260,7 +260,8 @@
         %get-book
       =/  rid  rid.action
       =/  top  book-index.action
-      ?<  (is-owner src.bowl)  :: invalid, disallow ourselves from requesting from our own library
+      ?<  =(our.bowl src.bowl)    :: invalid, disallow ourselves from requesting from our own library
+      ?>  =(entity.rid our.bowl)  :: assert that the library is one that we (potentially) own
       :: 1. add the person to readers
       =/  prm  (fall (~(get by readers) src.bowl) *prim:library)
       =.  prm  (~(put ju prm) rid top)
