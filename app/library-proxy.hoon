@@ -26,7 +26,7 @@
     def       ~(. (default-agent this %|) bowl)
     hc        ~(. +> bowl)
     io        ~(. agentio bowl)
-    libgraph  ~(. graph bowl)
+    gra       ~(. graph bowl)
 ::
 ++  on-init
   ^-  (quip card _this)
@@ -122,7 +122,7 @@
     ::  we scry the original graph just to get its original creation time
     ::  otherwise, it is discarded. what is actually sent is an empty graph
     ::  todo refactor for readability
-    =/  original-time-sent      p:(scry-for:libgraph update:store /graph/(scot %p our.bowl)/[name])
+    =/  original-time-sent      p:(scry-for:gra update:store /graph/(scot %p our.bowl)/[name])
     =/  initial-library-update  (create-library-update:libr [our.bowl name] original-time-sent)
     :: readers are who's actually interested, and wants to hear updates
     :: implicitly, having a successful subscription means you have permission, not necessarily are interested in hearing about anything yet.
@@ -138,7 +138,7 @@
       [%x %libraries ~]
     ::  1. scry for all graph keys in our local graph store
     =/  keys
-      =/  key-update  (scry-for:libgraph update:store /keys/noun)
+      =/  key-update  (scry-for:gra update:store /keys)
       ?>  ?=(%keys -.q.key-update)
       resources.q.key-update
     ::  this also has the same redundancy
@@ -148,13 +148,13 @@
       %+  skim  ~(tap in keys)
       |=  [key=resource]
       ::  invariant: entity.key == our.bowl
-      =/  mark  (scry-for:libgraph (unit @tas) /graph-mark/(scot %p entity.key)/[name.key]/noun)
+      =/  mark  (scry-for:gra (unit @tas) /graph-mark/(scot %p entity.key)/[name.key])
       =([~ %graph-validator-library] mark)
     ``noun+!>(library-keys)
   ::      
       [%x %books @ ~]
     =/  name=@tas  i.t.t.pax
-    =/  update  (scry-for:libgraph update:store /graph/(scot %p our.bowl)/[name])
+    =/  update  (scry-for:gra update:store /graph/(scot %p our.bowl)/[name])
     ?>  ?=(%add-graph -.q.update)
     =/  the-graph  graph.q.update
     =/  book-tops  (silt (turn (tap:orm:store the-graph) head))
@@ -250,7 +250,7 @@
       =/  comment-index  index.action
       ?>  ?=([@ %comments @ ~] comment-index)  ::  ensure index is of proper form
       =/  prev-comment-update
-        (scry-for:libgraph update:store (weld /node/(scot %p our.bowl)/[name.rid] (snoc (index-to-path:libr comment-index) %noun)))
+        (scry-for:gra update:store (weld /node/(scot %p our.bowl)/[name.rid] (index-to-path:libr comment-index)))
       ?.  (can-remove-comment src.bowl comment-index prev-comment-update)
         `state  :: if src cannot remove comment, silently ignore
       =/  remove-update  (remove-comment-update:libr rid comment-index now.bowl)
@@ -265,8 +265,8 @@
       =.  prm  (~(put ju prm) rid top)
       =.  readers  (~(put by readers) src.bowl prm)
       :: 2. send them the graph update
-      =/  update  (scry-for:libgraph update:store /node/(scot %p our.bowl)/[name.rid]/(scot %ud top)/noun)
       [[%give %fact ~[/updates/(scot %p src.bowl)/(scot %p entity.rid)/[name.rid]] [%graph-update-2 !>(update)]]~ state]
+      =/  update  (scry-for:gra update:store /node/(scot %p our.bowl)/[name.rid]/(scot %ud top))
     ::
         %get-libraries
       =/  libraries  .^((set resource) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/libraries/noun)
