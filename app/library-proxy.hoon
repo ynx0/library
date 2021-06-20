@@ -269,7 +269,7 @@
       =/  update  (scry-for:gra update:store /node/(scot %p our.bowl)/[name.rid]/(scot %ud top))
     ::
         %get-libraries
-      =/  libraries  .^((set resource) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/libraries/noun)
+      =/  libraries  (scry-for:libr (set resource) /libraries)
       =?  libraries  !(is-owner src.bowl)  :: filter out allowed libraries if requester isn't the owner
         %-  silt
         %+  skim  ~(tap in libraries)
@@ -285,8 +285,8 @@
       =/  policy  (~(get by policies) rid)
       ?~  policy  `state                               :: if there is no policy set for the given rid, it is an invalid request. ignore
       ?.  (is-allowed:libr src.bowl our.bowl u.policy)  `state  :: only give them list of books if they are allowed
-      =/  book-indexes  .^((set atom) %gx /(scot %p our.bowl)/library-proxy/(scot %da now.bowl)/books/[name.rid]/noun)
       [[%pass ~ %agent [src.bowl %library-proxy] %poke [%library-response !>([%available-books rid book-indexes])]]~ state]
+      =/  book-indexes  (scry-for:libr (set atom) /books/[name.rid])
     ==
   [cards state]
   ::
