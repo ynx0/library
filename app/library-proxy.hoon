@@ -2,6 +2,7 @@
 /+  store=graph-store, graph, default-agent,
     dbug, verb, agentio, libr=library
 ::  TODO i still don't know what wires to put for my `%watch`s
+::  TODO should i refactor out %give paths to arm (i.e. generate /updates/(scot %p her)/(scot %p our.bowl)/[name.rid] from arm)
 |%
 +$  versioned-state
     $%  state-0

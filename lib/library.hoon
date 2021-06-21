@@ -5,8 +5,8 @@
   :: increments the last value in the index by 1
   |=  [=index:post]
   ^-  index:post
-  =/  last=@  (sub (lent index) 1)  :: calculate the array index of the last item
-  =/  old-revision-count=atom  (snag last index)  :: get the last item
+  =/  last=@                (sub (lent index) 1)  :: calculate the array index of the last item
+  =/  old-revision-count=@  (snag last index)     :: get the last item
   (snap index last (add 1 old-revision-count))    :: replace the value of last item with 1 added to it
 ++  scry-for
   |*  [=mold =path]

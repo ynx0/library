@@ -152,6 +152,12 @@ skipped
 june 20
 
 
+done
+
+- code
+	* all major refactoring before code review
+
+
 todo
 
 

@@ -62,6 +62,7 @@
       =/  contents  contents.p.i
       i
     ==
+  ::  vestigial structures from graph-push-hook. don't know if we still need these
   ++  graph-permissions-add
     |=  vip=vip-metadata:met
     ^-  permissions:graph
@@ -71,10 +72,9 @@
     |=  vip=vip-metadata:met
     ^-  permissions:graph
     !!
-    ::==
   ++  transform-add-nodes
     |=  [=index =post =atom was-parent-modified=?]
-    :: todo this needs to be implemented properly
+    :: todo this needs to be implemented properly (?)
     :: based off of publish, doesn't take parent-modified into account
     ^-  [^index ^post]
     :: trust all incoming indexes by default, don't modify them
@@ -90,7 +90,7 @@
     ::[transformed-index post(index transformed-index)]
     [index post]
   ::
-    ++  notification-kind  `[%message [0 1] %count %none]
+  ++  notification-kind  `[%message [0 1] %count %none]
   ::
   --
 ++  grab
