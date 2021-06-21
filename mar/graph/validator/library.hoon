@@ -62,16 +62,7 @@
       =/  contents  contents.p.i
       i
     ==
-  ::  vestigial structures from graph-push-hook. don't know if we still need these
-  ++  graph-permissions-add
-    |=  vip=vip-metadata:met
-    ^-  permissions:graph
-    !!
-  ::
-  ++  graph-permissions-remove
-    |=  vip=vip-metadata:met
-    ^-  permissions:graph
-    !!
+  ::  optional arm used mainly by graph-push-hook.
   ++  transform-add-nodes
     |=  [=index =post =atom was-parent-modified=?]
     :: todo this needs to be implemented properly (?)
