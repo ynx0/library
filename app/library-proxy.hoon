@@ -218,7 +218,7 @@
     =/  =action:library  [%get-book rid top]
     :: i'm pretty sure this crashes if we haven't %request-library'd first. this is probably ok
     :_  state
-    (~(poke pass:io /book-request) [entity.rid %library-proxy] library-action+!>(action))
+    (~(poke pass:io /book-request) [entity.rid %library-proxy] library-action+!>(action))^~
   ==
   [cards state]
   ::
