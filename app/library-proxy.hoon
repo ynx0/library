@@ -142,15 +142,15 @@
       =/  key-update  (scry-for:gra update:store /keys)
       ?>  ?=(%keys -.q.key-update)
       resources.q.key-update
-    ::  this also has the same redundancy
-    ::  where the entity.rid is always our.bowl
+    ::  this also has the redundancy where the entity.rid is always our.bowl
     =/  library-keys=(set resource)
       %-  silt
       %+  skim  ~(tap in keys)
       |=  [key=resource]
-      ::  invariant: entity.key == our.bowl
-      =/  mark  (scry-for:gra (unit @tas) /graph-mark/(scot %p entity.key)/[name.key])
-      =([~ %graph-validator-library] mark)
+      ^-  ?
+      =/  mark  ::  invariant: entity.key == our.bowl
+        (scry-for:gra (unit @tas) /graph-mark/(scot %p entity.key)/[name.key])
+      =(`%graph-validator-library mark)
     ``noun+!>(library-keys)
   ::      
       [%x %books @ ~]
@@ -205,8 +205,8 @@
     (poke-local (remove-book:libr rid top time-sent))
   ::
       %request-library
-    ~|  "tried to request access to library that we own"
     =/  rid  rid.command
+    ~|  "tried to request access to library that we own"
     ?<  (is-owner entity.rid)  :: invalid. we should never request our own library, this may cause a loop
     [(sub-to-library rid)^~ state]
   ::
@@ -250,11 +250,11 @@
         %remove-comment
       =/  rid            rid.action
       =/  comment-index  index.action
-      ?>  ?=([@ %comments @ ~] comment-index)  ::  ensure index is of proper form
+      ?>  ?=([@ %comments @ ~] comment-index)
       =/  prev-comment-update
         (scry-for:gra update:store (weld /node/(scot %p our.bowl)/[name.rid] (index-to-path:libr comment-index)))
       ?.  (can-remove-comment src.bowl comment-index prev-comment-update)
-        `state  :: if src cannot remove comment, silently ignore
+        `state  :: if requesting ship cannot remove comment, silently ignore
       =/  remove-update  (remove-comment:libr rid comment-index now.bowl)
       [(poke-local-store remove-update)^~ state]
     ::
@@ -441,9 +441,9 @@
   ~&  "got foreign graph update {<-.q.update>} from {<src.bowl>}"
   ~&  update
   =^  cards  state
-    =/  rids  (resource-for-update:gra !>(update))
-    ?~  rids  `state
-    =/  rid   i.rids
+    =/  wrapped-rid  (resource-for-update:gra !>(update))
+    ?~  wrapped-rid  `state
+    =/  rid          i.wrapped-rid
     ?>  =(src.bowl entity.rid)  :: only owners may send graph updates for resources they own
     [(poke-local-store update)^~ state]
   [cards state]
