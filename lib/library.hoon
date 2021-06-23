@@ -3,11 +3,11 @@
 |%
 ++  incr-index
   :: increments the last value in the index by 1
-  |=  [=index:post]
+  |=  [idx=index:post]
   ^-  index:post
-  =/  old-revision-count=@   (rear index)     :: get the last item
-  =/  new-revision-count=@  +(old-revision-count)
-  (snoc (snip index) new-revision-count)    :: remove last item, combine with incremented value
+  =/  old-revision-count=@   (rear idx)            :: get the last item
+  =/  new-revision-count=@  +(old-revision-count)  :: increment revision count
+  (snoc (snip idx) new-revision-count)             :: remove last item, combine with new revision count
 ++  scry-for
   |*  [=mold =path]
   .^  mold
