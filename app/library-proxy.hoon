@@ -2,7 +2,6 @@
 /+  store=graph-store, graph, default-agent,
     dbug, verb, agentio, libr=library
 ::  TODO i still don't know what wires to put for my `%watch`s
-::  TODO should i refactor out %give paths to arm (i.e. generate /updates/(scot %p her)/(scot %p our.bowl)/[name.rid] from arm)
 |%
 +$  versioned-state
     $%  state-0
@@ -111,25 +110,29 @@
   ::  +$  us               atom
   ::  +$  name             atom
       [%updates @ @ @ ~]
-    ::  path format: /updates/[subscriber-ship]/[entity.rid]/[name.rid]
-    ::  entity.rid must always be us, its redundant
-    =/  subscriber  `@p`(slav %p i.t.path)
-    =/  us          `@p`(slav %p i.t.t.path)  :: redundant
-    =/  name        `@tas`i.t.t.t.path
+    ::  path format:  /updates/[src.bowl]/[entity.rid]/[name.rid]
+    ::  human format: /updates/[subscriber-ship]/[host-ship]/[library-name]
+    ::  host-ship must always be us, its redundant
+    =/  subscriber    `@p`(slav %p i.t.path)
+    =/  host-ship     `@p`(slav %p i.t.t.path)
+    =/  library-name  `@tas`i.t.t.t.path
     ?<  (is-owner:hc src.bowl)    :: do not allow ourselves to subscribe, invalid
     ?>  =(subscriber src.bowl)    :: check for imposter (sus)
-    =/  policy  (~(got by policies) [our.bowl name])
+    =/  policy  (~(got by policies) [our.bowl library-name])
     ?>  (is-allowed:libr subscriber our.bowl policy)
     ::  we scry the original graph just to get its original creation time
     ::  otherwise, it is discarded. what is actually sent is an empty graph
     ::  todo refactor for readability
-    =/  original-time-sent      p:(scry-for:gra update:store /graph/(scot %p our.bowl)/[name])
-    =/  initial-library-update  (create-library:libr [our.bowl name] original-time-sent)
+    =/  original-time-sent      p:(scry-for:gra update:store /graph/(scot %p our.bowl)/[library-name])
+    =/  initial-library-update  (create-library:libr [our.bowl library-name] original-time-sent)
     :: readers are who's actually interested, and wants to hear updates
-    :: implicitly, having a successful subscription means you have permission, not necessarily are interested in hearing about anything yet.
-    ::
-    =.  readers  (~(put by readers) subscriber (~(gas by *prim:library) [[[our.bowl name] *(set atom)] ~]))
-    [(fact:io graph-update-2+!>(initial-library-update) ~[/updates/(scot %p src.bowl)/(scot %p our.bowl)/[name]])^~ state]
+    :: implicitly, having a successful subscription means you have permission, 
+    :: not necessarily that you are interested in hearing about anything yet.
+    ::  todo refactor following state modif
+    =.  readers  (~(put by readers) subscriber (~(gas by *prim:library) [[[our.bowl library-name] *(set atom)] ~]))
+    :_  state
+    :~  (fact:io graph-update-2+!>(initial-library-update) (incoming-sub-path subscriber library-name)^~)
+    ==
   ==
   [cards this]
 ++  on-peek
@@ -269,7 +272,9 @@
       =.  readers  (~(put by readers) src.bowl prm)
       :: 2. send them the graph update
       =/  update  (scry-for:gra update:store /node/(scot %p our.bowl)/[name.rid]/(scot %ud top))
-      [(fact:io graph-update-2+!>(update) ~[/updates/(scot %p src.bowl)/(scot %p entity.rid)/[name.rid]])^~ state]
+      :_  state
+      :~  (fact:io graph-update-2+!>(update) ~[(incoming-sub-path src.bowl name.rid)])
+      ==
     ::
         %get-libraries
       =/  libraries  (scry-for:libr (set resource) /libraries)
@@ -279,8 +284,9 @@
         |=  [rid=resource]
         =/  policy  (~(got by policies) rid)
         (is-allowed:libr src.bowl our.bowl policy)
-      [(~(poke pass:io /) [src.bowl %library-proxy] library-response+!>(available-libraries+libraries))^~ state]
-
+      :_  state
+      :~  (~(poke pass:io /) [src.bowl %library-proxy] library-response+!>(available-libraries+libraries))
+      ==
     ::
         %get-books
       ::  todo if/when full-text/extra info is enabled, the resulting data could be a set of book-indexes along with just title and isbn without(!)
@@ -291,7 +297,8 @@
       ?.  (is-allowed:libr src.bowl our.bowl u.policy)  `state  :: only give them list of books if they are allowed
       =/  book-indexes  (scry-for:libr (set atom) /books/[name.rid])
       :_  state
-      (~(poke pass:io /) [src.bowl %library-proxy] library-response+!>(available-books+[rid book-indexes]))^~
+      :~  (~(poke pass:io /) [src.bowl %library-proxy] library-response+!>(available-books+[rid book-indexes]))
+      ==
     ==
   [cards state]
   ::
@@ -356,7 +363,7 @@
       =/  tracked-libraries  ~(key by prm)  :: if her is not tracking this resource, don't send the update
       ?.  (~(has in tracked-libraries) update-rid)  ~
       %-  some
-      :~  (fact:io graph-update-2+!>(update) ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]])
+      :~  (fact:io graph-update-2+!>(update) (incoming-sub-path her name.update-rid)^~)
           (kick-only:io her paths)
       ==
     ::
@@ -371,7 +378,7 @@
       %+  murn  ~(tap by nodes.q.update)
       |=  [idx=index:store *]
       ?.  (~(has in u.tracked-books) (head idx))  ~  :: only forward this update if they are tracking this book
-      `(fact:io graph-update-2+!>(update) ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]])      
+      `(fact:io graph-update-2+!>(update) (incoming-sub-path her name.update-rid)^~)
     ::
         %remove-posts
       ::  need to clear reader state *after* creating cards, cause we can't create card without state
@@ -387,7 +394,7 @@
       :: ensure that users who receive a remove-posts
       :: only receive it for indices that they would have
       =.  indices.q.update  (filter-indices indices.q.update u.tracked-books)
-      `(fact:io graph-update-2+!>(update) ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]])
+      `(fact:io graph-update-2+!>(update) (incoming-sub-path her name.update-rid)^~)
     ==
   [cards state]
   ::
@@ -409,7 +416,7 @@
     :: if no tracked books for this resource, don't bother making any cards
     ?~  tracked-books  ~
     ?.  (~(has in u.tracked-books) (head idx))  ~  :: only forward this update if they are tracking this book
-    `(fact:io graph-update-2+!>(update) ~[/updates/(scot %p her)/(scot %p our.bowl)/[name.update-rid]])
+    `(fact:io graph-update-2+!>(update) (incoming-sub-path her name.update-rid)^~)
   ++  remove-library
     |=  [old=_state rid=resource]
     ^-  _state
@@ -456,12 +463,23 @@
 ++  sub-to-library
   |=  [rid=resource]
   ^-  card
-  =/  pax  /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid]
   =/  wir  /request-library/(scot %p entity.rid)/[name.rid]
   ::  note: agentio prepends "agentio-watch" to the provided wire
-  (~(watch pass:io wir) [entity.rid %library-proxy] pax)
+  (~(watch pass:io wir) [entity.rid %library-proxy] (outgoing-sub-path rid))
+::  TODO probably rename to is-host
 ++  is-owner
   :: is the ship the owner of this proxys
   |=  [=ship]
   =(our.bowl ship)
+::  also the naming is a bit confusing even for me
+++  incoming-sub-path
+  :: someone is subscribed to us
+  |=  [reader=ship library-name=@tas]
+  ^-  path
+  /updates/(scot %p reader)/(scot %p our.bowl)/[library-name]
+++  outgoing-sub-path
+  :: we're subscribed to someone else
+  |=  [rid=resource]
+  ^-  path
+  /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid]
 --
