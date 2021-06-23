@@ -173,6 +173,7 @@
 ::  i think it may be important when there is a poke-nack or smtn and you want to keep track of it
 |_  bowl=bowl:gall
 +*  gra  ~(. graph bowl)
+    io   ~(. agentio bowl)
 ::
 ++  handle-command
   |=  [=command:library]
