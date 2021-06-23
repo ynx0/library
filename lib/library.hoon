@@ -47,18 +47,17 @@
   |=  [[owner=ship name=@tas] time-sent=time]
   ^-  update
   :-  time-sent
-  :-  %add-graph
-  :*  [owner name]
-      *graph  :: the official thread uses (gas:orm ~ ~), which is equivalent
-      [~ %graph-validator-library]
-      %.n     :: don't overwrite an existing library
+  :*  %add-graph  
+      [owner name]
+      *graph
+      `%graph-validator-library
+      %.n  :: don't overwrite an existing library
   ==
 ++  remove-library
   |=  [[owner=ship name=@tas] time-sent=time]
   ^-  update
   :-  time-sent
-  :-  %remove-graph
-  [owner name]
+  [%remove-graph [owner name]]
 ++  add-book
   |=  [rid=resource author=ship time-sent=time =book:library]
   ^-  update
