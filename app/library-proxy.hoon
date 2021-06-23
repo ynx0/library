@@ -364,7 +364,8 @@
       =/  tracked-libraries  ~(key by prm)  :: if her is not tracking this resource, don't send the update
       ?.  (~(has in tracked-libraries) update-rid)  ~
       %-  some
-      :~  (fact:io graph-update-2+!>(update) (incoming-sub-path her name.update-rid)^~)
+      =/  paths  (incoming-sub-path her name.update-rid)^~
+      :~  (fact:io graph-update-2+!>(update) paths)
           (kick-only:io her paths)
       ==
     ::
