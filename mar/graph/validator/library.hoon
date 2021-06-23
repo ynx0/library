@@ -62,27 +62,6 @@
       =/  contents  contents.p.i
       i
     ==
-  ::  optional arm used mainly by graph-push-hook.
-  ++  transform-add-nodes
-    |=  [=index =post =atom was-parent-modified=?]
-    :: todo this needs to be implemented properly (?)
-    :: based off of publish, doesn't take parent-modified into account
-    ^-  [^index ^post]
-    :: trust all incoming indexes by default, don't modify them
-    :: we could also do something with the post if we wanted, like forcing all coords to be valid
-    ::=/  transformed-index
-    ::  ?+    index  ~|(transform+[index post] !!)
-    ::      [@ ~]          index
-    ::      [@ %meta ~]    index
-    ::      [@ %pin ~]     index
-    ::      [@ %meta @ ~]  index
-    ::      [@ %pin @ ~]   index
-    ::  ==
-    ::[transformed-index post(index transformed-index)]
-    [index post]
-  ::
-  ++  notification-kind  `[%message [0 1] %count %none]
-  ::
   --
 ++  grab
   |%
