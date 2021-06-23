@@ -12,11 +12,11 @@
 ++  make-meta-contents
   |=  [=book:library]
   ^-  (list content)
-  ~[[%text (crip title.book)] [%text (crip isbn.book)]]
+  ~[[%text title.book] [%text isbn.book]]
 ++  make-comment-contents
   |=  [comment-text=comment:library]
   ^-  (list content)
-  ~[[%text (crip comment-text)]]
+  ~[[%text comment-text]]
 ::
 ++  is-allowed
   |=  [requester=ship host=ship =policy:library]

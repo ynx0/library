@@ -1,11 +1,11 @@
 /-  *resource, store=graph-store
 |%
-+$  comment  tape
++$  comment  cord
 +$  book
   $:
-    title=tape
-    isbn=tape
-    :: TODO fulltext=tape ? 
+    title=cord
+    isbn=cord
+    :: TODO fulltext=cord ? 
   ==
 ::
 ::  networking datastructures.

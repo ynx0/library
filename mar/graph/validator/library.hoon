@@ -2,11 +2,11 @@
 =>
 |%
 ++  is-title-valid
-  |=  [title=tape]
+  |=  [title=cord]
   ^-  ?
   %.y
 ++  is-isbn-valid  :: we could do https://github.com/xlcnd/isbnlib/blob/41f59c74a69a2675c3f135431e9785f9ae502a7e/isbnlib/_core.py#L52
-  |=  [isbn=tape]
+  |=  [isbn=cord]
   ^-  ?
   =/  len  (lent isbn)
   ?>  ?|(=(len 10) =(len 13))
@@ -41,9 +41,9 @@
         [@ %meta @ ~]
       =/  contents  contents.p.i
       ?>  ?=([[%text *] [%text *] ~] contents.p.i)
-      =/  title  (trip +.i.contents.p.i)
+      =/  title  +.i.contents.p.i
       ?>  (is-title-valid title)
-      =/  isbn  (trip +.i.t.contents.p.i)
+      =/  isbn   +.i.t.contents.p.i
       ?>  (is-isbn-valid isbn)
       i
     ::  comments section container
