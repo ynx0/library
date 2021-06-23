@@ -195,7 +195,7 @@
   ::
       %add-book
     =/  rid           rid.command
-    =/  author        src.bowl
+    =/  author        our.bowl
     =/  time-sent     now.bowl
     =/  book          book.command
     (poke-local (add-book:libr rid author time-sent book))
