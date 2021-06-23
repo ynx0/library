@@ -22,7 +22,7 @@
       [%add-book rid=resource =book]
       [%revise-book rid=resource top=@ new-book=book]  :: XX if we had to, we could use a separate "book-diff" type but for now we don't need it
       [%remove-book rid=resource top=@]
-      ::  todo extract out into request top level type?
+      ::  using your own library proxy to request a library on your behalf
       [%request-library rid=resource]
       [%request-book rid=resource top=@]
   ==
@@ -33,7 +33,6 @@
       [%remove-comment rid=resource =index:store]  :: anyone can remove their own comment
       [%get-book rid=resource book-index=atom]     :: someone else wants to now get the data for a book and hear about its updates. we should only ever hear this from a foreign library-proxy and never us ourself
       ::  scry wrappers
-      ::  todo extract out into request top level type?
       [%get-libraries ~]
       [%get-books rid=resource]
   ==

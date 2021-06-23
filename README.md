@@ -139,7 +139,7 @@ skipping over what's not necessary.
 
 Now, let's add a book to our library. Note that the isbn must be either length 10 or 13.
 ```
-~zod:dojo> :library-proxy &library-command [%add-book [our %library1] ["Dune123" "0441172717"]]
+~zod:dojo> :library-proxy &library-command [%add-book [our %library1] ['Dune123' '0441172717']]
 ```
 
 Verify that the book was created successfully.
@@ -449,12 +449,12 @@ As a result of the last two actions on **~nus**'s part, **~zod**'s `%library-pro
 
 After having read the book, **~nus** would like to comment about it.
 ```
-~nus:dojo> :~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune "dune is ok"]
+~nus:dojo> :~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune 'dune is ok']
 ```
 
 After thinking for a second, **~nus** realizes she didn't complete her thought, so she writes another comment.
 ```
-~nus:dojo> :~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune "in my opinion"]
+~nus:dojo> :~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune 'in my opinion']
 ```
 
 Let's make sure **~nus**'s comment was properly sent to **~zod**.

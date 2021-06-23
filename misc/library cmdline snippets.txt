@@ -31,17 +31,17 @@
 :library-proxy &library-command [%create-library [our %library1] [%open ~]]
 
 :: ~zod tries to add a book with invalid isbn length, fails
-:library-proxy &library-command [%add-book [our %library1] ["Dune" "not10or13chars"]]
+:library-proxy &library-command [%add-book [our %library1] ['Dune' 'not10or13chars']]
 
 :: ~zod adds two books adding a book
-:library-proxy &library-command [%add-book [our %library1] ["Dune" "isbnisbnis"]]
-:library-proxy &library-command [%add-book [our %library1] ["ABC" "isbnisbnis123"]]
+:library-proxy &library-command [%add-book [our %library1] ['Dune' 'isbnisbnis']]
+:library-proxy &library-command [%add-book [our %library1] ['ABC' 'isbnisbnis123']]
 
-::: replace with the top level index fragment of the book titled "Dune"
+::: replace with the top level index fragment of the book titled 'Dune'
 =top-of-dune 170.141.184.505.000.000.000.000.000.000.000.000.000
 
-:: ~zod adds comment on book "Dune"
-:library-proxy &library-action [%add-comment [our %library1] top-of-dune "I love dune"]
+:: ~zod adds comment on book 'Dune'
+:library-proxy &library-action [%add-comment [our %library1] top-of-dune 'I love dune']
 
 :: ~nus issues poke %get-libraries for libraries available on ~zod
 :~zod/library-proxy &library-action [%get-libraries ~]
@@ -50,10 +50,10 @@
 :~zod/library-proxy &library-action [%get-books [~zod %library1]]
 
 :: ~nus tries to add a book, fails because isn't in readers yet
-:~zod/library-proxy &library-command [%add-book [~zod %library1] ["fake book" "isbnisbnis"]]
+:~zod/library-proxy &library-command [%add-book [~zod %library1] ['fake book' 'isbnisbnis']]
 
 :: ~nus tries to add comment on book, fails cause not part of readers
-:~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune "failing comment"]
+:~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune 'failing comment']
 
 :: ~nus issues %request-library poke to start recieving updates to %library1
 :library-proxy &library-command [%request-library [~zod %library1]]
@@ -62,10 +62,10 @@
 :library-proxy &library-command [%request-book [~zod %library1] top-of-dune]
 
 :: ~nus tries to add comment, is successful
-:~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune "dune is ok"]
+:~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune 'dune is ok']
 
 :: ~nus adds a second comment again, is successful
-:~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune "in my opinion"]
+:~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune 'in my opinion']
 
 :: ~nus deletes own comment, succeeds
 :~zod/library-proxy &library-action [%remove-comment [~zod %library1] ~[top-of-dune %comments <index-frag of comment by ~nus>]]
@@ -82,7 +82,7 @@
 :: ~nus tries to delete ~zod's library, fails
 :~zod/library-proxy &library-command [%remove-library [~zod %library1]]
 
-:: ~zod deletes book with title "Dune", succeeds. appropriate state in proxy is cleared
+:: ~zod deletes book with title 'Dune', succeeds. appropriate state in proxy is cleared
 :library-proxy &library-command [%remove-book [our %library1] top-of-dune]
 
 :: ~zod deletes the library, succeeds
