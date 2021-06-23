@@ -43,7 +43,7 @@
   (turn idx (cury scot %ud))
 ::
 ::
-++  create-library-update
+++  create-library
   |=  [[owner=ship name=@tas] time-sent=time]
   ^-  update
   :-  time-sent
@@ -53,13 +53,13 @@
       [~ %graph-validator-library]
       %.n     :: don't overwrite an existing library
   ==
-++  remove-library-update
+++  remove-library
   |=  [[owner=ship name=@tas] time-sent=time]
   ^-  update
   :-  time-sent
   :-  %remove-graph
   [owner name]
-++  add-book-update
+++  add-book
   |=  [rid=resource author=ship time-sent=time =book:library]
   ^-  update
   =|  blank=post
@@ -79,7 +79,7 @@
       [~[top %comments] [[%.y blank(index ~[top %comments])] [%empty ~]]]
   ==
 ::
-++  remove-book-update
+++  remove-book
   |=  [rid=resource top=@ time-sent=time]
   :: todo this could be improved.
   :: right now it clears the post content of the top level structural node
@@ -92,7 +92,7 @@
   :+  %remove-posts  rid
   (silt ~[[top ~]])
 ::
-++  revise-meta-update
+++  revise-meta
   |=  [rid=resource last-revision-index=index author=ship time-sent=time =book:library]
   ^-  update
   =/  meta-index=index:post           (incr-index last-revision-index)
@@ -108,7 +108,7 @@
   %-  ~(gas by *(map index node))
   ~[[meta-index [[%.y meta-post] [%empty ~]]]]
 ::
-++  add-comment-update
+++  add-comment
   |=  [rid=resource top=@ author=ship time-sent=time =comment:library]
   ^-  update
   =/  comment-index=index  ~[top %comments time-sent]
@@ -124,7 +124,7 @@
   %-  ~(gas by *(map index node))
   ~[[comment-index [[%.y comment-post] [%empty ~]]]]
 ::
-++  remove-comment-update
+++  remove-comment
   |=  [rid=resource comment-index=index time-sent=time]
   ^-  update
   ~|  "invalid index {<comment-index>} provided"

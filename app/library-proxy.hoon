@@ -124,7 +124,7 @@
     ::  otherwise, it is discarded. what is actually sent is an empty graph
     ::  todo refactor for readability
     =/  original-time-sent      p:(scry-for:gra update:store /graph/(scot %p our.bowl)/[name])
-    =/  initial-library-update  (create-library-update:libr [our.bowl name] original-time-sent)
+    =/  initial-library-update  (create-library:libr [our.bowl name] original-time-sent)
     :: readers are who's actually interested, and wants to hear updates
     :: implicitly, having a successful subscription means you have permission, not necessarily are interested in hearing about anything yet.
     ::
@@ -181,20 +181,20 @@
     =/  time-sent  now.bowl
     =/  policy     policy.command
     =.  policies   (~(put by policies) rid policy)  :: set the policy for the given rid into the actual state
-    (poke-local (create-library-update:libr rid time-sent))
+    (poke-local (create-library:libr rid time-sent))
   ::
       %remove-library
     =/  rid        rid.command
     =/  time-sent  now.bowl
     =.  policies   (~(del by policies) rid)       ::  remove the policy for the given rid from
-    (poke-local (remove-library-update:libr rid time-sent))
+    (poke-local (remove-library:libr rid time-sent))
   ::
       %add-book
     =/  rid           rid.command
     =/  author        src.bowl
     =/  time-sent     now.bowl
     =/  book          book.command
-    (poke-local (add-book-update:libr rid author time-sent book))
+    (poke-local (add-book:libr rid author time-sent book))
   ::
       %remove-book
     =/  rid        rid.command
@@ -202,7 +202,7 @@
     =/  time-sent  now.bowl
     ::  removing the book from `readers` is handled during the handling of %remove-graph
     ::  because it needs the metadata to know who to send the update to
-    (poke-local (remove-book-update:libr rid top time-sent))
+    (poke-local (remove-book:libr rid top time-sent))
   ::
       %request-library
     ~|  "tried to request access to library that we own"
@@ -244,7 +244,7 @@
               ::  (team:title our.bowl author)    ::  us or our moon
               (~(has ju (need prm)) rid top)      ::  someone with permissions
           ==
-      =/  update     (add-comment-update:libr rid top author time-sent comment)
+      =/  update     (add-comment:libr rid top author time-sent comment)
       [(poke-local-store update)^~ state]
     ::
         %remove-comment
@@ -255,7 +255,7 @@
         (scry-for:gra update:store (weld /node/(scot %p our.bowl)/[name.rid] (index-to-path:libr comment-index)))
       ?.  (can-remove-comment src.bowl comment-index prev-comment-update)
         `state  :: if src cannot remove comment, silently ignore
-      =/  remove-update  (remove-comment-update:libr rid comment-index now.bowl)
+      =/  remove-update  (remove-comment:libr rid comment-index now.bowl)
       [(poke-local-store remove-update)^~ state]
     ::
         %get-book
