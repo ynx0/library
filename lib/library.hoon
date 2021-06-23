@@ -8,15 +8,6 @@
   =/  old-revision-count=@   (rear idx)            :: get the last item
   =/  new-revision-count=@  +(old-revision-count)  :: increment revision count
   (snoc (snip idx) new-revision-count)             :: remove last item, combine with new revision count
-++  scry-for
-  |*  [=mold =path]
-  .^  mold
-    %gx
-    (scot %p our.bowl)
-    %library-proxy
-    (scot %da now.bowl)
-    (snoc `^path`path %noun)
-  ==
 ::
 ++  make-meta-contents
   |=  [=book:library]

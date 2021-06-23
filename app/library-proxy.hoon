@@ -277,7 +277,7 @@
       ==
     ::
         %get-libraries
-      =/  libraries  (scry-for:libr (set resource) /libraries)
+      =/  libraries  (scry-for:hc (set resource) /libraries)
       =?  libraries  !(is-owner src.bowl)  :: filter out allowed libraries if requester isn't the owner
         %-  silt
         %+  skim  ~(tap in libraries)
@@ -295,7 +295,7 @@
       =/  policy  (~(get by policies) rid)
       ?~  policy  `state                               :: if there is no policy set for the given rid, it is an invalid request. ignore
       ?.  (is-allowed:libr src.bowl our.bowl u.policy)  `state  :: only give them list of books if they are allowed
-      =/  book-indexes  (scry-for:libr (set atom) /books/[name.rid])
+      =/  book-indexes  (scry-for:hc (set atom) /books/[name.rid])
       :_  state
       :~  (~(poke pass:io /) [src.bowl %library-proxy] library-response+!>(available-books+[rid book-indexes]))
       ==
@@ -482,4 +482,13 @@
   |=  [rid=resource]
   ^-  path
   /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid]
+++  scry-for
+  |*  [=mold =path]
+  .^  mold
+    %gx
+    (scot %p our.bowl)
+    %library-proxy
+    (scot %da now.bowl)
+    (snoc `^path`path %noun)
+  ==
 --
