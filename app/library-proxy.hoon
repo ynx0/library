@@ -200,6 +200,22 @@
     =/  book          book.command
     (poke-local (add-book:libr rid author time-sent book))
   ::
+      %revise-book
+    =/  rid        rid.command
+    =/  top        top.command
+    =/  new-book   new-book.command
+    =/  author     our.bowl
+    =/  time-sent  now.bowl
+    =/  update  (scry-for:gra update:store /graph/(scot %p our.bowl)/[name.rid])
+    ?>  ?=(%add-graph -.q.update)
+    =/  meta-node         (got-deep:gra graph.q.update ~[top %meta])
+    =/  meta-child-graph
+      ?>  ?=(%graph -.children.meta-node)  :: invariant: book will always have at least one revision, i.e. the first ever revisoni, i.e. the original book metadata. this could be made more lax, to automatically create one if missing, but i don't think it makes sense to be lax here...
+      p.children.meta-node
+    =/  latest-revision-node  (need (pry:orm:store meta-child-graph))
+    =/  last-revision-index   ~[top %meta key.latest-revision-node]  ::  XX we use this construction instead of doing the index.p.post.node dance because it works even if the post has been deletedd (which it should never but i guess its easier to code)
+    =/  new-index             (incr-index:libr last-revision-index)
+    (poke-local (revise-book-meta:libr rid new-index author time-sent new-book))
       %remove-book
     =/  rid        rid.command
     =/  top        top.command

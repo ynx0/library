@@ -20,6 +20,7 @@
   $%  [%create-library rid=resource =policy]
       [%remove-library rid=resource]
       [%add-book rid=resource =book]
+      [%revise-book rid=resource top=@ new-book=book]  :: XX if we had to, we could use a separate "book-diff" type but for now we don't need it
       [%remove-book rid=resource top=@]
       ::  todo extract out into request top level type?
       [%request-library rid=resource]

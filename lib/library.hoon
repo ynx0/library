@@ -82,21 +82,20 @@
   :+  %remove-posts  rid
   (silt ~[[top ~]])
 ::
-++  revise-meta
-  |=  [rid=resource last-revision-index=index author=ship time-sent=time =book:library]
+++  revise-book-meta
+  |=  [rid=resource new-revision-index=index:post author=ship time-sent=time =book:library]
   ^-  update
-  =/  meta-index=index:post           (incr-index last-revision-index)
   =/  meta-contents=(list content)    (make-meta-contents book)
   =|  meta-post=post
   =:  author.meta-post     author
-      index.meta-post      meta-index
+      index.meta-post      new-revision-index
       time-sent.meta-post  time-sent
       contents.meta-post   meta-contents
   ==
   :-  time-sent
   :+  %add-nodes  rid
   %-  ~(gas by *(map index node))
-  ~[[meta-index [[%.y meta-post] [%empty ~]]]]
+  ~[[new-revision-index [[%.y meta-post] [%empty ~]]]]
 ::
 ++  add-comment
   |=  [rid=resource top=@ author=ship time-sent=time =comment:library]
