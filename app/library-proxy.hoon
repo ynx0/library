@@ -189,8 +189,8 @@
   ::
       %remove-library
     =/  library-name  library-name.command
-    =/  time-sent  now.bowl
-    =.  policies   (~(del by policies) library-name)       ::  remove the policy for the given rid from
+    =/  time-sent     now.bowl
+    =.  policies      (~(del by policies) library-name)       ::  remove the policy for the given rid from
     (poke-local (remove-library:libr [our.bowl library-name] time-sent))
   ::
       %add-book
@@ -405,8 +405,8 @@
         %remove-posts
       ::  need to clear reader state *after* creating cards, cause we can't create card without state
       ::  todo this style and code sucks please someone help lol
-      :_   =.  state  (remove-book state library-name indices.q.update)
-      state
+      :_   =/   new-state  (remove-any-books state library-name indices.q.update)
+      new-state
       %+  murn  ~(tap by readers)
       |=  [her=ship prm=prim:library]
       =/  tracked-books=(unit (set @))
@@ -447,8 +447,9 @@
       |=  prm=prim:library
       (~(del by prm) name)
     old(readers new-readers)
-  ++  remove-book
-    ::  todo rename
+  ++  remove-any-books
+    ::  if any indexes are pointing to books
+    ::  clear them from the state
     |=  [old=_state library-name=@tas indices=(set index:store)]
     ^-  _state
     =/  index-list  ~(tap by indices)
