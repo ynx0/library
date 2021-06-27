@@ -240,19 +240,6 @@ To understand the underlying structure, take a look at
 [this section(**TODO**)](code_architecture.md#schema) of the documentation
 for an explanation of the schema.
 
-<!--
-
-Now, let's edit title of the book to remove the unnecessary numbers.
-
-```
-TODO this isn't implemented
-```
-
-Verify that a revision node was created successfully.
-```
-:graph-store +dbug [%state 'graphs']
-```
--->
 
 **Code references**
 - [`app/library-proxy.hoon`](#L999) - the relevant section in the `+on-poke` arm
@@ -260,6 +247,19 @@ Verify that a revision node was created successfully.
 - [`app/library-proxy.hoon`](#L999) - the wing that handles `%add-book`
 - [`sur/library.hoon`](#L999) - the definition of a `library-command`
 - [`mar/graph/validator/library.hoon`](#L13, #L43-47) - arm that enforces length check
+
+### Editing 
+
+Now, let's edit title of the book to remove the unnecessary numbers.
+
+```
+~zod:dojo> :library-proxy &library-command [%revise-book %library1 top-of-dune ['Dune: The Book' 'thirteenchars']]
+```
+
+Verify that a revision node was created successfully.
+```
+:graph-store +dbug [%state 'graphs']
+```
 
 
 ### Requesting access to someone else's library 
