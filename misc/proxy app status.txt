@@ -12,7 +12,7 @@ works = implemented + tested
 	- %add-book works
 	- %remove-book works
 	- %request-book works
-	- %revise-book poke to revise book metadata does not yet exist
+	- %revise-book works
 
 - actions
 	- %add-comment works
@@ -41,10 +41,8 @@ works = implemented + tested
 nice to haves
 
 * code (only after mvp + documentation released)
-	- allow revising the metadata of a book
 	- give back the title and/or isbn of the book as well, rather than simply the book's indicies.
 	- the printf response for %get-books and %get-libraries is fine as a user interface for a proof of concept displaying the backend. however, if the goal is for this to be easily frontend-able, then there is still a non-trivial gap for the data to get across to the web in a structured manner i think. i need to revisit airlock to see if we can easily get access to poke data, or rather what's the best way to do this.
-	- do cleanup refactor pass (redundant code, using agentio, getting a code review)
 
 * docs
 	- a short reference document
@@ -198,9 +196,6 @@ done
 
 skipped
 
-todo
-- links in usage doc to src code!
-- do all minor refactoring as much as possible before review
 - [low-priority] potentially move towards treating moons as the same as planets
 
 
@@ -214,5 +209,32 @@ limit the scope of the sigbar by an if statement rather than having it wrap the 
    ~|("oops" b)
 c
 
+
+-----------------------
+
+june 20-21
+
+done
+
+- code
+	- bunch of code refactoring before review
+
+----------------------
+june 21-23
+
+done
+	- work on review materials
+	- implement %revise-book
+	- fix bug with not kicking on %remove-book
+
+-----------------------
+june 26
+
+done
+	- code: remove redundancy in use of resource where @tas would be fine
+
+todo
+	- docs: links to source code in usage doc
+	- docs: start working on architecture document
 
 
