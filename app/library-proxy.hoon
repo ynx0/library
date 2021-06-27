@@ -46,7 +46,6 @@
   =^  cards  state
   ?+    mark  (on-poke:def mark vase)
       %library-command
-    ::?>  (team:title our.bowl src.bowl)  :: allow ourselves and moons to use this poke
     ?>  (is-owner:hc src.bowl)  :: only allow ourselves to use this poke
     =+  !<(=command:library vase)
     (handle-command:hc command)
@@ -263,7 +262,6 @@
       =/  prm           (~(get by readers) author)
       ::                        ::  commenter must be either:
       ?>  ?|  (is-owner author)                            ::  us
-              ::  (team:title our.bowl author)             ::  us or our moon
               (~(has ju (need prm)) library-name top)      ::  someone with permissions
           ==
       =/  update  (add-comment:libr [our.bowl library-name] top author time-sent comment)
