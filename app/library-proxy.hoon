@@ -82,7 +82,7 @@
   ::
       %watch-ack
     ?~  p.sign
-      ~&  >   "resubscribed on wire {<wire>} successfully"
+      ~&  >   "subscribed on wire {<wire>} successfully"
       `this  :: no error, subscription was successful
     ~&  >>>  "subscribe on wire {<wire>} failed"
     `this    :: we have truly been kicked. a sad day
@@ -107,18 +107,15 @@
   ::  TODO potenially do readable type alias for watch path wing (is there any perf hit to a bunch of aliases)
   ::  or maybe just a comment
   ::  +$  subscriber-ship  atom
-  ::  +$  us               atom
   ::  +$  name             atom
-      [%updates @ @ @ ~]
-    ::  path format:  /updates/[src.bowl]/[entity.rid]/[name.rid]
-    ::  human format: /updates/[subscriber-ship]/[host-ship]/[library-name]
-    ::  host-ship must always be us, its redundant
+      [%updates @ @ ~]
+    ::  path format:  /updates/[src.bowl]/[name.rid]
+    ::  human format: /updates/[subscriber-ship]/[library-name]
     =/  subscriber    `@p`(slav %p i.t.path)
-    =/  host-ship     `@p`(slav %p i.t.t.path)
-    =/  library-name  `@tas`i.t.t.t.path
+    =/  library-name  `@tas`i.t.t.path
     ?<  (is-owner:hc src.bowl)    :: do not allow ourselves to subscribe, invalid
     ?>  =(subscriber src.bowl)    :: check for imposter (sus)
-    =/  policy  (~(got by policies) [our.bowl library-name])
+    =/  policy  (~(got by policies) library-name)
     ?>  (is-allowed:libr subscriber our.bowl policy)
     ::  we scry the original graph just to get its original creation time
     ::  otherwise, it is discarded. what is actually sent is an empty graph
@@ -129,7 +126,10 @@
     :: implicitly, having a successful subscription means you have permission, 
     :: not necessarily that you are interested in hearing about anything yet.
     ::  todo refactor following state modif
-    =.  readers  (~(put by readers) subscriber (~(gas by *prim:library) [[[our.bowl library-name] *(set atom)] ~]))
+    =.  readers  
+      %+  ~(put by readers)
+        subscriber
+      (~(gas by *prim:library) [[library-name *(set atom)] ~])
     :_  state
     :~  (fact:io graph-update-2+!>(initial-library-update) (incoming-sub-path subscriber library-name)^~)
     ==
@@ -154,8 +154,9 @@
       =/  mark  ::  invariant: entity.key == our.bowl
         (scry-for:gra (unit @tas) /graph-mark/(scot %p entity.key)/[name.key])
       =(`%graph-validator-library mark)
-    ``noun+!>(library-keys)
-  ::      
+    =/  library-names  (silt (turn ~(tap in library-keys) tail))
+    ``noun+!>(`(set @tas)`library-names)
+  ::
       [%x %books @ ~]
     =/  name=@tas  i.t.t.pax
     =/  update  (scry-for:gra update:store /graph/(scot %p our.bowl)/[name])
@@ -181,32 +182,32 @@
   =^  cards  state
   ?-    -.command
       %create-library
-    =/  rid        rid.command
-    =/  time-sent  now.bowl
-    =/  policy     policy.command
-    =.  policies   (~(put by policies) rid policy)  :: set the policy for the given rid into the actual state
-    (poke-local (create-library:libr rid time-sent))
+    =/  library-name  library-name.command
+    =/  time-sent     now.bowl
+    =/  policy        policy.command
+    =.  policies      (~(put by policies) library-name policy)  :: set the policy for the given rid into the actual state
+    (poke-local (create-library:libr [our.bowl library-name] time-sent))
   ::
       %remove-library
-    =/  rid        rid.command
+    =/  library-name  library-name.command
     =/  time-sent  now.bowl
-    =.  policies   (~(del by policies) rid)       ::  remove the policy for the given rid from
-    (poke-local (remove-library:libr rid time-sent))
+    =.  policies   (~(del by policies) library-name)       ::  remove the policy for the given rid from
+    (poke-local (remove-library:libr [our.bowl library-name] time-sent))
   ::
       %add-book
-    =/  rid           rid.command
+    =/  library-name  library-name.command
     =/  author        our.bowl
     =/  time-sent     now.bowl
     =/  book          book.command
-    (poke-local (add-book:libr rid author time-sent book))
+    (poke-local (add-book:libr [our.bowl library-name] author time-sent book))
   ::
       %revise-book
-    =/  rid        rid.command
-    =/  top        top.command
-    =/  new-book   new-book.command
-    =/  author     our.bowl
-    =/  time-sent  now.bowl
-    =/  update  (scry-for:gra update:store /graph/(scot %p our.bowl)/[name.rid])
+    =/  library-name  library-name.command
+    =/  top           top.command
+    =/  new-book      new-book.command
+    =/  author        our.bowl
+    =/  time-sent     now.bowl
+    =/  update  (scry-for:gra update:store /graph/(scot %p our.bowl)/[library-name])
     ?>  ?=(%add-graph -.q.update)
     =/  meta-node         (got-deep:gra graph.q.update ~[top %meta])
     =/  meta-child-graph
@@ -215,14 +216,15 @@
     =/  latest-revision-node  (need (pry:orm:store meta-child-graph))
     =/  last-revision-index   ~[top %meta key.latest-revision-node]  ::  XX we use this construction instead of doing the index.p.post.node dance because it works even if the post has been deletedd (which it should never but i guess its easier to code)
     =/  new-index             (incr-index:libr last-revision-index)
-    (poke-local (revise-book-meta:libr rid new-index author time-sent new-book))
+    (poke-local (revise-book-meta:libr [our.bowl library-name] new-index author time-sent new-book))
+  ::
       %remove-book
-    =/  rid        rid.command
-    =/  top        top.command
-    =/  time-sent  now.bowl
+    =/  library-name  library-name.command
+    =/  top           top.command
+    =/  time-sent     now.bowl
     ::  removing the book from `readers` is handled during the handling of %remove-graph
     ::  because it needs the metadata to know who to send the update to
-    (poke-local (remove-book:libr rid top time-sent))
+    (poke-local (remove-book:libr [our.bowl library-name] top time-sent))
   ::
       %request-library
     =/  rid  rid.command
@@ -235,7 +237,7 @@
     =/  top  top.command
     ?:  (is-owner entity.rid)
       ~|("tried to request access to library that we own" !!)
-    =/  =action:library  [%get-book rid top]
+    =/  =action:library  [%get-book name.rid top]
     :: i'm pretty sure this crashes if we haven't %request-library'd first. this is probably ok
     :_  state
     (~(poke pass:io /book-request) [entity.rid %library-proxy] library-action+!>(action))^~
@@ -253,53 +255,54 @@
   =^  cards  state
     ?-    -.action
         %add-comment
-      =/  rid        rid.action
-      =/  top        top.action
-      =/  author     src.bowl
-      =/  time-sent  now.bowl
-      =/  comment    comment.action
-      =/  prm        (~(get by readers) author)
-      ::                                          ::  commenter must be either:
-      ?>  ?|  (is-owner author)                   ::  us
-              ::  (team:title our.bowl author)    ::  us or our moon
-              (~(has ju (need prm)) rid top)      ::  someone with permissions
+      =/  library-name  library-name.action
+      =/  top           top.action
+      =/  author        src.bowl
+      =/  time-sent     now.bowl
+      =/  comment       comment.action
+      =/  prm           (~(get by readers) author)
+      ::                        ::  commenter must be either:
+      ?>  ?|  (is-owner author)                            ::  us
+              ::  (team:title our.bowl author)             ::  us or our moon
+              (~(has ju (need prm)) library-name top)      ::  someone with permissions
           ==
-      =/  update     (add-comment:libr rid top author time-sent comment)
+      =/  update  (add-comment:libr [our.bowl library-name] top author time-sent comment)
       [(poke-local-store update)^~ state]
     ::
         %remove-comment
-      =/  rid            rid.action
+      =/  library-name   library-name.action
       =/  comment-index  index.action
       ?>  ?=([@ %comments @ ~] comment-index)
       =/  prev-comment-update
-        (scry-for:gra update:store (weld /node/(scot %p our.bowl)/[name.rid] (index-to-path:libr comment-index)))
+        (scry-for:gra update:store (weld /node/(scot %p our.bowl)/[library-name] (index-to-path:libr comment-index)))
       ?.  (can-remove-comment src.bowl comment-index prev-comment-update)
         `state  :: if requesting ship cannot remove comment, silently ignore
-      =/  remove-update  (remove-comment:libr rid comment-index now.bowl)
+      =/  remove-update  (remove-comment:libr [our.bowl library-name] comment-index now.bowl)
       [(poke-local-store remove-update)^~ state]
     ::
         %get-book
-      =/  rid  rid.action
-      =/  top  book-index.action
+      =/  library-name  library-name.action
+      =/  top           book-index.action
       ?<  =(our.bowl src.bowl)    :: invalid, disallow ourselves from requesting from our own library
-      ?>  =(entity.rid our.bowl)  :: assert that the library is one that we (potentially) own
+      =/  libraries  (scry-for (set @tas) /libraries)
+      ?>  (~(has in libraries) library-name)
       :: 1. add the person to readers
       =/  prm  (fall (~(get by readers) src.bowl) *prim:library)
-      =.  prm  (~(put ju prm) rid top)
+      =.  prm  (~(put ju prm) library-name top)
       =.  readers  (~(put by readers) src.bowl prm)
       :: 2. send them the graph update
-      =/  update  (scry-for:gra update:store /node/(scot %p our.bowl)/[name.rid]/(scot %ud top))
+      =/  update  (scry-for:gra update:store /node/(scot %p our.bowl)/[library-name]/(scot %ud top))
       :_  state
-      :~  (fact:io graph-update-2+!>(update) ~[(incoming-sub-path src.bowl name.rid)])
+      :~  (fact:io graph-update-2+!>(update) ~[(incoming-sub-path src.bowl library-name)])
       ==
     ::
         %get-libraries
-      =/  libraries  (scry-for (set resource) /libraries)
+      =/  libraries  (scry-for (set @tas) /libraries)
       =?  libraries  !(is-owner src.bowl)  :: filter out allowed libraries if requester isn't the owner
         %-  silt
         %+  skim  ~(tap in libraries)
-        |=  [rid=resource]
-        =/  policy  (~(got by policies) rid)
+        |=  [library-name=@tas]
+        =/  policy  (~(got by policies) library-name)
         (is-allowed:libr src.bowl our.bowl policy)
       :_  state
       :~  (~(poke pass:io /) [src.bowl %library-proxy] library-response+!>(available-libraries+libraries))
@@ -308,13 +311,13 @@
         %get-books
       ::  todo if/when full-text/extra info is enabled, the resulting data could be a set of book-indexes along with just title and isbn without(!)
       ::  fulltext, so that you only download the fulltext of books that you care about, and you have more metadata to judge by
-      =/  rid  rid.action
-      =/  policy  (~(get by policies) rid)
-      ?~  policy  `state                               :: if there is no policy set for the given rid, it is an invalid request. ignore
+      =/  library-name     library-name.action
+      =/  policy           (~(get by policies) library-name)
+      ?~  policy           `state                               :: if there is no policy set for the given rid, it is an invalid request. ignore
       ?.  (is-allowed:libr src.bowl our.bowl u.policy)  `state  :: only give them list of books if they are allowed
-      =/  book-indexes  (scry-for (set atom) /books/[name.rid])
+      =/  book-indexes  (scry-for (set atom) /books/[library-name])
       :_  state
-      :~  (~(poke pass:io /) [src.bowl %library-proxy] library-response+!>(available-books+[rid book-indexes]))
+      :~  (~(poke pass:io /) [src.bowl %library-proxy] library-response+!>(available-books+[library-name book-indexes]))
       ==
     ==
   [cards state]
@@ -342,7 +345,7 @@
     `state
   ::
       %available-books
-    ~&  rid.response
+    ~&  library-name.response
     ~&  book-indexes.response
     `state
   ==
@@ -352,10 +355,13 @@
   ::  this is where we forward any graph store updates to any subscriber of ours
   =^  cards  state
     :: resource-for-update always returns a list of one (1) resource
-    =/  update-rid-wrapped  (resource-for-update:gra !>(update))
-    ?~  update-rid-wrapped  `state             :: if theres no resource, we don't forward cause we can't tell if its something based on our own resource
-    =/  update-rid          i.update-rid-wrapped
-    ?.  =(our.bowl entity.update-rid)  `state  :: we only broadcast updates for resources we own
+    =/  wrapped-rid   (resource-for-update:gra !>(update))
+    ?~  wrapped-rid
+      `state       :: if theres no resource, we don't forward cause we can't tell if its something based on our own resource
+    =/  update-rid    i.wrapped-rid
+    ?.  =(our.bowl entity.update-rid)
+      `state  :: we only broadcast updates for resources we own
+    =/  library-name  name.update-rid
     ?+    -.q.update        ~&("ignoring update {<-.q.update>}" `state)
         %add-graph          `state  :: do not forward add graph to anyone. this gets manually forwarded in on-watch
     ::
@@ -364,23 +370,23 @@
         %unarchive-graph    `state
         %run-updates        `state
     ::
-        %add-signatures     [(send-if-tracking-uid update update-rid index.uid.q.update) state]
-        %remove-signatures  [(send-if-tracking-uid update update-rid index.uid.q.update) state]
-        %add-tag            [(send-if-tracking-uid update update-rid index.uid.q.update) state]
-        %remove-tag         [(send-if-tracking-uid update update-rid index.uid.q.update) state]
+        %add-signatures     [(send-if-tracking-uid update library-name index.uid.q.update) state]
+        %remove-signatures  [(send-if-tracking-uid update library-name index.uid.q.update) state]
+        %add-tag            [(send-if-tracking-uid update library-name index.uid.q.update) state]
+        %remove-tag         [(send-if-tracking-uid update library-name index.uid.q.update) state]
     ::
         %remove-graph
       ::  todo this style and code sucks please someone help lol
-      :_  =.  state  (remove-library state update-rid)
-      state
+      :_  =/  new-state  (remove-library state library-name)
+      new-state
       %-  zing
       ~&  readers
       %+  murn  ~(tap by readers)
       |=  [her=ship prm=prim:library]
-      =/  tracked-libraries  ~(key by prm)  :: if her is not tracking this resource, don't send the update
-      ?.  (~(has in tracked-libraries) update-rid)  ~
+      =/  tracked-libraries  ~(key by prm)
+      ?.  (~(has in tracked-libraries) library-name)  ~  :: only send the update if her is tracking this resource
       %-  some
-      =/  paths  (incoming-sub-path her name.update-rid)^~
+      =/  paths  (incoming-sub-path her library-name)^~
       :~  (fact:io graph-update-2+!>(update) paths)
           (kick-only:io her paths)
       ==
@@ -390,29 +396,29 @@
       %-  zing
       %+  murn  ~(tap by readers)
       |=  [her=ship prm=prim:library]
-      =/  tracked-books=(unit (set @))  (~(get by prm) update-rid)
-      ?~  tracked-books  ~  :: if no tracked books for this resource, don't bother making any cards
+      =/  tracked-books=(unit (set @))  (~(get by prm) library-name)
+      ?~  tracked-books  ~  :: if they aren't tracking any books yet, don't bother making cards
       %-  some
       %+  murn  ~(tap by nodes.q.update)
       |=  [idx=index:store *]
       ?.  (~(has in u.tracked-books) (head idx))  ~  :: only forward this update if they are tracking this book
-      `(fact:io graph-update-2+!>(update) (incoming-sub-path her name.update-rid)^~)
+      `(fact:io graph-update-2+!>(update) (incoming-sub-path her library-name)^~)
     ::
         %remove-posts
       ::  need to clear reader state *after* creating cards, cause we can't create card without state
       ::  todo this style and code sucks please someone help lol
-      :_   =.  state  (remove-book state update-rid indices.q.update)
+      :_   =.  state  (remove-book state library-name indices.q.update)
       state
       %+  murn  ~(tap by readers)
       |=  [her=ship prm=prim:library]
       =/  tracked-books=(unit (set @))
-        (~(get by prm) update-rid)
+        (~(get by prm) library-name)
       :: if no tracked books for this resource, don't bother making any cards
       ?~  tracked-books  ~
       :: ensure that users who receive a remove-posts
       :: only receive it for indices that they would have
       =.  indices.q.update  (filter-indices indices.q.update u.tracked-books)
-      `(fact:io graph-update-2+!>(update) (incoming-sub-path her name.update-rid)^~)
+      `(fact:io graph-update-2+!>(update) (incoming-sub-path her library-name)^~)
     ==
   [cards state]
   ::
@@ -425,27 +431,27 @@
     |=  [idx=index:store]
     (~(has in tracked-books) (head idx))
   ++  send-if-tracking-uid
-    |=  [=update:store update-rid=resource idx=index:store]
+    |=  [=update:store library-name=@tas idx=index:store]
     ^-  (list card)
     %+  murn  ~(tap by readers)
     |=  [her=ship prm=prim:library]
     =/  tracked-books=(unit (set @))
-      (~(get by prm) update-rid)
+      (~(get by prm) library-name)
     :: if no tracked books for this resource, don't bother making any cards
     ?~  tracked-books  ~
     ?.  (~(has in u.tracked-books) (head idx))  ~  :: only forward this update if they are tracking this book
-    `(fact:io graph-update-2+!>(update) (incoming-sub-path her name.update-rid)^~)
+    `(fact:io graph-update-2+!>(update) (incoming-sub-path her library-name)^~)
   ++  remove-library
-    |=  [old=_state rid=resource]
+    |=  [old=_state name=@tas]
     ^-  _state
     =/  new-readers
       %-  ~(run by readers.old)
       |=  prm=prim:library
-      (~(del by prm) rid)
+      (~(del by prm) name)
     old(readers new-readers)
   ++  remove-book
     ::  todo rename
-    |=  [old=_state rid=resource indices=(set index:store)]
+    |=  [old=_state library-name=@tas indices=(set index:store)]
     ^-  _state
     =/  index-list  ~(tap by indices)
     =/  new-readers
@@ -455,8 +461,8 @@
       |-
       ?~  index-list  prm  :: we've processed all indexes, return the modified prim
       =/  idx=index:store  i.index-list
-      ?.  ?=([@ ~] idx)  $(index-list t.index-list)                   ::  this isn't a book to be deleted, so we don't handle it here
-      $(index-list t.index-list, prm (~(del ju prm) rid (head idx)))  ::  stop tracking any readers for this book
+      ?.  ?=([@ ~] idx)  $(index-list t.index-list)                            ::  the index doesn't match a book to be deleted, so we skip handling it here
+      $(index-list t.index-list, prm (~(del ju prm) library-name (head idx)))  ::  stop tracking any readers for this book
     old(readers new-readers)
   --
 ::
@@ -483,7 +489,7 @@
   ^-  card
   =/  wir  /request-library/(scot %p entity.rid)/[name.rid]
   ::  note: agentio prepends "agentio-watch" to the provided wire
-  (~(watch pass:io wir) [entity.rid %library-proxy] (outgoing-sub-path rid))
+  (~(watch pass:io wir) [entity.rid %library-proxy] (outgoing-sub-path name.rid))
 ::  TODO probably rename to is-host
 ++  is-owner
   :: is the ship the owner of this proxys
@@ -494,12 +500,12 @@
   :: someone is subscribed to us
   |=  [reader=ship library-name=@tas]
   ^-  path
-  /updates/(scot %p reader)/(scot %p our.bowl)/[library-name]
+  /updates/(scot %p reader)/[library-name]
 ++  outgoing-sub-path
   :: we're subscribed to someone else
-  |=  [rid=resource]
+  |=  [library-name=@tas]
   ^-  path
-  /updates/(scot %p our.bowl)/(scot %p entity.rid)/[name.rid]
+  /updates/(scot %p our.bowl)/[library-name]
 ++  scry-for
   |*  [=mold =path]
   .^  mold
