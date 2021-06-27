@@ -1,16 +1,16 @@
-/-  *post, met=metadata-store, graph=graph-store
+/-  *post, graph=graph-store
 =>
 |%
 ++  is-title-valid
   |=  [title=cord]
   ^-  ?
   %.y
+  ::
 ++  is-isbn-valid  :: we could do https://github.com/xlcnd/isbnlib/blob/41f59c74a69a2675c3f135431e9785f9ae502a7e/isbnlib/_core.py#L52
   |=  [isbn=cord]
   ^-  ?
-  =/  len  (lent isbn)
-  ?>  ?|(=(len 10) =(len 13))
-  %.y
+  =/  len  (met 3 isbn)
+  ?|(=(len 10) =(len 13))
 --
 |_  i=indexed-post
 ++  grow
