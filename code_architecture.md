@@ -46,24 +46,9 @@ Let's take a look at the structure of the project
 │       ├── action.hoon
 │       ├── command.hoon
 │       └── response.hoon
-├── misc
-│   ├── library cmdline snippets.txt
-│   ├── may 17 plan.txt
-│   ├── may 20 plan.txt
-│   ├── old_notes.txt
-│   ├── old_thread_code.hoon
-│   ├── proxy app status.txt
-│   ├── user flows.txt
-│   └── working scries.txt
-└── sur
-    └── library.hoon
-├── ignore_files.txt
-├── code_architecture.md
-├── install.sh
-├── README.md
-
-8 directories, 19 files
-
+├── sur
+│   └── library.hoon
+└── install.sh
 ```
 
 
