@@ -16,12 +16,56 @@ In this document, we will cover:
 	- Permissions per-book: implicity granted when given access to library. (note: descision arbitrary, doesn't have to be this way)
 - 
 
+Library is a toy social media application in which you can create a collection of books, called a library, which can contain any number of books. You can share individual collections per-ship. The creator of the collection has de-facto admin powers; he is the only one who can add or remove books to/from the library, remove the library itself, and add comments or remove anyone's comments. Guest ships may request access to specific libraries, which if granted, allows them to request any book from the library\*\*.
+
+
+
+
 *\*The structure of this application is by no means the only or one, true way to build an application using `%graph-store`.*
+
+\*\*This is an arbitrary design decision. It very well could be that permission is also doled out per-book, but this was chosen for simplicities sake.
 
 
 ## Project Structure
 
 "briefly show and explain project file structure (don't forget, ted/ and gen/ are deprecated)"
+
+
+Let's take a look at the structure of the project
+
+```
+├── app
+│   └── library-proxy.hoon
+├── lib
+│   └── library.hoon
+├── mar
+│   ├── graph
+│   │   └── validator
+│   │       └── library.hoon
+│   └── library
+│       ├── action.hoon
+│       ├── command.hoon
+│       └── response.hoon
+├── misc
+│   ├── library cmdline snippets.txt
+│   ├── may 17 plan.txt
+│   ├── may 20 plan.txt
+│   ├── old_notes.txt
+│   ├── old_thread_code.hoon
+│   ├── proxy app status.txt
+│   ├── user flows.txt
+│   └── working scries.txt
+└── sur
+    └── library.hoon
+├── ignore_files.txt
+├── code_architecture.md
+├── install.sh
+├── README.md
+
+8 directories, 19 files
+
+```
+
 
 ## Data
 
