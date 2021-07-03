@@ -2,6 +2,8 @@
 
 ## Intro
 
+<!-- assuming familiarity with hoon language and gall agents -->
+
 The purpose of this application is to serve as an example of how one can use `%graph-store`
 as the scaffolding for a new social media application they'd like to build.<sup>*</sup>
 
@@ -28,9 +30,6 @@ Library is a toy social media application in which you can create a collection o
 
 ## Project Structure
 
-"briefly show and explain project file structure (don't forget, ted/ and gen/ are deprecated)"
-
-
 Let's take a look at the structure of the project
 
 ```
@@ -51,16 +50,28 @@ Let's take a look at the structure of the project
 └── install.sh
 ```
 
+- The main code of the application lives in `app/library-proxy.hoon`. This contains the gall agent which proxies the `%graph-store` updates between ships.
+
+- `lib/library.hoon` contains miscellaneous helper arms which the proxy uses extensively. A common use case is creating the different `%graph-store` updates for each action being performed.
+
+
+- The `mar/library` folder contains the definitions of the marks that `%library-proxy` sends and receives in the form of pokes.
+
+- Contained in `mar/graph/validator/library.hoon` is the definition of the validation logic that `%graph-store` uses to enforce the schema of the library applications graph data.
+
+- `sur/library.hoon` contains all the various type definitions used by `%library-store`.
+
+- `install.sh` is a script that automates copying the source files into a ship's pier / home desk.
+
+
 
 ## Data
 
 ### Schema
-"schema explanation"
-
 
 * **Library** - The fundamental data structure. A library is a graph that contains books
 * **Book** - A data structure that contains an entry of a given book's metadata (i.e. title and isbn) and any comments associated with it. It is represented by a top-level node within a library graph.
-* **Comment** - A node that represents a user's comment on a given book.
+* **Comment** - A node that represents a user's comment on a given book. Represented as a child node of a book's comment container node.
 
 The schema of the application is as follows:
 
@@ -75,12 +86,92 @@ The schema of the application is as follows:
 Here is an example output of the simplest graph that showcases the above schema:
 
 ```
-TODO output
+[ p=[entity=~zod name=%library1]
+    q
+  [   p
+    { [ key=170.141.184.505.124.502.987.560.371.149.556.678.656
+          val
+        [   post
+          [ %.y
+              p
+            [ author=~zod
+              index=~[170.141.184.505.124.502.987.560.371.149.556.678.656]
+              time-sent=~2021.6.27..14.18.57..b3dc
+              contents=~
+              hash=~
+              signatures={}
+            ]
+          ]
+            children
+          [ %graph
+              p
+            { [ key=8.319.395.793.566.789.475
+                  val
+                [   post
+                  [ %.y
+                      p
+                    [ author=~zod
+                      index=~[170.141.184.505.124.502.987.560.371.149.556.678.656 8.319.395.793.566.789.475]
+                      time-sent=~2021.6.27..14.18.57..b3dc
+                      contents=~
+                      hash=~
+                      signatures={}
+                    ]
+                  ]
+                  children=[%empty ~]
+                ]
+              ]
+              [ key=1.635.018.093
+                  val
+                [   post
+                  [ %.y
+                      p
+                    [ author=~zod
+                      index=~[170.141.184.505.124.502.987.560.371.149.556.678.656 1.635.018.093]
+                      time-sent=~2021.6.27..14.18.57..b3dc
+                      contents=~
+                      hash=~
+                      signatures={}
+                    ]
+                  ]
+                    children
+                  [ %graph
+                      p
+                    { [ key=1
+                          val
+                        [   post
+                          [ %.y
+                              p
+                            [ author=~zod
+                              index=~[170.141.184.505.124.502.987.560.371.149.556.678.656 1.635.018.093 1]
+                              time-sent=~2021.6.27..14.18.57..b3dc
+                              contents=~[[%text text='Dune'] [%text text='10charlong']]
+                              hash=~
+                              signatures={}
+                            ]
+                          ]
+                          children=[%empty ~]
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              ]
+            }
+          ]
+        ]
+      ]
+    }
+    q=[~ %graph-validator-library]
+  ]
+]
+
 ```
+
+TODO label statements and pick this apart.
 
 
 ### Validator
-"validator logic explanation, briefly"
 
 The schema consists of rules we define over how the shape and contents of the a graph should look like. The validator enforces these rules. 
 
@@ -99,6 +190,25 @@ Summary:
 "explain implicit permissioning system (i.e. when you have access to a book, you automatically have access to commenting. deliberate choice, not required to be this way)"
 
 "explain policies"
+
+Currently, there are 3 policies, X Y and Z
+
+- open - asdfadsf
+- children - asdfasdf. proof of concept. say you want to automatically allow any children without specifying them all manually. this allows you to do it.
+- whitelist - asdfjasdfasdf
+
+It is implemented [here](), and used [here]() at runtime to check
+
+These are totally arbitrary and you can create any type of policy you want. One could imagine creating a policy as based on a 50% chance of getting in, or based on the literal alignment of the stars.
+
+
+
+
+In general, the curren principle is:
+- oiwner cna do all
+- readers can comment only
+- 
+
 
 
 ## Agent State
