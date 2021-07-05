@@ -4,6 +4,8 @@
 
 <!-- assuming familiarity with hoon language and gall agents -->
 
+TODO expl diff between this model and graph push hook
+
 The purpose of this application is to serve as an example of how one can use `%graph-store`
 as the scaffolding for a new social media application they'd like to build.<sup>*</sup>
 

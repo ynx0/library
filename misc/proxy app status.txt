@@ -238,3 +238,18 @@ todo
 	- docs: start working on architecture document
 
 
+-------------------------------
+
+june 29
+
+
+if someone were to ask me, how does the application work?
+
+
+features it provides:
+- CRUD {libraries, books, comments}. *comments cannot be edited.
+- policy per library
+- one ship hosts all library data, other ships request for access to libraries and request to start tracking specific books.
+- uses graph store to store data, acts as a wrapper around it. defines its own semantics on top of graph store (more stringent), and also does all the networking and permissioning
+
+
