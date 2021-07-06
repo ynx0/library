@@ -7,7 +7,7 @@
 TODO expl diff between this model and graph push hook
 
 The purpose of this application is to serve as an example of how one can use `%graph-store`
-as the scaffolding for a new social media application they'd like to build.<sup>*</sup>
+as the scaffolding for a new social media application they'd like to build.<sup>\*</sup>
 
 
 In this document, we will cover:
@@ -85,19 +85,24 @@ The schema of the application is as follows:
 			* Specific Comment
 
 
-Here is an example output of the simplest graph that showcases the above schema:
+The following is the output of an example graph that showcases the above schema,
+lightly edited for clarity.
+
+Each index fragment is replaced with its proper representation in its original aura.
+
+
 
 ```
 [ p=[entity=~zod name=%library1]
     q
   [   p
-    { [ key=170.141.184.505.124.502.987.560.371.149.556.678.656
+    { [ key=~2021.6.27..14.18.57..b3dc
           val
         [   post
           [ %.y
               p
             [ author=~zod
-              index=~[170.141.184.505.124.502.987.560.371.149.556.678.656]
+              index=~[~2021.6.27..14.18.57..b3dc]
               time-sent=~2021.6.27..14.18.57..b3dc
               contents=~
               hash=~
@@ -107,13 +112,13 @@ Here is an example output of the simplest graph that showcases the above schema:
             children
           [ %graph
               p
-            { [ key=8.319.395.793.566.789.475
+            { [ key=%comments
                   val
                 [   post
                   [ %.y
                       p
                     [ author=~zod
-                      index=~[170.141.184.505.124.502.987.560.371.149.556.678.656 8.319.395.793.566.789.475]
+                      index=~[~2021.6.27..14.18.57..b3dc %comments]
                       time-sent=~2021.6.27..14.18.57..b3dc
                       contents=~
                       hash=~
@@ -123,13 +128,13 @@ Here is an example output of the simplest graph that showcases the above schema:
                   children=[%empty ~]
                 ]
               ]
-              [ key=1.635.018.093
+              [ key=%meta
                   val
                 [   post
                   [ %.y
                       p
                     [ author=~zod
-                      index=~[170.141.184.505.124.502.987.560.371.149.556.678.656 1.635.018.093]
+                      index=~[~2021.6.27..14.18.57..b3dc %meta]
                       time-sent=~2021.6.27..14.18.57..b3dc
                       contents=~
                       hash=~
@@ -145,9 +150,9 @@ Here is an example output of the simplest graph that showcases the above schema:
                           [ %.y
                               p
                             [ author=~zod
-                              index=~[170.141.184.505.124.502.987.560.371.149.556.678.656 1.635.018.093 1]
+                              index=~[~2021.6.27..14.18.57..b3dc %meta 1]
                               time-sent=~2021.6.27..14.18.57..b3dc
-                              contents=~[[%text text='Dune'] [%text text='10charlong']]
+                              contents=~[[%text text='Dune'] [%text text='0441172717']]
                               hash=~
                               signatures={}
                             ]
@@ -170,7 +175,27 @@ Here is an example output of the simplest graph that showcases the above schema:
 
 ```
 
-TODO label statements and pick this apart.
+
+
+TODO:
+Show table view
+Then show equivalent tree diagram
+Then show higher level object diagram.
+
+
+It is a library that has a single book, whose metadata is stored
+under the %meta revision container. The metadata associated with this specific 
+book entry is currently with title: "Dune" and isbn "0441172717".
+The reason we have a revision container for the book metadata is so that in case
+someone makes an error, they may correct it, and the frontend would show the most recent version. 
+
+We skipped revision containers for comments to keep schema simple, but you could imagine
+duplicating the same logic for comments as well. 
+
+
+Each specific metadata revision has in it's contents a representation of the [`book`](https://github.com/ynx0/library/tree/library/sur/library.hoon#L4-9). Graph store doesn't allow for storing just any arbitrary content in a `post`'s `content` field,
+so we must convert back and forth from our type in various instances. This can be seen [here **TODO**](example.com), [here **TODO**](example.com), and [here **TODO**](example.com).
+
 
 
 ### Validator
@@ -190,8 +215,9 @@ Summary:
 ### Access
 
 "explain implicit permissioning system (i.e. when you have access to a book, you automatically have access to commenting. deliberate choice, not required to be this way)"
-
-"explain policies"
+  
+In general, any user can create or remove libraries on their own ship at will.
+To control who gets access to a given library, the user uses a policy, set per-library at the time of creation.<sup>\*</sup>
 
 Currently, there are 3 policies, X Y and Z
 
@@ -204,12 +230,17 @@ It is implemented [here](), and used [here]() at runtime to check
 These are totally arbitrary and you can create any type of policy you want. One could imagine creating a policy as based on a 50% chance of getting in, or based on the literal alignment of the stars.
 
 
+For any given library that one owns, here is a list of the permissioning rules:
+* An owner can 
+  - add a top level book node to any library
+  - add a metadata revision to any book
+  - add or remove any comment on any book
 
+* A reader, that is, a another granted access to the library, can:
+  - add a comment to any book that they have requested
+  - remove any comment that they are the author of.
 
-In general, the curren principle is:
-- oiwner cna do all
-- readers can comment only
-- 
+This logic is implemented [here **TODO**](example.com), [here **TODO**](example.com), and [here **TODO**](example.com)
 
 
 
