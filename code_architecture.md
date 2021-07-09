@@ -3,17 +3,38 @@
 ## Intro
 
 <!-- assuming familiarity with hoon language and gall agents -->
+<!-- assuming this document is detached from the source code -->
+<!-- assuming familiarity with graph store from other docs -->
 
-TODO expl diff between this model and graph push hook
 
-The purpose of this application is to serve as an example of how one can use `%graph-store`
-as the scaffolding for a new social media application they'd like to build.<sup>\*</sup>
+When creating the backend to a social media application using graph store, there are $X things that you need to define and implement:
 
+* Schema - defining the structure and constraints that your data must obey
+* Networking - defining how graph store data, primarily graph-store-updates, get to the ships that need them
+  - Interaction semantics - how does one know (basically im trying to describe the commands/actions/reponses in a sussinct description here.)
+  - Access control - who gets access to a given graph or node, what kind of access are they granted.
+
+Since graph store is a database, it doesn't define any of the above, so it is up to us to do so.
+
+
+Library is an example application that build a social media application on top of `%graph-store`.
+It's purpose is to showcase one way to handle the networking on top of graph store
+in order to properly sync social data to users.
+
+**Aside: Library Proxy's architecture vs. the Push/Pull Hook architecutre**
+
+<!-- TODO expl diff between this model and graph push hook -->
+<!-- TODO move this aside section to somewhere else more appropriate -->
+
+The structure of this application is by no means the only way to build an application using `%graph-store`.
+Instead, it shows a simpler, more ad-hoc approach to 
+
+--
 
 In this document, we will cover:
 - The features offered by this application
 - How the application structures its data
-	- Where is that structure found? <!-- sur files -->
+	- Where is that structure found?
 	- Where is that structure enforced?
 - How the application handles access control
 	- Permissions per-library: explicit set by policy
@@ -25,7 +46,7 @@ Library is a toy social media application in which you can create a collection o
 
 
 
-*\*The structure of this application is by no means the only or one, true way to build an application using `%graph-store`.*
+
 
 \*\*This is an arbitrary design decision. It very well could be that permission is also doled out per-book, but this was chosen for simplicities sake.
 
