@@ -268,6 +268,11 @@ This logic is implemented [here **TODO**](example.com), [here **TODO**](example.
 ## Agent State
 "explain the state that the app holds and what its used for"
 
+## Interaction Semantics
+
+"describe how library proxies talk to each other and how they form a communication protocol"
+you only get or give graph store updates after / in respnose to a library poke / response / etc.
+
 ## Networking Architecture:
 "explain core design decisions: every host of library is themselves responsible for sending out data to relevant people, receivers only trust host's update."
 
