@@ -11,7 +11,7 @@ When creating the backend to a social media application using graph store, there
 
 * Schema - defining the structure and constraints that your data must obey
 * Networking - defining how graph store data, primarily graph-store-updates, get to the ships that need them
-  - Interaction semantics - how does one know (basically im trying to describe the commands/actions/reponses in a sussinct description here.)
+  - Interaction semantics - how does one know (basically im trying to describe the commands/actions/reponses in a susscinct description here.)
   - Access control - who gets access to a given graph or node, what kind of access are they granted.
 
 Since graph store is a database, it doesn't define any of the above, so it is up to us to do so.
@@ -39,11 +39,10 @@ In this document, we will cover:
 - How the application handles access control
 	- Permissions per-library: explicit set by policy
 	- Permissions per-book: implicity granted when given access to library. (note: descision arbitrary, doesn't have to be this way)
-- 
+- How the application synchronizes data between users
+- How the application structures its communication protocol
 
 Library is a toy social media application in which you can create a collection of books, called a library, which can contain any number of books. You can share individual collections per-ship. The creator of the collection has de-facto admin powers; he is the only one who can add or remove books to/from the library, remove the library itself, and add comments or remove anyone's comments. Guest ships may request access to specific libraries, which if granted, allows them to request any book from the library\*\*.
-
-
 
 
 
@@ -104,6 +103,8 @@ The schema of the application is as follows:
 			* Specific Metadata Revision
 		+ Comments Container
 			* Specific Comment
+
+<!-- TODO diagrammatize above -->
 
 
 The following is the output of an example graph that showcases the above schema,
@@ -198,11 +199,12 @@ Each index fragment is replaced with its proper representation in its original a
 
 
 
-TODO:
+<!-- TODO:
+Potential enhancements:
 Show table view
 Then show equivalent tree diagram
 Then show higher level object diagram.
-
+-->
 
 It is a library that has a single book, whose metadata is stored
 under the %meta revision container. The metadata associated with this specific 
@@ -210,26 +212,31 @@ book entry is currently with title: "Dune" and isbn "0441172717".
 The reason we have a revision container for the book metadata is so that in case
 someone makes an error, they may correct it, and the frontend would show the most recent version. 
 
-We skipped revision containers for comments to keep schema simple, but you could imagine
+Each comment is simply a node under a book's `%comment` node with a single `%text` content. We skipped revision containers for comments to keep schema simple, but you could imagine
 duplicating the same logic for comments as well. 
 
 
-Each specific metadata revision has in it's contents a representation of the [`book`](https://github.com/ynx0/library/tree/library/sur/library.hoon#L4-9). Graph store doesn't allow for storing just any arbitrary content in a `post`'s `content` field,
-so we must convert back and forth from our type in various instances. This can be seen [here **TODO**](example.com), [here **TODO**](example.com), and [here **TODO**](example.com).
+Each specific metadata revision has in it's contents a representation of the [`book`](https://github.com/ynx0/library/tree/library/sur/library.hoon#L4-9). Graph store doesn't allow for storing just any arbitrary content in a `post`'s `content` field, such as the `book` type itself,
+so we must convert back and forth from our type to the `content` representation in various instances. This can be seen [here **TODO**](example.com), [here **TODO**](example.com), and [here **TODO**](example.com).
 
+
+Every book node has an index of `now`, i.e., the datetime of when it was created.
+Each structural node in a book has a constant index fragment, either `%meta` for the metadata revision container node, or `%comments` for the comments container node. 
+Every comment has an index of `now`, which again is the datetime of when it was posted.
+The metadata revisions are a single incrementing number, so the first post has a revision count of 1, the second post has a revision count of 2, and so on.
 
 
 ### Validator
 
 The schema consists of rules we define over how the shape and contents of the a graph should look like. The validator enforces these rules. 
 
-The main arm to look at is `+graph-indexed-post`, which is what graph-store uses internally to verify the adherence of every graph to its schema any time it is updated. At the time of creation/modification, every indexed-post is fed into this function, which pass/fails the operation.
+The main arm to look at is `+graph-indexed-post`, which is what `%graph-store` uses internally to verify the adherence of every graph to its schema any time it is updated. At the time of creation/modification, every indexed-post is fed into this function, which accepts or rejects the operation.
 
 Summary:
 
 - None of the structural nodes require data, so we simply assert that their contents are empty
-- For a specific comment, i.e. a post with an index matching the structure `[@ %comments @ ~]`, we assert that contents only contains a single `%text` content. This choice is arbitrary but meant to keep the application simple.
-- For a specific metadata revision, i.e. a post with index matching the structure `[@ %meta @ ~]`,
+- For a *Specific Comment Node*, a post with an index matching the structure `[@ %comments @ ~]`, we assert that contents only contains a single `%text` content. This choice is arbitrary but meant to keep the application simple and so that a potential frontend does not have to do complex rendering.
+- For a *Specific Metadata Revision*, a post with index matching the structure `[@ %meta @ ~]`,
   we first ensure that it's contents only contain two `%text` content instances.
 
 
@@ -240,15 +247,16 @@ Summary:
 In general, any user can create or remove libraries on their own ship at will.
 To control who gets access to a given library, the user uses a policy, set per-library at the time of creation.<sup>\*</sup>
 
-Currently, there are 3 policies, X Y and Z
+Currently, there are 3 policies, `%open`, `%children` and `%whitelist`
 
-- open - asdfadsf
-- children - asdfasdf. proof of concept. say you want to automatically allow any children without specifying them all manually. this allows you to do it.
-- whitelist - asdfjasdfasdf
+- `%open` - anyone can request access to the library
+- `%children` - only children can request access to the library
+- `%whitelist` - only select ships specified can request the access to library
 
-It is implemented [here](), and used [here]() at runtime to check
 
-These are totally arbitrary and you can create any type of policy you want. One could imagine creating a policy as based on a 50% chance of getting in, or based on the literal alignment of the stars.
+It is implemented [here](), and used [here]() by the agent to implement access control.
+
+These policy types are totally arbitrary and you can create any type of policy you want. One could imagine creating a policy as based on a 50% chance of getting in, or based on the literal alignment of the stars.
 
 
 For any given library that one owns, here is a list of the permissioning rules:
@@ -281,7 +289,7 @@ you only get or give graph store updates after / in respnose to a library poke /
 "(maybe) show full data flow in short bulleted form. %get-libraries -> %get-library resource -> %get-book resource book -> %add-comment"
 "(maybe) explain how poke-back pattern is used to surface data to the end user."
 
-## Closing Words
+## Closing
 "emphasize: this is just one architecture that you could follow, you can really do anything you want."
 
 
