@@ -11,7 +11,7 @@ Library is a toy social media application in which you can create a collection o
 
 Library serves as an example of how to build a social media application using `%graph-store`.
 
-When creating the backend to a social media application using graph store, there are $X things that you need to define and implement:
+When creating the backend to a social media application using graph store, there are a few things that you need to define and implement:
 
 * Schema - defining the structure and constraints that your data must obey
 * Networking - defining how graph store data, primarily graph-store-updates, get to the ships that need them
@@ -198,7 +198,7 @@ Then show equivalent tree diagram
 Then show higher level object diagram.
 -->
 
-It is a library that has a single book, whose metadata is stored
+The above graph represents a library that has a single book, whose metadata is stored
 under the %meta revision container. The metadata associated with this specific 
 book entry is currently with title: "Dune" and isbn "0441172717".
 The reason we have a revision container for the book metadata is so that in case
@@ -222,7 +222,7 @@ The metadata revisions are a single incrementing number, so the first post has a
 
 The schema consists of rules we define over how the shape and contents of the a graph should look like. The validator enforces these rules. 
 
-The main arm to look at is `+graph-indexed-post`, which is what `%graph-store` uses internally to verify the adherence of every graph to its schema any time it is updated. At the time of creation/modification, every indexed-post is fed into this function, which accepts or rejects the operation.
+<!-- should be in graph store docs not the tutorial. this is assumed. The main arm to look at is `+graph-indexed-post`, which is what `%graph-store` uses internally to verify the adherence of every graph to its schema any time it is updated. At the time of creation/modification, every indexed-post is fed into this function, which accepts or rejects the operation. -->
 
 Summary:
 
