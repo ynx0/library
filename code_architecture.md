@@ -7,6 +7,10 @@
 <!-- assuming familiarity with graph store from other docs -->
 
 
+Library is a toy social media application in which you can create a collection of books, called a library, which can contain any number of books. You can share individual collections per-ship. The creator of the collection has de-facto admin powers; he is the only one who can add or remove books to/from the library, remove the library itself, and add comments or remove anyone's comments. Guest ships may request access to specific libraries, which if granted, allows them to request any book from the library.
+
+Library serves as an example of how to build a social media application using `%graph-store`.
+
 When creating the backend to a social media application using graph store, there are $X things that you need to define and implement:
 
 * Schema - defining the structure and constraints that your data must obey
@@ -14,12 +18,8 @@ When creating the backend to a social media application using graph store, there
   - Interaction semantics - how does one know (basically im trying to describe the commands/actions/reponses in a susscinct description here.)
   - Access control - who gets access to a given graph or node, what kind of access are they granted.
 
-Since graph store is a database, it doesn't define any of the above, so it is up to us to do so.
+Since graph store is just a database, it doesn't define any of the above, so it is up to us to do so.
 
-
-Library is an example application that build a social media application on top of `%graph-store`.
-It's purpose is to showcase one way to handle the networking on top of graph store
-in order to properly sync social data to users.
 
 **Aside: Library Proxy's architecture vs. the Push/Pull Hook architecutre**
 
@@ -29,9 +29,8 @@ in order to properly sync social data to users.
 The structure of this application is by no means the only way to build an application using `%graph-store`.
 Instead, it shows a simpler, more ad-hoc approach to 
 
---
-
-In this document, we will cover:
+<!--
+In this document, we need to cover:
 - The features offered by this application
 - How the application structures its data
 	- Where is that structure found?
@@ -41,14 +40,7 @@ In this document, we will cover:
 	- Permissions per-book: implicity granted when given access to library. (note: descision arbitrary, doesn't have to be this way)
 - How the application synchronizes data between users
 - How the application structures its communication protocol
-
-Library is a toy social media application in which you can create a collection of books, called a library, which can contain any number of books. You can share individual collections per-ship. The creator of the collection has de-facto admin powers; he is the only one who can add or remove books to/from the library, remove the library itself, and add comments or remove anyone's comments. Guest ships may request access to specific libraries, which if granted, allows them to request any book from the library\*\*.
-
-
-
-
-\*\*This is an arbitrary design decision. It very well could be that permission is also doled out per-book, but this was chosen for simplicities sake.
-
+-->
 
 ## Project Structure
 
@@ -275,6 +267,10 @@ This logic is implemented [here **TODO**](example.com), [here **TODO**](example.
 
 ## Agent State
 "explain the state that the app holds and what its used for"
+
+- readers: networking structure, (NOT permissioning, we assume they already have perms if they are granted access anywhere in here), keeps track of who wants what updates to which books from which libraries
+- permissions: keeps track of which policy is to be applied to which 
+
 
 ## Interaction Semantics
 
