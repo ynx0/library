@@ -224,6 +224,7 @@ The schema consists of rules we define over how the shape and contents of the a 
 
 <!-- should be in graph store docs not the tutorial. this is assumed. The main arm to look at is `+graph-indexed-post`, which is what `%graph-store` uses internally to verify the adherence of every graph to its schema any time it is updated. At the time of creation/modification, every indexed-post is fed into this function, which accepts or rejects the operation. -->
 
+
 Summary:
 
 - None of the structural nodes require data, so we simply assert that their contents are empty
@@ -231,10 +232,12 @@ Summary:
 - For a *Specific Metadata Revision*, a post with index matching the structure `[@ %meta @ ~]`,
   we first ensure that it's contents only contain two `%text` content instances.
 
+The validator is defined here. Take a moment to read through it and cross-check your understanding with the above explanation.
 
-### Access
 
-"explain implicit permissioning system (i.e. when you have access to a book, you automatically have access to commenting. deliberate choice, not required to be this way)"
+### Access Control
+
+<!-- "explain implicit permissioning system (i.e. when you have access to a book, you automatically have access to commenting. deliberate choice, not required to be this way)" -->
   
 In general, any user can create or remove libraries on their own ship at will.
 To control who gets access to a given library, the user uses a policy, set per-library at the time of creation.<sup>\*</sup>
@@ -266,7 +269,7 @@ This logic is implemented [here **TODO**](example.com), [here **TODO**](example.
 
 
 ## Agent State
-"explain the state that the app holds and what its used for"
+<!-- "explain the state that the app holds and what its used for" -->
 
 - readers: networking structure, (NOT permissioning, we assume they already have perms if they are granted access anywhere in here), keeps track of who wants what updates to which books from which libraries
 - permissions: keeps track of which policy is to be applied to which 
