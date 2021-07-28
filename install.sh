@@ -18,8 +18,9 @@ while getopts "w" opt; do
     esac
 done
 
+# todo use watch -n or smtn
 if [ -z "$WATCH_MODE" ]; then
-    echo "Installed pinboard"
+    echo "Installed $(dirname $0)"
     rsync -r --exclude-from=$EXCLUDE_FILE * $PIER/home/
 else
    echo "Watching for changes to copy to ${PIER}..."

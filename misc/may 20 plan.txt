@@ -1,0 +1,40 @@
+may 20 plan
+
+
+- implement foreign scrying for available books on a given resource
+	- when /books/[rid] is scried, return a list of all top level nodes on given book
+
+- add %request-book local poke to facilitate subscription flow
+	- only allow self to poke this poke
+	- poke foreign graph store with %get-book
+	- receive graph store update in return (should still be in our +on-agent)
+	- also set up subscription %watch
+
+- implement %remove-comment
+- implement %get-book
+
+
+
+- local poke tests
+	- [x] %add-library
+	- [x] %add-book
+ 	- %remove-book
+		- [x] book is removed
+		- [ ] book is removed from `readers` state
+	- [ ] %remove-library
+		- [x] library is removed
+		- [x] policy is removed from `readers` state
+		- [ ] every prim per ship has the rid of the library cleared
+
+- remote poke tests
+	- ~nus dojo -> poke %get-book -> ~zod library-proxy
+		- [ ] fails because it wasn't from app %library-proxy
+	- ~nus dojo -> poke %request-book -> ~nus library-proxy -> poke %get-book -> ~zod library-proxy
+		- [ ] should create new subscription wire for ~nus watching ~zod's library-proxy
+		- [ ] ~zod should pass graph update of requested book back to ~nus on new subscription as a %pass
+		- [ ] ~zod should send all further updates to ~nus now
+	- ~nus comment successfully on book on ~zod/library1
+	- ~nus cannot delete ~zod's comment
+	- ~zod can delete ~nus's comment
+	- ~nus can delete his own comment
+

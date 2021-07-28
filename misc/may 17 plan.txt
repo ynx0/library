@@ -1,0 +1,21 @@
+may 17
+
+2:30 plan
+
+- [x] ensure code compiles
+- test out and make sure all commands work locally, i.e. ~zod pokes successfully applying effects
+- [x] test out and make sure ~nus cannot poke any commands to ~zod's proxy
+- test out and make sure all actions work locally, ~zod pokes self.
+	- [x] %add-library
+	- [x] %add-book
+	- [x] %remove-library*
+	- [x] %remove-book*
+	* readers state doesn't get cleared
+- try and get ~nus to subscribe to ~zod's proxy hook on resource ~zod/library1
+- implement foreign scrying for available books on a given resource
+- test out get book method, allow nus to subscribe
+- ~nus comment successfully on book on ~zod/library1
+- ~nus cannot delete ~zod's comment
+- ~zod can delete ~nus's comment.
+- ~nus can delete his own comment
+
