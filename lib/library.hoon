@@ -58,7 +58,6 @@
       contents.blank   ~
   ==
   =/  meta-contents  (make-meta-contents book)
-  ::  todo in scry .^  graph store for last update if doing ascending numeric order
   =/  top  time-sent
   :-  time-sent
   :+  %add-nodes  rid
@@ -71,12 +70,12 @@
 ::
 ++  remove-book
   |=  [rid=resource top=@ time-sent=time]
-  :: todo this could be improved.
-  :: right now it clears the post content of the top level structural node
-  :: what would be better is to clear all of the indexes
-  :: so we need to have a list of the indexes of all [top %meta @] revisions and all [top %comments @]
-  :: right now, landscape also just deletes the top level node, using it as a "this post has been marked deleted"
-  ::  and just hides the whole. so we can do this for now and have it be ok
+  ::  this could be improved.
+  ::  right now it clears the post content of the top level structural node
+  ::  what would be better is to clear all of the indexes
+  ::  so we need to have a list of the indexes of all [top %meta @] revisions and all [top %comments @].
+  ::  right now, landscape also just deletes the top level node, using it as a "this post has been marked deleted"
+  ::  and just hides the whole. so it also works the same way and ends up being fine
   ^-  update
   :-  time-sent
   :+  %remove-posts  rid

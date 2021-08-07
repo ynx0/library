@@ -13,16 +13,14 @@
 ::  not for access control. (for that look at `policies`)
 +$  prim     (jug @tas atom)      :: for a given library name, what indexes does the reader want to hear about?
 +$  readers  (map ship prim)      :: given a ship, what are the libraries and books per library that it cares about?
-::  TODO most things that take a rid can theoretically be just a name=@tas because entity=@p is always gonna be the owner of the proxy
-::  TODO rename some `top`s to `book-index`
 ::  only we can poke ourselves with a command
 +$  command  
   $%  [%create-library library-name=@tas =policy]
       [%remove-library library-name=@tas]
       [%add-book library-name=@tas =book]
-      [%revise-book library-name=@tas top=@ new-book=book]  :: XX if we had to, we could use a separate "book-diff" type instead of =book but for now we don't need it
+      [%revise-book library-name=@tas top=@ new-book=book]  :: XX if we had to, we could use a separate "book-diff" type instead of =book but it's not necessary
       [%remove-book library-name=@tas top=@]
-      ::  using your own library proxy to request a library on your behalf
+      ::  the following commands originate from your own library proxy to request a foreign library on your behalf
       [%request-library rid=resource]
       [%request-book rid=resource top=@]
   ==
