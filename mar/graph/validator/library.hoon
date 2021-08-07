@@ -16,6 +16,8 @@
   |%
   ++  noun  i
   ::
+  ++  notification-kind  `[%message [0 1] %count %none]
+  ::
   ++  graph-indexed-post
     ^-  indexed-post
     ?+    index.p.i  !!

@@ -146,7 +146,7 @@
       |=  [key=resource]
       ^-  ?
       =/  mark  ::  invariant: entity.key == our.bowl
-        (scry-for:gra (unit @tas) /graph-mark/(scot %p entity.key)/[name.key])
+        (scry-for:gra (unit @tas) /graph/(scot %p entity.key)/[name.key]/mark)
       =(`%graph-validator-library mark)
     =/  library-names  (silt (turn ~(tap in library-keys) tail))
     ``noun+!>(`(set @tas)`library-names)
@@ -264,7 +264,7 @@
       =/  comment-index  index.action
       ?>  ?=([@ %comments @ ~] comment-index)
       =/  prev-comment-update
-        (scry-for:gra update:store (weld /node/(scot %p our.bowl)/[library-name] (index-to-path:libr comment-index)))
+        (scry-for:gra update:store (weld /graph/(scot %p our.bowl)/[library-name]/node/index/kith (index-to-path:libr comment-index)))
       ?.  (can-remove-comment src.bowl comment-index prev-comment-update)
         `state  :: if requesting ship cannot remove comment, silently ignore
       =/  remove-update  (remove-comment:libr [our.bowl library-name] comment-index now.bowl)
@@ -281,7 +281,7 @@
       =.  prm  (~(put ju prm) library-name top)
       =.  readers  (~(put by readers) src.bowl prm)
       :: 2. send them the graph update
-      =/  update  (scry-for:gra update:store /node/(scot %p our.bowl)/[library-name]/(scot %ud top))
+      =/  update  (scry-for:gra update:store /graph/(scot %p our.bowl)/[library-name]/node/index/kith/(scot %ud top))
       :_  state
       :~  (fact:io graph-update-2+!>(update) ~[(incoming-sub-path src.bowl library-name)])
       ==
@@ -459,7 +459,7 @@
   |=  [=update:store]
   ^-  (quip card _state)
   ~&  "got foreign graph update {<-.q.update>} from {<src.bowl>}"
-  ~&  update
+  ::~&  update
   =^  cards  state
     =/  wrapped-rid  (resource-for-update:gra !>(update))
     ?~  wrapped-rid  `state
