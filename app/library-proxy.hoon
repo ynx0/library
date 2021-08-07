@@ -273,6 +273,9 @@
         %get-book
       =/  library-name  library-name.action
       =/  top           book-index.action
+      =/  policy           (~(get by policies) library-name)
+      ?~  policy           `state                               :: if there is no policy set for the given rid, it is an invalid request. ignore
+      ?.  (is-allowed:libr src.bowl our.bowl u.policy)  `state  :: only give them the books if they are allowed
       ?<  =(our.bowl src.bowl)    :: invalid, disallow ourselves from requesting from our own library
       =/  libraries  (scry-for (set @tas) /libraries)
       ?>  (~(has in libraries) library-name)
