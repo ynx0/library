@@ -5,8 +5,7 @@
   |=  [title=cord]
   ^-  ?
   %.y
-  ::
-++  is-isbn-valid  :: we could do https://github.com/xlcnd/isbnlib/blob/41f59c74a69a2675c3f135431e9785f9ae502a7e/isbnlib/_core.py#L52
+++  is-isbn-valid  :: we could do https://github.com/xlcnd/isbnlib/blob/41f59c74a69a2675c3f1/isbnlib/_core.py#L52
   |=  [isbn=cord]
   ^-  ?
   =/  len  (met 3 isbn)
@@ -56,7 +55,7 @@
     ::  comment
     ::
         [@ %comments @ ~]
-      :: we could allow any content eventually
+      :: we could allow any content
       ::?>  ?=(* contents.p.i)  :: any content is allowed.
       ?>  ?=([[%text *] ~] contents.p.i)  :: only a single %text content is allowed
       =/  contents  contents.p.i

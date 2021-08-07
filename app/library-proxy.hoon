@@ -1,7 +1,6 @@
 /-  *resource, library
 /+  store=graph-store, graph, default-agent,
     dbug, verb, agentio, libr=library
-::  TODO i still don't know what wires to put for my `%watch`s
 |%
 +$  versioned-state
     $%  state-0
@@ -72,7 +71,7 @@
     :: thus, we must try to resubscribe here, and then once that goes through if we then get a failing watch ack only then do we give up
     ~&  >>  "kicked from subscription {<wire>}"
     ~&  >>  "attempting to resubscribe"
-    ?~  wire  ~|("empty wire, can't resubscribe. this shouldn't happen" `this)  :: todo do we need this or can we do with just the assertion
+    ?~  wire  ~|("empty wire, can't resubscribe. this shouldn't happen" `this)
     ::
     ?>  ?=([%request-library @ @ ~] wire)
     =/  host  (slav %p i.t.wire)
@@ -103,10 +102,6 @@
   ^-  (quip card _this)
   =^  cards  state
   ?+    path  (on-watch:def path)
-  ::  TODO potenially do readable type alias for watch path wing (is there any perf hit to a bunch of aliases)
-  ::  or maybe just a comment
-  ::  +$  subscriber-ship  atom
-  ::  +$  name             atom
       [%updates @ @ ~]
     ::  path format:  /updates/[src.bowl]/[name.rid]
     ::  human format: /updates/[subscriber-ship]/[library-name]
@@ -168,9 +163,6 @@
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --
-::  General Comment: the second item in cell of all the cards below is ~ which is actually the return wire we want the poke-ack to 
-::  be sent on, but, we don't really care about it i don't think so we'll leave it null for now
-::  i think it may be important when there is a poke-nack or smtn and you want to keep track of it
 |_  bowl=bowl:gall
 +*  gra  ~(. graph bowl)
     io   ~(. agentio bowl)
@@ -213,7 +205,7 @@
       ?>  ?=(%graph -.children.meta-node)  :: invariant: book will always have at least one revision, i.e. the first ever revisoni, i.e. the original book metadata. this could be made more lax, to automatically create one if missing, but i don't think it makes sense to be lax here...
       p.children.meta-node
     =/  latest-revision-node  (need (pry:orm:store meta-child-graph))
-    =/  last-revision-index   ~[top %meta key.latest-revision-node]  ::  XX we use this construction instead of doing the index.p.post.node dance because it works even if the post has been deletedd (which it should never but i guess its easier to code)
+    =/  last-revision-index   ~[top %meta key.latest-revision-node]  :: we use this construction instead of doing the index.p.post.node dance because it works even if the post has been deletedd (which it should never but i guess its easier to code)
     =/  new-index             (incr-index:libr last-revision-index)
     (poke-local (revise-book-meta:libr [our.bowl library-name] new-index author time-sent new-book))
   ::
@@ -237,7 +229,7 @@
     ?:  (is-owner entity.rid)
       ~|("tried to request access to library that we own" !!)
     =/  =action:library  [%get-book name.rid top]
-    :: i'm pretty sure this crashes if we haven't %request-library'd first. this is probably ok
+    ::  this should crash if we haven't %request-library'd first.
     :_  state
     (~(poke pass:io /book-request) [entity.rid %library-proxy] library-action+!>(action))^~
   ==
@@ -260,7 +252,7 @@
       =/  time-sent     now.bowl
       =/  comment       comment.action
       =/  prm           (~(get by readers) author)
-      ::                        ::  commenter must be either:
+      ::                                                   ::  commenter must be either:
       ?>  ?|  (is-owner author)                            ::  us
               (~(has ju (need prm)) library-name top)      ::  someone with permissions
           ==
@@ -363,7 +355,7 @@
     ?+    -.q.update        ~&("ignoring update {<-.q.update>}" `state)
         %add-graph          `state  :: do not forward add graph to anyone. this gets manually forwarded in on-watch
     ::
-        ::  i think the following pokes are only meant to be sent by the local user to his local graph-store
+        ::  the following pokes should never be forwarded
         %archive-graph      `state
         %unarchive-graph    `state
         %run-updates        `state
@@ -374,7 +366,6 @@
         %remove-tag         [(send-if-tracking-uid update library-name index.uid.q.update) state]
     ::
         %remove-graph
-      ::  todo this style and code sucks please someone help lol
       :_  =/  new-state  (remove-library state library-name)
       new-state
       %-  zing
@@ -404,7 +395,6 @@
     ::
         %remove-posts
       ::  need to clear reader state *after* creating cards, cause we can't create card without state
-      ::  todo this style and code sucks please someone help lol
       :_   =/   new-state  (remove-any-books state library-name indices.q.update)
       new-state
       %+  murn  ~(tap by readers)
@@ -481,7 +471,6 @@
 ++  poke-local-store
   |=  [=update:store]
   ^-  card
-  :: this is using a ~ wire. again, is this ok?
   (~(poke-our pass:io /) %graph-store graph-update-2+!>(update))
 ++  sub-to-library
   |=  [rid=resource]
@@ -494,7 +483,6 @@
   :: is the ship the owner of this proxys
   |=  [=ship]
   =(our.bowl ship)
-::  also the naming is a bit confusing even for me
 ++  incoming-sub-path
   :: someone is subscribed to us
   |=  [reader=ship library-name=@tas]
