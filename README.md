@@ -93,7 +93,7 @@ This second one prints out the state of the `%library-proxy` app.
 >   [%0 readers={} policies={}]
 ```
 
-The output shows us that there is currently only one empty graph reserved for DMs,
+The output shows us that there is currently only one empty graph created by default for DMs,
 and that `%library-proxy` is currently not tracking any readers or policies.
 
 
