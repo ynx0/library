@@ -75,7 +75,7 @@ Then, go ahead and start the `%library-proxy` app on both ships.
 ```
 
 **Code references**
-- [`app/library-proxy.hoon`](#L999) - the `+on-init` arm
+- [`app/library-proxy.hoon`](https://github.com/ynx0/library/blob/db6ff0354e9e639a5488e67921468477f5df9b98/app/library-proxy.hoon#L30-L33) - the `+on-init` arm
 
 
 
@@ -248,12 +248,13 @@ for an explanation of the schema.
 
 Now, let's edit title of the book to remove the unnecessary numbers.
 
-To make things easy, we'll first give the index of the book a face.
+To make things easy, we'll first give the index of the book a face. Use the index from the last `%graph-store` debug output, like so:
 
 ```
 ~zod:dojo> =top-of-dune 170.141.184.505.110.303.839.596.375.394.968.666.112
 ```
 
+Now, we issue the `%revise-book` command, supplying the new book metadata.
 ```
 ~zod:dojo> :library-proxy &library-command [%revise-book %library1 top-of-dune ['Dune: The Book' 'thirteenchars']]
 ```
@@ -263,6 +264,7 @@ Verify that a revision node was created successfully.
 :graph-store +dbug [%state 'graphs']
 ```
 
+<!-- potential improvement: add collapseable output block for revision node -->
 
 ### Requesting access to someone else's library 
 
@@ -278,7 +280,7 @@ We see one library, with the name *library1*.
 Let's request this one from **~zod**.
 
 ```
-~nus:dojo> :library-proxy &library-command [%request-library [~zod %library1]]
+~nus:dojo> :library-proxy &library-command [%request-library %library1]
 ```
 
 If we inspect **~nus**'s `%graph-store`, we will now see that it now has a new graph from **~zod** corresponding to *library1*.
@@ -306,7 +308,7 @@ In Library, we only store data about and keep track of books that we are interes
 
 So, let's figure out what books are available on *library1*.
 ```
-~nus:dojo> :~zod/library-proxy &library-action [%get-books [~zod %library1]]
+~nus:dojo> :~zod/library-proxy &library-action [%get-books %library1]
 
 [entity=~zod name=%library1]
 {170.141.184.505.110.703.100.063.230.385.815.814.144}
@@ -320,7 +322,7 @@ Right now, we see the index of one book. We'll give it a face on this ship as we
 
 Now let's request this book.
 ```
-~nus:dojo> :library-proxy &library-command [%request-book [~zod %library1] top-of-dune]
+~nus:dojo> :library-proxy &library-command [%request-book %library1 top-of-dune]
 ```
 
 And verify that we got the update.
@@ -451,12 +453,12 @@ As a result of the last two actions on **~nus**'s part, **~zod**'s `%library-pro
 
 After having read the book, **~nus** would like to comment about it.
 ```
-~nus:dojo> :~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune 'dune is ok']
+~nus:dojo> :~zod/library-proxy &library-action [%add-comment %library1 top-of-dune 'dune is ok']
 ```
 
 After thinking for a second, **~nus** realizes she didn't complete her thought, so she writes another comment.
 ```
-~nus:dojo> :~zod/library-proxy &library-action [%add-comment [~zod %library1] top-of-dune 'in my opinion']
+~nus:dojo> :~zod/library-proxy &library-action [%add-comment %library1 top-of-dune 'in my opinion']
 ```
 
 Let's make sure **~nus**'s comment was properly sent to **~zod**.
@@ -611,7 +613,7 @@ Let's make sure **~nus**'s comment was properly sent to **~zod**.
 
 Now, **~nus** feels like deleting her first comment, and does so:
 ```
-~nus:dojo> :~zod/library-proxy &library-action [%remove-comment [~zod %library1] ~[top-of-dune %comments 170.141.184.505.110.615.575.362.645.737.013.772.288]]
+~nus:dojo> :~zod/library-proxy &library-action [%remove-comment %library1 ~[top-of-dune %comments 170.141.184.505.110.615.575.362.645.737.013.772.288]]
 ```
 
 **~zod** wants to clean up **~nus**'s second comment, because it doesn't really make sense without the first one.
