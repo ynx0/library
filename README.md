@@ -240,11 +240,9 @@ for an explanation of the schema.
 
 
 **Code references**
-- [`app/library-proxy.hoon`](#L999) - the relevant section in the `+on-poke` arm
-- [`app/library-proxy.hoon`](#L999) - the wing that handles a `%library-command`
-- [`app/library-proxy.hoon`](#L999) - the wing that handles `%add-book`
-- [`sur/library.hoon`](#L999) - the definition of a `library-command`
-- [`mar/graph/validator/library.hoon`](#L13, #L43-47) - arm that enforces length check
+- [`app/library-proxy.hoon`](https://github.com/ynx0/library/blob/db6ff0354e9e639a5488e67921468477f5df9b98/app/library-proxy.hoon#L188-L193) - the wing that handles `%add-book`
+- [`sur/library.hoon`](https://github.com/ynx0/library/blob/db6ff0354e9e639a5488e67921468477f5df9b98/sur/library.hoon#L20) - the definition of the `%add-book` command.
+- [`mar/graph/validator/library.hoon`](https://github.com/ynx0/library/blob/72224e27efa5d02cdc4261b32602be6ef4faf89d/mar/graph/validator/library.hoon#L42-L49) - wing that enforces isbn validity
 
 ### Editing 
 
