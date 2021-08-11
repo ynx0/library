@@ -273,14 +273,14 @@ Let's bring another ship, **~nus**, into the picture.
 First, get the list of available libraries from **~zod**
 ```
 ~nus:dojo> :~zod/library-proxy &library-action [%get-libraries ~]
-{[entity=~zod name=%library1]}
+{%library1}
 ```
 We see one library, with the name *library1*.
 
 Let's request this one from **~zod**.
 
 ```
-~nus:dojo> :library-proxy &library-command [%request-library %library1]
+~nus:dojo> :library-proxy &library-command [%request-library [~zod %library1]]
 ```
 
 If we inspect **~nus**'s `%graph-store`, we will now see that it now has a new graph from **~zod** corresponding to *library1*.
@@ -322,7 +322,7 @@ Right now, we see the index of one book. We'll give it a face on this ship as we
 
 Now let's request this book.
 ```
-~nus:dojo> :library-proxy &library-command [%request-book %library1 top-of-dune]
+~nus:dojo> :library-proxy &library-command [%request-book [~zod %library1] top-of-dune]
 ```
 
 And verify that we got the update.
