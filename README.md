@@ -128,11 +128,9 @@ skipping over what's not necessary.
 
 
 **Code references**
-- [`app/library-proxy.hoon`](#L999) - the relevant section in the `+on-poke` arm
-- [`app/library-proxy.hoon`](#L999) - the wing that handles a `%library-command`
-- [`app/library-proxy.hoon`](#L999) - the wing that handles `%create-library`
-- [`sur/library.hoon`](#L999) - the definition of a `library-command`
-- [`mar/library/command.hoon`](#L999) - mark file defining a `library-command`
+- [`app/library-proxy.hoon#L47-50`](https://github.com/ynx0/library/blob/db6ff0354e9e639a5488e67921468477f5df9b98/app/library-proxy.hoon#L47-L50) - the relevant section in the `+on-poke` arm
+- [`app/library-proxy.hoon#`](https://github.com/ynx0/library/blob/db6ff0354e9e639a5488e67921468477f5df9b98/app/library-proxy.hoon#L175-L180) - the wing that handles `%create-library`
+- [`sur/library.hoon`](https://github.com/ynx0/library/blob/master/sur/library.hoon#L18) - the definition of a `library-command`
 
 
 ### Adding a book
@@ -237,7 +235,7 @@ Verify that the book was created successfully.
 
 Although all the data is present and valid, it is not in a human readable format.
 To understand the underlying structure, take a look at 
-[this section(**TODO**)](code_architecture.md#schema) of the documentation
+[this section](urbit.org/docs/userspace/graph-store/sample-application-overview#organizing-data-within-graph-store) of the documentation
 for an explanation of the schema.
 
 
