@@ -104,7 +104,7 @@ Now, let's create a library on **~zod**.
 
 We'll create it with the `%open` policy, which means that anyone can request for access to the library.
 ```
-~zod:dojo> :library-proxy &library-command [%create-library [our %library1] [%open ~]]
+~zod:dojo> :library-proxy &library-command [%create-library %library1 [%open ~]]
 ```
 
 Let's verify that the library exists.
@@ -139,7 +139,7 @@ skipping over what's not necessary.
 
 Now, let's add a book to our library. Note that the isbn must be either length 10 or 13.
 ```
-~zod:dojo> :library-proxy &library-command [%add-book [our %library1] ['Dune123' '0441172717']]
+~zod:dojo> :library-proxy &library-command [%add-book %library1 ['Dune123' '0441172717']]
 ```
 
 Verify that the book was created successfully.
@@ -252,6 +252,12 @@ for an explanation of the schema.
 
 Now, let's edit title of the book to remove the unnecessary numbers.
 
+To make things easy, we'll first give the index of the book a face.
+
+```
+~zod:dojo> =top-of-dune 170.141.184.505.110.303.839.596.375.394.968.666.112
+```
+
 ```
 ~zod:dojo> :library-proxy &library-command [%revise-book %library1 top-of-dune ['Dune: The Book' 'thirteenchars']]
 ```
@@ -310,10 +316,10 @@ So, let's figure out what books are available on *library1*.
 {170.141.184.505.110.703.100.063.230.385.815.814.144}
 ```
 
-Right now, we see the index of one book. Let's give it a face for easy access.
+Right now, we see the index of one book. We'll give it a face on this ship as well for easy access.
 
 ```
-=top-of-dune 170.141.184.505.110.303.839.596.375.394.968.666.112
+~nus:dojo> =top-of-dune 170.141.184.505.110.303.839.596.375.394.968.666.112
 ```
 
 Now let's request this book.
@@ -616,7 +622,7 @@ Now, **~nus** feels like deleting her first comment, and does so:
 So he ends up deleting it, since he's the owner of the library.
 
 ```
-~zod:dojo> :library-proxy &library-action [%remove-comment [our %library1] ~[top-of-dune %comments 170.141.184.505.110.617.158.107.698.780.100.886.528]]
+~zod:dojo> :library-proxy &library-action [%remove-comment %library1 ~[top-of-dune %comments 170.141.184.505.110.617.158.107.698.780.100.886.528]]
 ```
 
 Now, if we look at the `%graph-store` states for both **~zod** and **~nus**, we'll see the above changes reflected on both graphs.
@@ -736,7 +742,7 @@ The book nodes on both graphs are identical.
 
 Now, **~zod** decides to delete the book *Dune*
 ```
-:library-proxy &library-command [%remove-book [our %library1] top-of-dune]
+:library-proxy &library-command [%remove-book %library1 top-of-dune]
 ```
 
 Looking at the state,
@@ -865,7 +871,7 @@ Compare to the earlier state:
 
 To wrap up, **~zod** deletes the library.
 ```
-~zod:dojo> :library-proxy &library-command [%remove-library [our %library1]]
+~zod:dojo> :library-proxy &library-command [%remove-library %library1]
 ```
 
 Looking at the state,
