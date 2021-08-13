@@ -310,7 +310,7 @@ So, let's figure out what books are available on *library1*.
 ```
 ~nus:dojo> :~zod/library-proxy &library-action [%get-books %library1]
 
-[entity=~zod name=%library1]
+%library1
 {170.141.184.505.110.703.100.063.230.385.815.814.144}
 ```
 
