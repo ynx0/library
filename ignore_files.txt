@@ -1,8 +1,0 @@
-.*
-*.sh
-*.md
-*.txt
-*.js
-*.swp
-*.save
-./misc/*
