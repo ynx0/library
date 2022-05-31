@@ -6,7 +6,8 @@ if [ $# -eq 0 ]; then
     exit 2
 fi
 PIER=$1
-EXCLUDE_FILE=ignore_files.txt
+DIR=$(dirname $0)
+EXCLUDE_FILE=$DIR/ignore_files.txt
 
 while getopts "w" opt; do
     case ${opt} in
@@ -20,7 +21,7 @@ done
 
 # todo use watch -n or smtn
 if [ -z "$WATCH_MODE" ]; then
-    echo "Installed $(dirname $0)"
+    echo "Installed $DIR"
     rsync -r --exclude-from=$EXCLUDE_FILE * $PIER/home/
 else
    echo "Watching for changes to copy to ${PIER}..."
